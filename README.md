@@ -21,6 +21,19 @@ node node/asketches_list.js
 
 node node/acollection_list.js
 
+sh downloads/meta/download.sh
+
+rm p5-projects/Outstanding\ fortnight/p5.js
+rm p5-projects/Outstanding\ fortnight/p5.sound.min.js
+rm p5-projects/truchet\ tiles\ copy/p5.js
+rm p5-projects/truchet\ tiles\ copy/p5.sound.min.js
+
+ls p5-projects/*/p5.*
+p5-projects/truchet tiles odd/p5.js                     p5-projects/truchet tiles tweeked/p5.js
+p5-projects/truchet tiles odd/p5.sound.min.js           p5-projects/truchet tiles tweeked/p5.sound.min.js
+
+rm p5-projects/*/p5.*
+
 # --
 
 # download sketch + assets to skt directory
