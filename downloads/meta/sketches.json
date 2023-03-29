@@ -1,0 +1,332 @@
+[
+  {
+    "name": "11.4: Brightness getpixel",
+    "_id": "J7Zhes2Tc",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6415ea45af49fb07761c04fe",
+          "6415ea45af49fb07761c04ff",
+          "6415ea45af49fb07761c0500"
+        ],
+        "fileType": "folder",
+        "_id": "6415ea45af49fb07761c04fd",
+        "createdAt": "2023-03-18T16:45:24.243Z",
+        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "isSelectedFile": false,
+        "id": "6415ea45af49fb07761c04fd"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/J7Zhes2Tc\n// 11.4: Brightness getpixel\n\np5.disableFriendlyErrors = true; // disables FES\n\nlet video;\n\nlet vScale = 16;\n\nfunction setup() {\n  createCanvas(640, 480);\n  pixelDensity(1);\n  video = createCapture(VIDEO);\n  video.size(width / vScale, height / vScale);\n  noStroke();\n  fill(255);\n  rectMode(CENTER);\n\n}\n\nfunction draw() {\n  background(51);\n\n  video.loadPixels();\n  for (var y = 0; y < video.height; y++) {\n    for (var x = 0; x < video.width; x++) {\n      var index = (video.width - x - 1 + y * video.width) * 4;\n      var r = video.pixels[index + 0];\n      var g = video.pixels[index + 1];\n      var b = video.pixels[index + 2];\n      var bright = (r + g + b) / 3;\n\n      // let col = video.get(x, y);\n      // let bright = (col[0] + col[1] + col[2]) / 3;\n      \n      let w = map(bright, 0, 255, 0, vScale);\n\n      rect(x * vScale, y * vScale, w, w);\n    }\n  }\n}\n\n// https://editor.p5js.org/jht1493/sketches/XFKWbV01m\n// 11.4: Brightness getpixel copy\n\n// 2020-10-25 jht: Correct index, remove unneeed loadPixels\n// https://github.com/CodingTrain/website/tree/master/Tutorials/P5JS/p5.js_video",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415ea45af49fb07761c04ff",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-18T16:45:24.243Z",
+        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "id": "6415ea45af49fb07761c04ff"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415ea45af49fb07761c04fe",
+        "createdAt": "2023-03-18T16:45:24.243Z",
+        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "isSelectedFile": false,
+        "id": "6415ea45af49fb07761c04fe"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415ea45af49fb07761c0500",
+        "createdAt": "2023-03-18T16:45:24.243Z",
+        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "isSelectedFile": false,
+        "id": "6415ea45af49fb07761c0500"
+      }
+    ],
+    "createdAt": "2023-03-18T16:43:49.509Z",
+    "updatedAt": "2023-03-18T16:45:24.243Z",
+    "id": "J7Zhes2Tc"
+  },
+  {
+    "name": "Outstanding fortnight",
+    "_id": "4DETmJP-l",
+    "updatedAt": "2023-03-18T16:11:04.212Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6415e28d8158ec7c4b859588",
+          "6415e28d8158ec7c4b859587",
+          "6415e28d8158ec7c4b859589"
+        ],
+        "fileType": "folder",
+        "_id": "6415e28d8158ec7c4b85958a",
+        "createdAt": "2023-03-18T16:11:04.212Z",
+        "updatedAt": "2023-03-18T16:11:04.212Z",
+        "id": "6415e28d8158ec7c4b85958a"
+      },
+      {
+        "name": "sketch.js",
+        "content": "function setup() {\n  createCanvas(400, 400);\n}\n\nfunction draw() {\n  background(220);\n}",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415e28d8158ec7c4b859587",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-18T16:11:04.212Z",
+        "updatedAt": "2023-03-18T16:11:04.212Z",
+        "id": "6415e28d8158ec7c4b859587"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415e28d8158ec7c4b859588",
+        "createdAt": "2023-03-18T16:11:04.212Z",
+        "updatedAt": "2023-03-18T16:11:04.212Z",
+        "id": "6415e28d8158ec7c4b859588"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415e28d8158ec7c4b859589",
+        "createdAt": "2023-03-18T16:11:04.212Z",
+        "updatedAt": "2023-03-18T16:11:04.212Z",
+        "id": "6415e28d8158ec7c4b859589"
+      }
+    ],
+    "createdAt": "2023-03-18T16:11:04.212Z",
+    "id": "4DETmJP-l"
+  },
+  {
+    "name": "truchet tiles copy",
+    "_id": "48eYwMpJs",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "641c950ac0de2c65ee9a85ec",
+          "641c950ac0de2c65ee9a85ed",
+          "641c950ac0de2c65ee9a85ee"
+        ],
+        "fileType": "folder",
+        "_id": "641c950ac0de2c65ee9a85eb",
+        "createdAt": "2023-03-23T18:10:43.919Z",
+        "updatedAt": "2023-03-23T18:10:43.919Z",
+        "id": "641c950ac0de2c65ee9a85eb"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n\nlet cellSize = 40;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noLoop();\n}\n\nfunction draw() {\n  background(220);\n  for (i = 0; i < width; i += cellSize) {\n    for (j = 0; j < height; j += cellSize) {\n      // pick one of two functions drawCellA, drawCellB\n      // listCell = random([drawCellA, drawCellB]);\n      // listCell(i, j);\n      if (random() > 0.5) {\n        drawCellA(i,j)\n      }\n      else {\n        drawCellB(i,j)\n      }\n    }\n  }\n}\n\nfunction drawCellA(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(0, 0, cellSize, cellSize, 0, 90);\n  arc(cellSize, cellSize, cellSize, cellSize, 180, 270);\n  pop();\n}\n\nfunction drawCellB(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(cellSize, 0, cellSize, cellSize, 90, 180);\n  arc(0, cellSize, cellSize, cellSize, 270, 360);\n  pop();\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "641c950ac0de2c65ee9a85ed",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-23T18:10:43.919Z",
+        "updatedAt": "2023-03-23T18:10:43.919Z",
+        "id": "641c950ac0de2c65ee9a85ed"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "641c950ac0de2c65ee9a85ec",
+        "createdAt": "2023-03-23T18:10:43.919Z",
+        "updatedAt": "2023-03-23T18:10:43.919Z",
+        "id": "641c950ac0de2c65ee9a85ec"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "641c950ac0de2c65ee9a85ee",
+        "createdAt": "2023-03-23T18:10:43.919Z",
+        "updatedAt": "2023-03-23T18:10:43.919Z",
+        "id": "641c950ac0de2c65ee9a85ee"
+      }
+    ],
+    "createdAt": "2023-03-23T18:06:02.812Z",
+    "updatedAt": "2023-03-23T18:10:43.919Z",
+    "id": "48eYwMpJs"
+  },
+  {
+    "name": "truchet tiles copy",
+    "_id": "lBrb1cBQ7",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6415fe517cf2db13ca14e194",
+          "6415fe517cf2db13ca14e195",
+          "6415fe517cf2db13ca14e196"
+        ],
+        "fileType": "folder",
+        "_id": "6415fe517cf2db13ca14e193",
+        "createdAt": "2023-03-18T18:10:24.720Z",
+        "updatedAt": "2023-03-18T18:10:24.720Z",
+        "id": "6415fe517cf2db13ca14e193"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\nlet cellSize = 40;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noLoop();\n}\n\nfunction draw() {\n  background(220);\n  for (i = 0; i < width; i += cellSize) {\n    for (j = 0; j < height; j += cellSize) {\n      listCell = random([drawCellA, drawCellB]);\n      listCell(i, j);\n    }\n  }\n}\n\nfunction drawCellA(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(0, 0, cellSize, cellSize, 0, 90);\n  arc(cellSize, cellSize, cellSize, cellSize, 180, 270);\n  pop();\n}\n\nfunction drawCellB(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(cellSize, 0, cellSize, cellSize, 90, 180);\n  arc(0, cellSize, cellSize, cellSize, 270, 360);\n  pop();\n}\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415fe517cf2db13ca14e195",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-18T18:10:24.720Z",
+        "updatedAt": "2023-03-18T18:10:24.720Z",
+        "id": "6415fe517cf2db13ca14e195"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415fe517cf2db13ca14e194",
+        "createdAt": "2023-03-18T18:10:24.720Z",
+        "updatedAt": "2023-03-18T18:10:24.720Z",
+        "id": "6415fe517cf2db13ca14e194"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415fe517cf2db13ca14e196",
+        "createdAt": "2023-03-18T18:10:24.720Z",
+        "updatedAt": "2023-03-18T18:10:24.720Z",
+        "id": "6415fe517cf2db13ca14e196"
+      }
+    ],
+    "createdAt": "2023-03-18T18:09:22.139Z",
+    "updatedAt": "2023-03-18T18:10:24.720Z",
+    "id": "lBrb1cBQ7"
+  },
+  {
+    "name": "truchet tiles odd",
+    "_id": "ghy_WpWDr",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "64161b727cf2db13ca14e1a0",
+          "64161b727cf2db13ca14e1a1",
+          "64161b727cf2db13ca14e1a2"
+        ],
+        "fileType": "folder",
+        "_id": "64161b727cf2db13ca14e19f",
+        "createdAt": "2023-03-19T20:21:28.683Z",
+        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "isSelectedFile": false,
+        "id": "64161b727cf2db13ca14e19f"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/ghy_WpWDr\n// truchet tiles odd\n\nlet a_len = 40;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noLoop();\n  noFill();\n  strokeWeight(4)\n}\n\nfunction draw() {\n  background(220);\n  let odd = false\n  for (let x = 0; x < width; x += a_len) {\n    for (let y = 0; y < height; y += a_len) {\n      // odd = random() > 0.5\n      if (odd) {\n        drawLeft(x,y)\n      }\n      else {\n        drawRight(x,y)\n      }\n      // odd = ! odd;\n    }\n    // odd = ! odd;\n  }\n}\n\nfunction drawLeft(x, y) {\n  arc(x+0, y+0, a_len, a_len, 0, 90);\n  arc(x+a_len, y+a_len, a_len, a_len, 180, 270);\n}\n\nfunction drawRight(x, y) {\n  arc(x+a_len, y+0, a_len, a_len, 90, 180);\n  arc(x+0, y+a_len, a_len, a_len, 270, 360);\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/5TSs5XB6o\n// truchet tiles rotate\n\n// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles re-factored\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64161b727cf2db13ca14e1a1",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-19T20:21:28.683Z",
+        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "id": "64161b727cf2db13ca14e1a1"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64161b727cf2db13ca14e1a0",
+        "createdAt": "2023-03-19T20:21:28.683Z",
+        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "isSelectedFile": false,
+        "id": "64161b727cf2db13ca14e1a0"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64161b727cf2db13ca14e1a2",
+        "createdAt": "2023-03-19T20:21:28.683Z",
+        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "isSelectedFile": false,
+        "id": "64161b727cf2db13ca14e1a2"
+      }
+    ],
+    "createdAt": "2023-03-18T20:13:38.653Z",
+    "updatedAt": "2023-03-19T20:21:28.683Z",
+    "id": "ghy_WpWDr"
+  },
+  {
+    "name": "truchet tiles tweeked",
+    "_id": "1CpIVSqp_d",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6415febe7cf2db13ca14e198",
+          "6415febe7cf2db13ca14e199",
+          "6415febe7cf2db13ca14e19a"
+        ],
+        "fileType": "folder",
+        "_id": "6415febe7cf2db13ca14e197",
+        "createdAt": "2023-03-19T20:00:56.425Z",
+        "updatedAt": "2023-03-19T20:00:56.425Z",
+        "id": "6415febe7cf2db13ca14e197"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles tweeked\n\nlet a_len = 40;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noLoop();\n  noFill();\n  strokeWeight(4)\n}\n\nfunction draw() {\n  background(220);\n  for (x = 0; x < width; x += a_len) {\n    for (y = 0; y < height; y += a_len) {\n      // listCell = random([drawCellA, drawCellB]);\n      // listCell(x, y);\n      if (random() > 0.5) {\n        drawLeft(x,y)\n      }\n      else {\n        drawRight(x,y)\n      }\n    }\n  }\n}\n\nfunction drawLeft(x, y) {\n  // push();\n  // noFill();\n  // translate(x, y);\n  arc(x+0, y+0, a_len, a_len, 0, 90);\n  arc(x+a_len, y+a_len, a_len, a_len, 180, 270);\n  // pop();\n}\n\nfunction drawRight(x, y) {\n  // push();\n  // noFill();\n  // translate(x, y);\n  arc(x+a_len, y+0, a_len, a_len, 90, 180);\n  arc(x+0, y+a_len, a_len, a_len, 270, 360);\n  // pop();\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415febe7cf2db13ca14e199",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-19T20:00:56.425Z",
+        "updatedAt": "2023-03-19T20:00:56.425Z",
+        "id": "6415febe7cf2db13ca14e199"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415febe7cf2db13ca14e198",
+        "createdAt": "2023-03-19T20:00:56.425Z",
+        "updatedAt": "2023-03-19T20:00:56.425Z",
+        "id": "6415febe7cf2db13ca14e198"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6415febe7cf2db13ca14e19a",
+        "createdAt": "2023-03-19T20:00:56.425Z",
+        "updatedAt": "2023-03-19T20:00:56.425Z",
+        "id": "6415febe7cf2db13ca14e19a"
+      }
+    ],
+    "createdAt": "2023-03-18T18:11:10.048Z",
+    "updatedAt": "2023-03-19T20:00:56.425Z",
+    "id": "1CpIVSqp_d"
+  }
+]
