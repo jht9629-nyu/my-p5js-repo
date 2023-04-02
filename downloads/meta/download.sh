@@ -1,0 +1,6 @@
+curl https://editor.p5js.org/editor/projects/48eYwMpJs/zip -o "downloads/zips/truchet tiles copy.zip"
+curl https://editor.p5js.org/editor/projects/ghy_WpWDr/zip -o "downloads/zips/truchet tiles odd.zip"
+curl https://editor.p5js.org/editor/projects/1CpIVSqp_d/zip -o "downloads/zips/truchet tiles tweeked.zip"
+curl https://editor.p5js.org/editor/projects/lBrb1cBQ7/zip -o "downloads/zips/truchet tiles copy.zip"
+curl https://editor.p5js.org/editor/projects/J7Zhes2Tc/zip -o "downloads/zips/11.4: Brightness getpixel.zip"
+curl https://editor.p5js.org/editor/projects/4DETmJP-l/zip -o "downloads/zips/Outstanding fortnight.zip"
