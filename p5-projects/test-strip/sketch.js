@@ -1,4 +1,4 @@
-let vid;
+let aVideo;
 let fcount = 0;
 let doRun = 0;
 let doPreRoll = 0;
@@ -6,23 +6,26 @@ let preRollCount = 0;
 let startSecs;
 // let lapseSecs = 10;
 // let secsMod = 10;
-let lapseSecs = 87;
-let secsMod = 87;
+let mediaPath = './media/test-strip-portrait-360x640-00-34sec.mov';
+let rwidth = 360;
+let rheight = 640;
+let lapseSecs = 33.5587;
+let secsMod = 33.5587;
 
 function setup() {
-  createCanvas(640, 360);
+  createCanvas(rwidth, rheight);
 
-  vid = createVideo(['./media/combo.mov'], vidLoad);
-  // vid.duration 86.470167
+  aVideo = createVideo([mediaPath], vidLoad);
+  // aVideo.duration 86.470167
   // ./media/test-strip-count-0-300-x480
   // test-strip-count-0-300-x480
   // test-strip-count-0-300
   // test-strip-360-10sec
 
-  //vid.size(100, 100);
+  //aVideo.size(100, 100);
   // video size not valid until loaded
-  // console.log('vid.width', vid.width);
-  // console.log('vid.height', vid.height);
+  // console.log('aVideo.width', aVideo.width);
+  // console.log('aVideo.height', aVideo.height);
 
   startSecs = millis() / 1000;
 }
@@ -49,10 +52,10 @@ function draw() {
     console.log('fcount=', fcount, 'doRun', doRun);
     if (doRun) {
       fcount = 0;
-      vid.time(0);
+      aVideo.time(0);
     }
   }
-  let vtime = vid.time();
+  let vtime = aVideo.time();
   vtime = int(vtime * 100) / 100;
   let strs = [];
   if (doPreRoll) {
@@ -73,7 +76,7 @@ function draw() {
   strs.push('secs=' + nowLapse, 'vtime=' + vtime);
   strs.push('count=' + fcount);
 
-  image(vid, 0, 0);
+  image(aVideo, 0, 0);
 
   let th = 32;
   textSize(th);
@@ -97,11 +100,15 @@ function draw() {
 
 // This function is called when the video loads
 function vidLoad() {
-  vid.loop();
-  vid.volume(1);
-  console.log('vid.width', vid.width);
-  console.log('vid.height', vid.height);
-  console.log('vid.duration', vid.duration());
-  // vid.width 640
-  // vid.height 360
+  aVideo.loop();
+  aVideo.volume(1);
+  console.log('aVideo.width', aVideo.width);
+  console.log('aVideo.height', aVideo.height);
+  console.log('aVideo.duration', aVideo.duration());
+  // aVideo.width 640
+  // aVideo.height 360
 }
+
+// Attributions
+// https://www.youtube.com/watch?v=5IrAg8plb1o
+// FULL HD Test Patterns 1920 x 1080 HDTV
