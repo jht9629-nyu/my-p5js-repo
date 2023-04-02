@@ -4,13 +4,17 @@ let doRun = 0;
 let doPreRoll = 0;
 let preRollCount = 0;
 let startSecs;
-let lapseSecs = 10;
-let secsMod = 10;
+// let lapseSecs = 10;
+// let secsMod = 10;
+let lapseSecs = 87;
+let secsMod = 87;
 
 function setup() {
   createCanvas(640, 360);
 
-  vid = createVideo(['test-strip-count-0-300-x480.mov'], vidLoad);
+  vid = createVideo(['./media/combo.mov'], vidLoad);
+  // vid.duration 86.470167
+  // ./media/test-strip-count-0-300-x480
   // test-strip-count-0-300-x480
   // test-strip-count-0-300
   // test-strip-360-10sec
@@ -53,7 +57,8 @@ function draw() {
   let strs = [];
   if (doPreRoll) {
     let now = new Date();
-    nsecs = secsMod - 1 - (now.getSeconds() % secsMod);
+    // nsecs = secsMod - 1 - (now.getSeconds() % secsMod);
+    nsecs = now.getSeconds() % secsMod;
     if (nsecs === 0) {
       doPreRoll = 0;
       doRun = 1;
@@ -93,9 +98,10 @@ function draw() {
 // This function is called when the video loads
 function vidLoad() {
   vid.loop();
-  vid.volume(0);
+  vid.volume(1);
   console.log('vid.width', vid.width);
   console.log('vid.height', vid.height);
+  console.log('vid.duration', vid.duration());
   // vid.width 640
   // vid.height 360
 }
