@@ -16,46 +16,41 @@ let peeps = [
   { mediaPath: 'TKXNE0024.MOV', caption: '- park' },
   { mediaPath: 'XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
-// BYWNE9238.MOV
-// DBOSE7398.MOV
-// FPFZE3511.MOV
-// JASPE0408.MOV
-// LNUIE9760.MOV
-// MEHQE5386.MOV
-// MFYS9812.MOV
-// PWESE1796.MOV
-// TKXNE0024.MOV
-// XNBCE9571.MOV
 
 function setup() {
+  sync.peepIndex = 0;
+  check_url_param();
+
   createCanvas(dim.width, dim.height);
 
-  mediaPath = '../media/rusty/' + peeps[9].mediaPath;
+  let peep = peeps[sync.peepIndex];
+  sync.caption = peep.caption;
+  mediaPath = '../media/rusty/' + peep.mediaPath;
+
   aVideo = createVideo([mediaPath], videoLoaded);
   aVideo.onended(videoEnded);
-  aVideo.hide();
+  // aVideo.hide();
+  aVideo.size(dim.width, dim.height);
+  aVideo.position(0, 0);
+  aVideo.elt.style.zIndex = '-1';
 
   sync.isPlaying = 0;
-  sync.fcount = 0;
   sync.periodSecs = secsTime();
 }
 
 function draw() {
-  background(0);
+  // background(0);
+  clear();
 
   let strs = [];
-
-  sync.fcount++;
   sync.lapseSec = secsTime() - sync.periodSecs;
-
   let startSecs = startSecsOffset();
-
-  strs.push('startSecs=' + formatTime(startSecs));
   strs.push('aVideo.time=' + formatTime(aVideo.time()));
-  strs.push('lapseSec=' + formatTime(sync.lapseSec));
-  strs.push('fcount=' + sync.fcount);
+  strs.push('startSecs=' + formatTime(startSecs));
+  // strs.push('lapseSec=' + formatTime(sync.lapseSec));
+  strs.push(sync.caption);
 
-  image(aVideo, 0, 0, dim.width, dim.height);
+  // image(aVideo, 0, 0, dim.width, dim.height);
 
   let th = 32;
   textSize(th);
@@ -108,7 +103,7 @@ function startVideoRelativeTime() {
   // Adjust start time to align with hour
   let startSecs = startSecsOffset();
   let delay = startSecs - sync.duration;
-  console.log('delay', formatTime(delay));
+  console.log('delay', formatTime(delay), 'startSecs', formatTime(startSecs));
   // delay = 1;
   if (delay < 0) {
     aVideo.play();
@@ -159,6 +154,30 @@ function formatTime(n) {
 
 function secsTime() {
   return millis() / 1000;
+}
+
+// https://editor.p5js.org/jht1493/sketches/5LgILr8RF
+// Firebase-createImg-board
+
+function check_url_param() {
+  let query = window.location.search;
+  console.log('query', query);
+  if (query.length < 1) return;
+  let params = params_query(query);
+  let peepIndex = params['peepIndex'];
+  if (peepIndex !== undefined) {
+    sync.peepIndex = peepIndex;
+  }
+  console.log('peepIndex', peepIndex);
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+function params_query(query) {
+  // eg. query='abc=foo&def=%5Basf%5D&xyz=5'
+  // params={abc: "foo", def: "[asf]", xyz: "5"}
+  const urlParams = new URLSearchParams(query);
+  const params = Object.fromEntries(urlParams);
+  return params;
 }
 
 // let delay = 3000;

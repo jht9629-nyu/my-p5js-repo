@@ -4,6 +4,12 @@
 - Scripts to download your p5js sketches.
 - Create listing of scripts and collections.
 
+## Links
+
+[p5-projects/sync](p5-projects/sync)
+
+## Notes
+
 ```
 
 # --
