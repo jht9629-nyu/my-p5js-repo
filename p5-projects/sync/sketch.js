@@ -59,6 +59,7 @@ function videoLoaded() {
   sync.gap = sync.residue / sync.nPerHour;
   console.log('sync', sync);
   console.log('.gap', sync.gap);
+  // confirm gap + duration will fit into hour
   console.log('(sync.duration + sync.gap) * sync.nPerHour', (sync.duration + sync.gap) * sync.nPerHour);
 }
 
@@ -69,17 +70,17 @@ function mousePressed() {
 function startVideoRelativeTime() {
   console.log('startVideoRelativeTime');
   // Adjust start time to align with hour
-  let aTime = new Date();
-  let hours = aTime.getHours();
-  let mins = aTime.getMinutes();
-  let secs = aTime.getSeconds();
-  let millis = aTime.getMilliseconds();
+  let date = new Date();
+  let hours = date.getHours();
+  let mins = date.getMinutes();
+  let secs = date.getSeconds();
+  let millis = date.getMilliseconds();
   console.log('hours', hours, 'mins', mins, 'secs', secs, 'millis', millis);
 
   let secsForHour = mins * 60 + secs + millis / 1000;
   let startSecs = secsForHour % (sync.duration + sync.gap);
   let delay = startSecs - sync.duration;
-  console.log('secsForHour', secsForHour, 'startSecs', startSecs, 'delay', delay);
+  console.log('secsForHour', secsForHour, 'startSecs', formatTime(startSecs), 'delay', formatTime(delay));
   // delay = 1;
   if (delay < 0) {
     aVideo.play();
@@ -95,8 +96,8 @@ function startVideoRelativeTime() {
 
 function videoPlayDelayed() {
   console.log('videoPlayDelayed');
-  aVideo.time(0);
   aVideo.play();
+  aVideo.time(0);
 }
 
 function videoEnded() {
