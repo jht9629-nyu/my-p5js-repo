@@ -5,17 +5,20 @@ let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 let dim = { width: 888 / 2, height: 1920 / 2 };
 let sync = {};
 let peeps = [
+  { mediaPath: 'test-strip-portrait-360x640-00-34sec.mov', caption: 'test' },
   { mediaPath: 'BYWNE9238.MOV', caption: 'Cintra Batchoo' },
   { mediaPath: 'DBOSE7398.MOV', caption: 'Luis Vasquez' },
   { mediaPath: 'FPFZE3511.MOV', caption: 'Kelly Carroll' },
   { mediaPath: 'JASPE0408.MOV', caption: 'Cheikh Gueye' },
   { mediaPath: 'LNUIE9760.MOV', caption: 'Rowan Abbas' },
-  { mediaPath: 'MEHQE5386.MOV', caption: 'Shindy Melani Johnson' },
+  { mediaPath: 'MEHQE5386.MOV', caption: 'Shindy Melani Johnson' }, // 5
   { mediaPath: 'MFYS9812.MOV', caption: 'Tony Franco' },
   { mediaPath: 'PWESE1796.MOV', caption: 'Maxim Kondratenko' },
   { mediaPath: 'TKXNE0024.MOV', caption: '- park' },
   { mediaPath: 'XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
+// let rootPath = '../media/rusty/';
+let rootPath = '../media-live/';
 
 function setup() {
   sync.peepIndex = 0;
@@ -25,7 +28,7 @@ function setup() {
 
   let peep = peeps[sync.peepIndex];
   sync.caption = peep.caption;
-  mediaPath = '../media/rusty/' + peep.mediaPath;
+  mediaPath = rootPath + peep.mediaPath;
 
   aVideo = createVideo([mediaPath], videoLoaded);
   aVideo.onended(videoEnded);
