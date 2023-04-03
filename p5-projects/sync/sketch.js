@@ -1,24 +1,22 @@
 let aVideo;
-// let mediaPath = '../media/test/test-strip-portrait-11sec.mov';
 let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 // let dim = { width: 360, height: 640 };
 let dim = { width: 888 / 2, height: 1920 / 2 };
 let sync = {};
 let peeps = [
-  { mediaPath: 'test-strip-portrait-360x640-00-34sec.mov', caption: 'test' },
-  { mediaPath: 'BYWNE9238.MOV', caption: 'Cintra Batchoo' },
-  { mediaPath: 'DBOSE7398.MOV', caption: 'Luis Vasquez' },
-  { mediaPath: 'FPFZE3511.MOV', caption: 'Kelly Carroll' },
-  { mediaPath: 'JASPE0408.MOV', caption: 'Cheikh Gueye' },
-  { mediaPath: 'LNUIE9760.MOV', caption: 'Rowan Abbas' },
-  { mediaPath: 'MEHQE5386.MOV', caption: 'Shindy Melani Johnson' }, // 5
-  { mediaPath: 'MFYS9812.MOV', caption: 'Tony Franco' },
-  { mediaPath: 'PWESE1796.MOV', caption: 'Maxim Kondratenko' },
-  { mediaPath: 'TKXNE0024.MOV', caption: '- park' },
-  { mediaPath: 'XNBCE9571.MOV', caption: '- Gravesend girlie' },
+  // { mediaPath: '../media-live/test-strip-portrait-360x640-00-34sec.mov', caption: 'test' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/BYWNE9238.MOV', caption: 'Cintra Batchoo' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/DBOSE7398.MOV', caption: 'Luis Vasquez' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/FPFZE3511.MOV', caption: 'Kelly Carroll' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/JASPE0408.MOV', caption: 'Cheikh Gueye' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/LNUIE9760.MOV', caption: 'Rowan Abbas' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/MEHQE5386.MOV', caption: 'Shindy Melani Johnson' }, // 5
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/MFYS9812.MOV', caption: 'Tony Franco' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/PWESE1796.MOV', caption: 'Maxim Kondratenko' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/TKXNE0024.MOV', caption: '- park' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
+  // { mediaPath: 'https://jht1493.net/MoGallery/XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
-// let rootPath = '../media/rusty/';
-let rootPath = '../media-live/';
 
 function setup() {
   sync.peepIndex = 0;
@@ -28,9 +26,8 @@ function setup() {
 
   let peep = peeps[sync.peepIndex];
   sync.caption = peep.caption;
-  mediaPath = rootPath + peep.mediaPath;
 
-  aVideo = createVideo([mediaPath], videoLoaded);
+  aVideo = createVideo([peep.mediaPath], videoLoaded);
   aVideo.onended(videoEnded);
   // aVideo.hide();
   aVideo.size(dim.width, dim.height);
