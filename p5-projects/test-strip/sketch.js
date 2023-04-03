@@ -6,7 +6,7 @@ let preRollCount = 0;
 let startSecs;
 // let lapseSecs = 10;
 // let secsMod = 10;
-let mediaPath = './media/test-strip-portrait-360x640-00-34sec.mov';
+let mediaPath = '../media/test-strip-portrait-360x640-00-34sec.mov';
 let dim = { width: 360, height: 640 };
 let lapseSecs = 33.5587;
 let secsMod = 33.5587;

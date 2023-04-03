@@ -1,80 +1,29 @@
 let aVideo;
-let fcount = 0;
-let doRun = 0;
-let doPreRoll = 0;
-let preRollCount = 0;
-let startSecs;
-// let lapseSecs = 10;
-// let secsMod = 10;
-let mediaPath = './media/test-strip-portrait-360x640-00-34sec.mov';
+let mediaPath = '../media/test-strip-portrait-11sec.mov';
 let dim = { width: 360, height: 640 };
-let lapseSecs = 33.5587;
-let secsMod = 33.5587;
-let sync = { running: 0, preRolling: 0 };
+let sync = {};
 
 function setup() {
   createCanvas(dim.width, dim.height);
 
   aVideo = createVideo([mediaPath], videoLoaded);
-  // aVideo.duration 86.470167
-  // ./media/test-strip-count-0-300-x480
-  // test-strip-count-0-300-x480
-  // test-strip-count-0-300
-  // test-strip-360-10sec
+  aVideo.onended(videoEnded);
 
-  //aVideo.size(100, 100);
-  // video size not valid until loaded
-  // console.log('aVideo.width', aVideo.width);
-  // console.log('aVideo.height', aVideo.height);
-
-  startSecs = millis() / 1000;
+  sync.fcount = 0;
+  sync.periodSecs = secsTime();
 }
-
-function mousePressed() {
-  doPreRoll = !doPreRoll;
-  if (doPreRoll) {
-    preRollCount = 0;
-  }
-  doRun = 0;
-  fcount = 0;
-}
-
-let nsecs;
 
 function draw() {
   background(0);
-  // Measure time interval nowLapse
-  let nowSecs = millis() / 1000;
-  let nowLapse = nowSecs - startSecs;
-  nowLapse = int(nowLapse * 100) / 100;
-  if (nowLapse >= lapseSecs) {
-    startSecs = nowSecs;
-    console.log('fcount=', fcount, 'doRun', doRun);
-    if (doRun) {
-      fcount = 0;
-      aVideo.time(0);
-    }
-  }
-  let vtime = aVideo.time();
-  vtime = int(vtime * 100) / 100;
+
   let strs = [];
-  if (doPreRoll) {
-    let now = new Date();
-    // nsecs = secsMod - 1 - (now.getSeconds() % secsMod);
-    nsecs = now.getSeconds() % secsMod;
-    if (nsecs === 0) {
-      doPreRoll = 0;
-      doRun = 1;
-    } else {
-      strs.push('preRollCount=' + preRollCount, 'nsecs=' + nsecs);
-      preRollCount++;
-    }
-  }
-  if (doRun) {
-    fcount++;
-  }
-  strs.push('secs=' + nowLapse, 'vtime=' + vtime);
-  strs.push('count=' + fcount);
+
+  sync.fcount++;
+  sync.lapseSec = secsTime() - sync.periodSecs;
+
+  strs.push('aVideo.time=' + formatTime(aVideo.time()));
+  strs.push('lapseSec=' + formatTime(sync.lapseSec));
+  strs.push('fcount=' + sync.fcount);
 
   image(aVideo, 0, 0);
 
@@ -100,21 +49,72 @@ function draw() {
 
 // This function is called when the video loads
 function videoLoaded() {
-  // aVideo.play();
+  aVideo.noLoop();
   aVideo.volume(1);
-  console.log('aVideo.width', aVideo.width);
-  console.log('aVideo.height', aVideo.height);
-  console.log('aVideo.duration', aVideo.duration());
-  // aVideo.width 640
-  // aVideo.height 360
+  console.log('videoLoaded .width', aVideo.width, '.height', aVideo.height, '.duration', aVideo.duration());
   sync.duration = aVideo.duration();
   sync.secsPerHour = 60 * 60;
   sync.nPerHour = Math.trunc(sync.secsPerHour / sync.duration);
   sync.residue = sync.secsPerHour - sync.nPerHour * sync.duration;
-  sync.preroll = sync.residue / sync.nPerHour;
-  sync.preRolling = 1;
+  sync.gap = sync.residue / sync.nPerHour;
+  console.log('sync', sync);
+  console.log('.gap', sync.gap);
+  console.log('(sync.duration + sync.gap) * sync.nPerHour', (sync.duration + sync.gap) * sync.nPerHour);
+}
+
+function mousePressed() {
+  startVideoRelativeTime();
+}
+
+function startVideoRelativeTime() {
+  console.log('startVideoRelativeTime');
+  // Adjust start time to align with hour
+  let aTime = new Date();
+  let hours = aTime.getHours();
+  let mins = aTime.getMinutes();
+  let secs = aTime.getSeconds();
+  let millis = aTime.getMilliseconds();
+  console.log('hours', hours, 'mins', mins, 'secs', secs, 'millis', millis);
+
+  let secsForHour = mins * 60 + secs + millis / 1000;
+  let startSecs = secsForHour % (sync.duration + sync.gap);
+  let delay = startSecs - sync.duration;
+  console.log('secsForHour', secsForHour, 'startSecs', startSecs, 'delay', delay);
+  // delay = 1;
+  if (delay < 0) {
+    aVideo.play();
+    aVideo.time(startSecs);
+  } else {
+    setTimeout(videoPlayDelayed, delay * 1000);
+  }
+  sync.fcount = 0;
+  sync.periodSecs = secsTime();
+
   console.log('sync', sync);
 }
+
+function videoPlayDelayed() {
+  console.log('videoPlayDelayed');
+  aVideo.time(0);
+  aVideo.play();
+}
+
+function videoEnded() {
+  console.log('videoEnded');
+  startVideoRelativeTime();
+}
+
+function formatTime(n) {
+  let displayPrecision = 1000;
+  return int(n * displayPrecision) / displayPrecision;
+}
+
+function secsTime() {
+  return millis() / 1000;
+}
+
+// let delay = 3000;
+// setTimeout(ui_present_window, delay);
 
 // Attributions
 // https://www.youtube.com/watch?v=5IrAg8plb1o
