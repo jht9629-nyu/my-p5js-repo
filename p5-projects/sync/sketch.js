@@ -5,6 +5,7 @@ let dim = { width: 888 / 2, height: 1920 / 2 };
 let sync = {};
 let peeps = [
   // { mediaPath: '../media-live/test-strip-portrait-360x640-00-34sec.mov', caption: 'test' },
+  { mediaPath: 'https://jht1493.net/MoGallery/rusty/00-09.mov', caption: '00-09' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/BYWNE9238.MOV', caption: 'Cintra Batchoo' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/DBOSE7398.MOV', caption: 'Luis Vasquez' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/FPFZE3511.MOV', caption: 'Kelly Carroll' },
@@ -15,7 +16,6 @@ let peeps = [
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/PWESE1796.MOV', caption: 'Maxim Kondratenko' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/TKXNE0024.MOV', caption: '- park' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
-  // { mediaPath: 'https://jht1493.net/MoGallery/XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
 
 function setup() {
