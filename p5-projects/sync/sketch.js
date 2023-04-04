@@ -63,7 +63,7 @@ function draw() {
   // background(0);
   // clear();
 
-  let strs = [];
+  let strs = ['2023-04-04-003'];
   sync.lapseSec = secsTime() - sync.periodSecs;
   let startSecs = startSecsOffset();
   strs.push('aVideo.time=' + formatTime(aVideo.time()));
