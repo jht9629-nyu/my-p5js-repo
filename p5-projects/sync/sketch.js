@@ -35,8 +35,8 @@ let peeps1 = [
 let playBtn;
 
 function setup() {
-  sync.gap = 1; // 1 sec gap between playback
   sync.peepIndex = 0;
+  sync.gap = 1; // 1 sec gap between playback
   check_url_param();
 
   // createCanvas(dim.width, dim.height);
@@ -63,7 +63,7 @@ function draw() {
   // background(0);
   // clear();
 
-  let strs = ['2023-04-04-003'];
+  let strs = ['2023-04-04-004' + (aVideo.elt.paused ? ' Paused' : ' Playing')];
   sync.lapseSec = secsTime() - sync.periodSecs;
   let startSecs = startSecsOffset();
   strs.push('aVideo.time=' + formatTime(aVideo.time()));
@@ -117,13 +117,9 @@ function videoLoaded() {
 }
 
 function togglePlay() {
-  console.log('[-- sync.isPlaying', sync.isPlaying);
-  console.log('.paused', aVideo.elt.paused);
-  sync.isPlaying = !sync.isPlaying;
-  if (aVideo.elt.paused !== sync.isPlaying) {
-    console.log('SYNCED .paused', aVideo.elt.paused);
-    sync.isPlaying = aVideo.elt.paused;
-  }
+  console.log('togglePlay .paused', aVideo.elt.paused);
+  // Go from paused to playing, or playing to paused
+  sync.isPlaying = aVideo.elt.paused;
   if (sync.isPlaying) {
     startVideoRelativeTime();
   } else {
@@ -176,7 +172,7 @@ function videoPlayDelayed() {
 }
 
 function videoEnded() {
-  console.log('videoEnded');
+  console.log('videoEnded paused', aVideo.elt.paused);
   if (sync.isPlaying) {
     startVideoRelativeTime();
   }
