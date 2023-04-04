@@ -6,7 +6,7 @@
 
 ## Links
 
-[p5-projects/sync](p5-projects/sync)
+[p5-projects/sync pages](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/sync/)
 
 ## Notes
 

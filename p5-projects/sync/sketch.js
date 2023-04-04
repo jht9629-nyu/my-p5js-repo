@@ -36,7 +36,7 @@ let playBtn;
 
 function setup() {
   sync.gap = 1; // 1 sec gap between playback
-  sync.peepIndex = 6;
+  sync.peepIndex = 0;
   check_url_param();
 
   // createCanvas(dim.width, dim.height);
