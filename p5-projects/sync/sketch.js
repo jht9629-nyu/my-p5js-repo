@@ -32,12 +32,15 @@ let peeps1 = [
   { mediaPath: '../media/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
 
+let playBtn;
+
 function setup() {
   sync.gap = 1; // 1 sec gap between playback
-  sync.peepIndex = 0;
+  sync.peepIndex = 6;
   check_url_param();
 
-  createCanvas(dim.width, dim.height);
+  // createCanvas(dim.width, dim.height);
+  noCanvas();
 
   let peep = peeps[sync.peepIndex];
   sync.caption = peep.caption;
@@ -46,16 +49,19 @@ function setup() {
   aVideo.onended(videoEnded);
   // aVideo.hide();
   aVideo.size(dim.width, dim.height);
-  aVideo.position(0, 0);
-  aVideo.elt.style.zIndex = '-1';
+  // aVideo.position(0, 0);
+  // aVideo.elt.style.zIndex = '-1';
 
   sync.isPlaying = 0;
   sync.periodSecs = secsTime();
+
+  playBtn = createButton('Play').mousePressed(togglePlay);
+  playBtn.style('font-size:42px');
 }
 
 function draw() {
   // background(0);
-  clear();
+  // clear();
 
   let strs = [];
   sync.lapseSec = secsTime() - sync.periodSecs;
@@ -65,26 +71,31 @@ function draw() {
   // strs.push('lapseSec=' + formatTime(sync.lapseSec));
   strs.push(sync.caption);
 
+  let div = ui_div_empty('istatus');
+  if (div) {
+    div.html(strs.join('<br/>'));
+  }
+
   // image(aVideo, 0, 0, dim.width, dim.height);
 
-  let th = 32;
-  textSize(th);
+  // let th = 32;
+  // textSize(th);
 
-  let x0 = width / 8;
+  // let x0 = width / 8;
 
-  let y0 = height;
-  y0 -= th * strs.length;
+  // let y0 = height;
+  // y0 -= th * strs.length;
 
-  for (let index = 0; index < strs.length; index++) {
-    let str = strs[index];
-    // let x0 = width / 2 - tw / 2;
-    let tw = textWidth(str);
-    fill(0);
-    rect(x0, y0 - th, tw, th);
-    fill(255);
-    text(str, x0, y0);
-    y0 += th;
-  }
+  // for (let index = 0; index < strs.length; index++) {
+  //   let str = strs[index];
+  //   // let x0 = width / 2 - tw / 2;
+  //   let tw = textWidth(str);
+  //   fill(0);
+  //   rect(x0, y0 - th, tw, th);
+  //   fill(255);
+  //   text(str, x0, y0);
+  //   y0 += th;
+  // }
 }
 
 // This function is called when the video loads
@@ -105,7 +116,7 @@ function videoLoaded() {
   // console.log('(sync.duration + sync.gap) * sync.nPerHour', (sync.duration + sync.gap) * sync.nPerHour);
 }
 
-function mousePressed() {
+function togglePlay() {
   sync.isPlaying = !sync.isPlaying;
   if (sync.isPlaying) {
     startVideoRelativeTime();
@@ -164,18 +175,6 @@ function videoEnded() {
   }
 }
 
-function formatTime(n) {
-  let displayPrecision = 1000;
-  return int(n * displayPrecision) / displayPrecision;
-}
-
-function secsTime() {
-  return millis() / 1000;
-}
-
-// https://editor.p5js.org/jht1493/sketches/5LgILr8RF
-// Firebase-createImg-board
-
 function check_url_param() {
   let query = window.location.search;
   console.log('query', query);
@@ -186,15 +185,6 @@ function check_url_param() {
     sync.peepIndex = peepIndex;
   }
   console.log('peepIndex', peepIndex);
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
-function params_query(query) {
-  // eg. query='abc=foo&def=%5Basf%5D&xyz=5'
-  // params={abc: "foo", def: "[asf]", xyz: "5"}
-  const urlParams = new URLSearchParams(query);
-  const params = Object.fromEntries(urlParams);
-  return params;
 }
 
 // let delay = 3000;
