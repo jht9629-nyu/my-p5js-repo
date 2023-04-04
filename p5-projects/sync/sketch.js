@@ -17,8 +17,23 @@ let peeps = [
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/TKXNE0024.MOV', caption: '- park' },
   { mediaPath: 'https://jht1493.net/MoGallery/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
+let peeps1 = [
+  // { mediaPath: '../media-live/test-strip-portrait-360x640-00-34sec.mov', caption: 'test' },
+  { mediaPath: '../media/rusty/00-09.mov', caption: '00-09' },
+  { mediaPath: '../media/rusty/BYWNE9238.MOV', caption: 'Cintra Batchoo' },
+  { mediaPath: '../media/rusty/DBOSE7398.MOV', caption: 'Luis Vasquez' },
+  { mediaPath: '../media/rusty/FPFZE3511.MOV', caption: 'Kelly Carroll' },
+  { mediaPath: '../media/rusty/JASPE0408.MOV', caption: 'Cheikh Gueye' },
+  { mediaPath: '../media/rusty/LNUIE9760.MOV', caption: 'Rowan Abbas' },
+  { mediaPath: '../media/rusty/MEHQE5386.MOV', caption: 'Shindy Melani Johnson' }, // 5
+  { mediaPath: '../media/rusty/MFYS9812.MOV', caption: 'Tony Franco' },
+  { mediaPath: '../media/rusty/PWESE1796.MOV', caption: 'Maxim Kondratenko' },
+  { mediaPath: '../media/rusty/TKXNE0024.MOV', caption: '- park' },
+  { mediaPath: '../media/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
+];
 
 function setup() {
+  sync.gap = 1; // 1 sec gap between playback
   sync.peepIndex = 0;
   check_url_param();
 
@@ -81,12 +96,13 @@ function videoLoaded() {
   sync.secsPerHour = 60 * 60;
   sync.nPerHour = Math.trunc(sync.secsPerHour / sync.duration);
   sync.residue = sync.secsPerHour - sync.nPerHour * sync.duration;
-  sync.gap = sync.residue / sync.nPerHour;
+  sync.cycleCount = 0;
+  // sync.gap = sync.residue / sync.nPerHour;
   console.log('sync', sync);
-  console.log('.gap', sync.gap);
+  // console.log('.gap', sync.gap);
   console.log('.nPerHour', sync.nPerHour);
   // confirm gap + duration will fit into hour
-  console.log('(sync.duration + sync.gap) * sync.nPerHour', (sync.duration + sync.gap) * sync.nPerHour);
+  // console.log('(sync.duration + sync.gap) * sync.nPerHour', (sync.duration + sync.gap) * sync.nPerHour);
 }
 
 function mousePressed() {
@@ -99,19 +115,21 @@ function mousePressed() {
 }
 
 function startVideoRelativeTime() {
-  console.log('startVideoRelativeTime');
+  sync.cycleCount++;
+  console.log('startVideoRelativeTime', sync.cycleCount);
   // Adjust start time to align with hour
   let startSecs = startSecsOffset();
-  let delay = startSecs - sync.duration;
-  console.log('delay', formatTime(delay), 'startSecs', formatTime(startSecs));
+  let diff = startSecs - sync.duration;
+  console.log('diff', formatTime(diff), 'startSecs', formatTime(startSecs));
   // delay = 1;
-  if (delay < 0) {
+  if (diff < 0) {
     aVideo.play();
     aVideo.time(startSecs);
   } else {
+    let delay = sync.gap - diff;
+    console.log('delay', formatTime(delay));
     setTimeout(videoPlayDelayed, delay * 1000);
   }
-  sync.fcount = 0;
   sync.periodSecs = secsTime();
 
   // console.log('sync', sync);
@@ -128,7 +146,6 @@ function startSecsOffset() {
 
   let secsForHour = mins * 60 + secs + millis / 1000;
   let startSecs = secsForHour % (sync.duration + sync.gap);
-
   // console.log('secsForHour', secsForHour, 'startSecs', formatTime(startSecs));
 
   return startSecs;
