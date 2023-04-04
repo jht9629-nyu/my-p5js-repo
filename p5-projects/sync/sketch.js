@@ -1,4 +1,4 @@
-let aVideo;
+let aVersion = '2023-04-04-005';
 let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 // let dim = { width: 360, height: 640 };
 let dim = { width: 888 / 2, height: 1920 / 2 };
@@ -31,6 +31,7 @@ let peeps1 = [
   { mediaPath: '../media/rusty/TKXNE0024.MOV', caption: '- park' },
   { mediaPath: '../media/rusty/XNBCE9571.MOV', caption: '- Gravesend girlie' },
 ];
+let aVideo;
 
 let playBtn;
 
@@ -56,53 +57,37 @@ function setup() {
   sync.periodSecs = secsTime();
 
   playBtn = createButton('Play').mousePressed(togglePlay);
-  playBtn.style('font-size:42px');
+  playBtn.style('font-size:88px');
 }
 
 function draw() {
   // background(0);
   // clear();
 
-  let strs = ['2023-04-04-004' + (aVideo.elt.paused ? ' Paused' : ' Playing')];
-  sync.lapseSec = secsTime() - sync.periodSecs;
+  let str = aVersion;
+  str += ' ' + sync.caption;
+  str += ' ' + (aVideo.elt.paused ? 'Paused' : 'Playing');
+  let strs = [str];
+  let time = aVideo.time();
   let startSecs = startSecsOffset();
-  strs.push('aVideo.time=' + formatTime(aVideo.time()));
-  strs.push('startSecs=' + formatTime(startSecs));
+  strs.push('duration=' + formatTime(sync.duration));
+  strs.push('time=' + formatTime(time));
+  strs.push('start=' + formatTime(startSecs));
+  // sync.lapseSec = secsTime() - sync.periodSecs;
   // strs.push('lapseSec=' + formatTime(sync.lapseSec));
-  strs.push(sync.caption);
 
   let div = ui_div_empty('istatus');
   if (div) {
     div.html(strs.join('<br/>'));
   }
-
-  // image(aVideo, 0, 0, dim.width, dim.height);
-
-  // let th = 32;
-  // textSize(th);
-
-  // let x0 = width / 8;
-
-  // let y0 = height;
-  // y0 -= th * strs.length;
-
-  // for (let index = 0; index < strs.length; index++) {
-  //   let str = strs[index];
-  //   // let x0 = width / 2 - tw / 2;
-  //   let tw = textWidth(str);
-  //   fill(0);
-  //   rect(x0, y0 - th, tw, th);
-  //   fill(255);
-  //   text(str, x0, y0);
-  //   y0 += th;
-  // }
 }
 
 // This function is called when the video loads
 function videoLoaded() {
   aVideo.noLoop();
   aVideo.volume(1);
-  console.log('videoLoaded .width', aVideo.width, '.height', aVideo.height, '.duration', aVideo.duration());
+  console.log('videoLoaded .width', aVideo.width, '.height', aVideo.height);
+  console.log('.duration', aVideo.duration());
   sync.duration = aVideo.duration();
   sync.secsPerHour = 60 * 60;
   sync.nPerHour = Math.trunc(sync.secsPerHour / sync.duration);
