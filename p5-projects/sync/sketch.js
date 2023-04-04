@@ -117,12 +117,19 @@ function videoLoaded() {
 }
 
 function togglePlay() {
+  console.log('[-- sync.isPlaying', sync.isPlaying);
+  console.log('.paused', aVideo.elt.paused);
   sync.isPlaying = !sync.isPlaying;
+  if (aVideo.elt.paused !== sync.isPlaying) {
+    console.log('SYNCED .paused', aVideo.elt.paused);
+    sync.isPlaying = aVideo.elt.paused;
+  }
   if (sync.isPlaying) {
     startVideoRelativeTime();
   } else {
     aVideo.pause();
   }
+  console.log('sync.isPlaying', sync.isPlaying);
 }
 
 function startVideoRelativeTime() {
