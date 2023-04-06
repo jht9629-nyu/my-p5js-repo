@@ -57,6 +57,240 @@
     "id": "J7Zhes2Tc"
   },
   {
+    "name": "IMS - Truchet Vamoss copy",
+    "_id": "G4K2yaPnz",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6425ae0385bf81680c394a18",
+          "6425ae0385bf81680c394a19",
+          "6425ae0385bf81680c394a1a"
+        ],
+        "fileType": "folder",
+        "_id": "6425ae0385bf81680c394a17",
+        "createdAt": "2023-03-30T15:43:03.790Z",
+        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "id": "6425ae0385bf81680c394a17"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht1493/sketches/TtXLXAiJv\n// IMS - Truchet Vamoss\n// https://openprocessing.org/sketch/1354815\n// Truchet in p5js by Vamoss\n\nvar aleatorios = []\nvar tamanhoDoGrid = 21\n\nfunction setup() {\n  createCanvas(400, 400)\n  noStroke()\n\t\n  for(var x=0; x < width; x += tamanhoDoGrid){\n    for(var y=0; y < height; y += tamanhoDoGrid){\n      aleatorios.push(floor(random(2)))\n    }\n  }\n}\n\nfunction draw() {\n  background(100)\n\t\n  var transparenciaRegular = map(mouseX, 0, width, 255, 0)\n  var transparenciaAleatoria = map(mouseY, 0, height, 255, 0)\n\t\n  var indice = 0\n  for(var x = 0; x<width; x+=tamanhoDoGrid){\n    for(var y = 0; y<height; y+=tamanhoDoGrid){\n      if (aleatorios[indice] == 0) fill(255, transparenciaAleatoria)\n      else fill(0, transparenciaAleatoria)\n      rect(x, y, tamanhoDoGrid, tamanhoDoGrid)\n      indice++\n    }\n  }\n\t\n  for(var x = 0; x <= width; x += tamanhoDoGrid){\n    for(var y = 0; y <= height; y += tamanhoDoGrid){\n      if ((x+y)%2 ==0) fill(255, transparenciaRegular)\n      else fill(0, transparenciaRegular)\n      circle(x, y, tamanhoDoGrid)\n    }\n  }\n}",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425ae0385bf81680c394a19",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-30T15:43:03.790Z",
+        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "id": "6425ae0385bf81680c394a19"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425ae0385bf81680c394a18",
+        "createdAt": "2023-03-30T15:43:03.790Z",
+        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "id": "6425ae0385bf81680c394a18"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425ae0385bf81680c394a1a",
+        "createdAt": "2023-03-30T15:43:03.790Z",
+        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "id": "6425ae0385bf81680c394a1a"
+      }
+    ],
+    "createdAt": "2023-03-30T15:42:59.411Z",
+    "updatedAt": "2023-03-30T15:43:03.790Z",
+    "id": "G4K2yaPnz"
+  },
+  {
+    "name": "ims03-jht scrolling color bars",
+    "_id": "3VKJ-q8ar",
+    "updatedAt": "2023-04-02T20:39:54.422Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6425fe61defa98523b4bbecc",
+          "6425fe61defa98523b4bbecb",
+          "6425fe61defa98523b4bbecd"
+        ],
+        "fileType": "folder",
+        "_id": "6425fe61defa98523b4bbece",
+        "createdAt": "2023-04-02T20:39:54.422Z",
+        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "id": "6425fe61defa98523b4bbece"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(full_screen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_len();\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  xpos = (xpos + 1) % width;\n}\n\nfunction init_len() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction full_screen_action() {\n  ui_remove_all();\n  ui_toggleFullScreen();\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_dim();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\nfunction ui_toggleFullScreen() {\n  fullscreen(1);\n  // if (!document.documentElement.requestFullscreen) {\n  //   console.log(\"NO document.documentElement.requestFullscreen\");\n  //   return;\n  // }\n  // if (!document.fullscreenElement) {\n  //   document.documentElement.requestFullscreen();\n  // } else {\n  //   if (document.exitFullscreen) {\n  //     document.exitFullscreen();\n  //   }\n  // }\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425fe61defa98523b4bbecb",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-02T20:39:54.422Z",
+        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "id": "6425fe61defa98523b4bbecb"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425fe61defa98523b4bbecc",
+        "createdAt": "2023-04-02T20:39:54.422Z",
+        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "id": "6425fe61defa98523b4bbecc"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425fe61defa98523b4bbecd",
+        "createdAt": "2023-04-02T20:39:54.422Z",
+        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "id": "6425fe61defa98523b4bbecd"
+      }
+    ],
+    "createdAt": "2023-03-30T21:27:17.559Z",
+    "id": "3VKJ-q8ar"
+  },
+  {
+    "name": "ims03-jht scrolling color time",
+    "_id": "ZGUqiovgG",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6426d3dec7e8c117a504ea72",
+          "6426d3dec7e8c117a504ea73",
+          "6426d3dec7e8c117a504ea74"
+        ],
+        "fileType": "folder",
+        "_id": "6426d3dec7e8c117a504ea71",
+        "createdAt": "2023-04-02T22:12:35.970Z",
+        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "isSelectedFile": false,
+        "id": "6426d3dec7e8c117a504ea71"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/ZGUqiovgG\n// ims03-jht scrolling color time\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\nlet startSecs;\nlet lapseSecs = 10;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(fullscreen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_len();\n\n  startSecs = millis() / 1000;\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  let nowSecs = millis() / 1000;\n  if (nowSecs - startSecs > lapseSecs) {\n    startSecs = nowSecs;\n  }\n\n  // xpos = (xpos + 1) % width;\n  xpos = (width * (nowSecs - startSecs)) / lapseSecs;\n  xpos = int(xpos);\n}\n\nfunction init_len() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction fullscreen_action() {\n  ui_remove_all();\n  // ui_toggleFullScreen();\n  fullscreen(1);\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_len();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\nfunction ui_toggleFullScreen() {\n  if (!document.documentElement.requestFullscreen) {\n    console.log(\"NO document.documentElement.requestFullscreen\");\n    return;\n  }\n  if (!document.fullscreenElement) {\n    document.documentElement.requestFullscreen();\n  } else {\n    if (document.exitFullscreen) {\n      document.exitFullscreen();\n    }\n  }\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6426d3dec7e8c117a504ea73",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-02T22:12:35.970Z",
+        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "id": "6426d3dec7e8c117a504ea73"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6426d3dec7e8c117a504ea72",
+        "createdAt": "2023-04-02T22:12:35.970Z",
+        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "isSelectedFile": false,
+        "id": "6426d3dec7e8c117a504ea72"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6426d3dec7e8c117a504ea74",
+        "createdAt": "2023-04-02T22:12:35.970Z",
+        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "isSelectedFile": false,
+        "id": "6426d3dec7e8c117a504ea74"
+      }
+    ],
+    "createdAt": "2023-03-31T12:36:46.682Z",
+    "updatedAt": "2023-04-02T22:12:35.970Z",
+    "id": "ZGUqiovgG"
+  },
+  {
+    "name": "IMS14 - Olive copy",
+    "_id": "6FIYHI4Mk",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "642cba1f922667712f2214c4",
+          "642cba1f922667712f2214c5",
+          "642cba1f922667712f2214c6",
+          "642cba1f922667712f2214c7"
+        ],
+        "fileType": "folder",
+        "_id": "642cba1f922667712f2214c3",
+        "createdAt": "2023-04-05T00:01:20.329Z",
+        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "isSelectedFile": false,
+        "id": "642cba1f922667712f2214c3"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/oy312/sketches/bwx18-eLe\n// Olive Yu\n// Heat map + Perlin Noise https://codepen.io/ysko909/pen/ExKLqYq \n// パーリンノイズ生成の準備\n\n//How can i track the colors on the camera to reflect heat more? \n\nconst NOISE_VALUE = 80;\nconst CELL_SIZE = 10;\nlet zSeed = 0;\n\n// Saturation（彩度）\nconst MAX_SATURATION = 100;\nconst MIN_SATURATION = 60;\nlet speedVal_sat = 0;\nlet addVal_sat = 1;\n\n\n// Brightness（明度）\nconst MAX_BRIGHTNESS = 100;\nconst MIN_BRIGHTNESS = 50;\nlet speedVal_bright = 0;\nlet addVal_bright = 1;\n\n//Camera\nlet capture;\n\nfunction setup() {\n  createCanvas(800, 600);\n  colorMode(HSB);\n  background(255);\n  noStroke();\n  capture = createCapture(VIDEO);\n \n  \n}\n\nfunction draw() {\n  \n  for (let y = 0; y*CELL_SIZE < height;y++) {\n    for (let x = 0; x*CELL_SIZE < width; x++){\n      \n      // 色相の設定\n      let hueVal = noise(x/NOISE_VALUE, y/NOISE_VALUE, zSeed) * 480;\n      \n      fill(hueVal, speedVal_sat, speedVal_bright, 1);\n      rect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);\n    }\n  }\n  zSeed += 0.01;\n  \n  // 彩度の設定 HUE\n  if(speedVal_sat <= MIN_SATURATION){\n    addVal_sat = (addVal_sat * addVal_sat);\n  }\n  else if (speedVal_sat >= MAX_SATURATION){\n    addVal_sat = -1 * (addVal_sat * addVal_sat);\n  }\n  \n  speedVal_sat += addVal_sat;\n  \n  // 明度の設定\n  if(speedVal_bright <= MIN_BRIGHTNESS){\n    addVal_bright = (addVal_bright * addVal_bright); \n  }\n  else if (speedVal_bright >= MAX_BRIGHTNESS){\n    addVal_bright = -1 * (addVal_bright * addVal_bright);\n  }\n  \n  speedVal_bright += addVal_bright;\n  // image(capture, 0, 0, 800, 600);\n  // blendMode(DIFFERENCE);\n  // filter(BLUR);\n\n\n}",
+        "children": [],
+        "fileType": "file",
+        "_id": "642cba1f922667712f2214c6",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-05T00:01:20.329Z",
+        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "id": "642cba1f922667712f2214c6"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642cba1f922667712f2214c5",
+        "createdAt": "2023-04-05T00:01:20.329Z",
+        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "isSelectedFile": false,
+        "id": "642cba1f922667712f2214c5"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642cba1f922667712f2214c7",
+        "createdAt": "2023-04-05T00:01:20.329Z",
+        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "isSelectedFile": false,
+        "id": "642cba1f922667712f2214c7"
+      },
+      {
+        "name": "balletdancer.mp4",
+        "content": "",
+        "children": [],
+        "fileType": "file",
+        "_id": "642cba1f922667712f2214c4",
+        "url": "https://assets.editor.p5js.org/60261b883e600f00240bd343/5fe5ada1-75ca-4c12-814e-400f047c6380.mp4",
+        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "createdAt": "2023-04-05T00:01:20.329Z",
+        "id": "642cba1f922667712f2214c4"
+      }
+    ],
+    "createdAt": "2023-04-05T00:00:32.797Z",
+    "updatedAt": "2023-04-05T00:01:20.329Z",
+    "id": "6FIYHI4Mk"
+  },
+  {
     "name": "Outstanding fortnight",
     "_id": "4DETmJP-l",
     "updatedAt": "2023-03-18T16:11:04.212Z",
@@ -109,60 +343,6 @@
     ],
     "createdAt": "2023-03-18T16:11:04.212Z",
     "id": "4DETmJP-l"
-  },
-  {
-    "name": "truchet tiles copy",
-    "_id": "48eYwMpJs",
-    "files": [
-      {
-        "name": "root",
-        "content": "",
-        "children": [
-          "641c950ac0de2c65ee9a85ec",
-          "641c950ac0de2c65ee9a85ed",
-          "641c950ac0de2c65ee9a85ee"
-        ],
-        "fileType": "folder",
-        "_id": "641c950ac0de2c65ee9a85eb",
-        "createdAt": "2023-03-23T18:10:43.919Z",
-        "updatedAt": "2023-03-23T18:10:43.919Z",
-        "id": "641c950ac0de2c65ee9a85eb"
-      },
-      {
-        "name": "sketch.js",
-        "content": "// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n\nlet cellSize = 40;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noLoop();\n}\n\nfunction draw() {\n  background(220);\n  for (i = 0; i < width; i += cellSize) {\n    for (j = 0; j < height; j += cellSize) {\n      // pick one of two functions drawCellA, drawCellB\n      // listCell = random([drawCellA, drawCellB]);\n      // listCell(i, j);\n      if (random() > 0.5) {\n        drawCellA(i,j)\n      }\n      else {\n        drawCellB(i,j)\n      }\n    }\n  }\n}\n\nfunction drawCellA(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(0, 0, cellSize, cellSize, 0, 90);\n  arc(cellSize, cellSize, cellSize, cellSize, 180, 270);\n  pop();\n}\n\nfunction drawCellB(x, y) {\n  push();\n  noFill();\n  translate(x, y);\n  arc(cellSize, 0, cellSize, cellSize, 90, 180);\n  arc(0, cellSize, cellSize, cellSize, 270, 360);\n  pop();\n}\n",
-        "children": [],
-        "fileType": "file",
-        "_id": "641c950ac0de2c65ee9a85ed",
-        "isSelectedFile": true,
-        "createdAt": "2023-03-23T18:10:43.919Z",
-        "updatedAt": "2023-03-23T18:10:43.919Z",
-        "id": "641c950ac0de2c65ee9a85ed"
-      },
-      {
-        "name": "index.html",
-        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
-        "children": [],
-        "fileType": "file",
-        "_id": "641c950ac0de2c65ee9a85ec",
-        "createdAt": "2023-03-23T18:10:43.919Z",
-        "updatedAt": "2023-03-23T18:10:43.919Z",
-        "id": "641c950ac0de2c65ee9a85ec"
-      },
-      {
-        "name": "style.css",
-        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
-        "children": [],
-        "fileType": "file",
-        "_id": "641c950ac0de2c65ee9a85ee",
-        "createdAt": "2023-03-23T18:10:43.919Z",
-        "updatedAt": "2023-03-23T18:10:43.919Z",
-        "id": "641c950ac0de2c65ee9a85ee"
-      }
-    ],
-    "createdAt": "2023-03-23T18:06:02.812Z",
-    "updatedAt": "2023-03-23T18:10:43.919Z",
-    "id": "48eYwMpJs"
   },
   {
     "name": "truchet tiles copy",
@@ -232,8 +412,8 @@
         ],
         "fileType": "folder",
         "_id": "64161b727cf2db13ca14e19f",
-        "createdAt": "2023-03-19T20:21:28.683Z",
-        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "createdAt": "2023-03-30T15:40:30.900Z",
+        "updatedAt": "2023-03-30T15:40:30.900Z",
         "isSelectedFile": false,
         "id": "64161b727cf2db13ca14e19f"
       },
@@ -244,8 +424,8 @@
         "fileType": "file",
         "_id": "64161b727cf2db13ca14e1a1",
         "isSelectedFile": true,
-        "createdAt": "2023-03-19T20:21:28.683Z",
-        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "createdAt": "2023-03-30T15:40:30.900Z",
+        "updatedAt": "2023-03-30T15:40:30.900Z",
         "id": "64161b727cf2db13ca14e1a1"
       },
       {
@@ -254,8 +434,8 @@
         "children": [],
         "fileType": "file",
         "_id": "64161b727cf2db13ca14e1a0",
-        "createdAt": "2023-03-19T20:21:28.683Z",
-        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "createdAt": "2023-03-30T15:40:30.900Z",
+        "updatedAt": "2023-03-30T15:40:30.900Z",
         "isSelectedFile": false,
         "id": "64161b727cf2db13ca14e1a0"
       },
@@ -265,15 +445,72 @@
         "children": [],
         "fileType": "file",
         "_id": "64161b727cf2db13ca14e1a2",
-        "createdAt": "2023-03-19T20:21:28.683Z",
-        "updatedAt": "2023-03-19T20:21:28.683Z",
+        "createdAt": "2023-03-30T15:40:30.900Z",
+        "updatedAt": "2023-03-30T15:40:30.900Z",
         "isSelectedFile": false,
         "id": "64161b727cf2db13ca14e1a2"
       }
     ],
     "createdAt": "2023-03-18T20:13:38.653Z",
-    "updatedAt": "2023-03-19T20:21:28.683Z",
+    "updatedAt": "2023-03-30T15:40:30.900Z",
     "id": "ghy_WpWDr"
+  },
+  {
+    "name": "truchet tiles pause copy",
+    "_id": "fWSv5uzke",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6425af5f2a6c137ec6dc896b",
+          "6425af5f2a6c137ec6dc896c",
+          "6425af5f2a6c137ec6dc896d"
+        ],
+        "fileType": "folder",
+        "_id": "6425af5f2a6c137ec6dc896a",
+        "createdAt": "2023-03-30T15:49:18.149Z",
+        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "isSelectedFile": false,
+        "id": "6425af5f2a6c137ec6dc896a"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/fWSv5uzke\n// truchet tiles pause cpoy\n// https://editor.p5js.org/jht9629-gmail/sketches/LnPplI2CR\n// truchet tiles pause\n\nlet len = 40;\nlet a_angle = 0;\nlet a_arr = [];\n// {count: seconds,...}\nlet a_pause_dict = {0: 2.0, 90: 2.0, 180: 2.0, 270: 2.0}\nlet a_pause_start = -1;\nlet a_pause_lapse;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noFill();\n  strokeWeight(4);\n  // Fill array a_arr with random true/false values\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = random() > 0.5\n      a_arr.push(odd)\n    }\n  }\n}\n\nfunction draw() {\n  let half = len / 2;\n  background(220);\n  let index = 0\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = a_arr[index]\n      if (odd) {\n        drawLeft(x, y, half);\n      } else {\n        drawRight(x, y, half);\n      }\n      index++;\n    }\n  }\n  if (check_cycle()) {\n    a_angle = (a_angle + 1) % 360;\n  }\n}\n\n// return true to advance cycle\n// use a_angle to find seconds to pause in a_pause_dict\nfunction check_cycle() {\n  if (a_pause_start > 0) {\n    let now = millis(); \n    if (now - a_pause_start > a_pause_lapse) {\n      a_pause_start = 0;\n      return true;\n    }\n    else {\n      return false\n    }\n  }\n  let lapse = a_pause_dict[a_angle];\n  if (lapse) {\n    a_pause_start = millis();\n    a_pause_lapse = lapse * 1000;\n    return false\n  }\n  else {  \n    return true; \n  }\n}\n\nfunction drawLeft(x, y, half) {\n  push();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + 0, -half + 0, len, len, 0, 90);\n  arc(-half + len, -half + len, len, len, 180, 270);\n  pop();\n}\n\nfunction drawRight(x, y, half) {\n  push();\n  noFill();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + len, -half + 0, len, len, 90, 180);\n  arc(-half + 0, -half + len, len, len, 270, 360);\n  pop();\n}\n\n// https://editor.p5js.org/jht9629-gmail/sketches/EfQDCJ5aR\n// truchet tiles array\n\n// https://editor.p5js.org/jht9629-nyu/sketches/5TSs5XB6o\n// truchet tiles rotate\n\n// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles re-factored\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425af5f2a6c137ec6dc896c",
+        "isSelectedFile": true,
+        "createdAt": "2023-03-30T15:49:18.149Z",
+        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "id": "6425af5f2a6c137ec6dc896c"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425af5f2a6c137ec6dc896b",
+        "createdAt": "2023-03-30T15:49:18.149Z",
+        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "isSelectedFile": false,
+        "id": "6425af5f2a6c137ec6dc896b"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6425af5f2a6c137ec6dc896d",
+        "createdAt": "2023-03-30T15:49:18.149Z",
+        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "isSelectedFile": false,
+        "id": "6425af5f2a6c137ec6dc896d"
+      }
+    ],
+    "createdAt": "2023-03-30T15:48:47.661Z",
+    "updatedAt": "2023-03-30T15:49:18.149Z",
+    "id": "fWSv5uzke"
   },
   {
     "name": "truchet tiles tweeked",
