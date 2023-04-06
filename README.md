@@ -25,6 +25,7 @@ npm install
 
 # --
 
+# copy down sketch listing from p5js editor
 node node/asketches_list.js
 
 node node/acollection_list.js
