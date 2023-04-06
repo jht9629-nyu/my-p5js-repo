@@ -1,5 +1,62 @@
 [
   {
+    "name": "03-jht-hatviz",
+    "_id": "7hzeHDSIl",
+    "updatedAt": "2023-04-06T21:26:53.342Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "642f34b75b11d919d026a647",
+          "642f34b75b11d919d026a646",
+          "642f34b75b11d919d026a648"
+        ],
+        "fileType": "folder",
+        "_id": "642f34b75b11d919d026a649",
+        "createdAt": "2023-04-06T21:26:53.342Z",
+        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "isSelectedFile": false,
+        "id": "642f34b75b11d919d026a649"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/7hzeHDSIl\n// 03-jht hatviz\n// https://github.com/isohedral/hatviz\n// https://cs.uwaterloo.ca/~csk/hat/\n\nconst r3 = 1.7320508075688772;\nconst hr3 = 0.8660254037844386;\nconst ident = [1,0,0,0,1,0];\n\nlet to_screen = [20, 0, 0, 0, -20, 0];\nlet lw_scale = 1;\nlet tiles;\nlet level;\n\nlet scale_centre;\nlet scale_start;\nlet scale_ts;\n\nlet reset_button;\nlet subst_button;\nlet translate_button;\nlet scale_button;\nlet draw_hats;\nlet draw_super;\nlet radio;\nlet cp_h1;\nlet cp_h;\nlet cp_t;\nlet cp_p;\nlet cp_f;\nlet dragging = false;\nlet uibox = true;\nlet box_height = 10;\n\nlet H1_hat;\nlet H_hat;\nlet T_hat;\nlet P_hat;\nlet F_hat;\n\nlet svg_serial = 0;\nlet h1_color = [0, 137, 212];\nlet h_color = [148, 205, 235];\nlet t_color = [251, 251, 251];\nlet p_color = [250, 250, 250];\nlet f_color = [191, 191, 191];\n\nfunction color2rgb(c)\n{\n\treturn [c.levels[0], c.levels[1], c.levels[2]];\n}\nfunction set_h1_color()\n{\n\tH1_hat.fill = color2rgb(cp_h1.color());\n}\nfunction set_h_color()\n{\n\tH_hat.fill = color2rgb(cp_h.color());\n}\nfunction set_t_color()\n{\n\tT_hat.fill = color2rgb(cp_t.color());\n}\nfunction set_p_color()\n{\n\tP_hat.fill = color2rgb(cp_p.color());\n}\nfunction set_f_color()\n{\n\tF_hat.fill = color2rgb(cp_f.color());\n}\n\nfunction pt( x, y )\n{\n\treturn { x : x, y : y };\n}\n\nfunction hexPt( x, y )\n{\n\treturn pt( x + 0.5*y, hr3*y );\n}\n\n// Affine matrix inverse\nfunction inv( T ) {\n\tconst det = T[0]*T[4] - T[1]*T[3];\n\treturn [T[4]/det, -T[1]/det, (T[1]*T[5]-T[2]*T[4])/det,\n\t\t-T[3]/det, T[0]/det, (T[2]*T[3]-T[0]*T[5])/det];\n};\n\n// Affine matrix multiply\nfunction mul( A, B )\n{\n\treturn [A[0]*B[0] + A[1]*B[3], \n\t\tA[0]*B[1] + A[1]*B[4],\n\t\tA[0]*B[2] + A[1]*B[5] + A[2],\n\n\t\tA[3]*B[0] + A[4]*B[3], \n\t\tA[3]*B[1] + A[4]*B[4],\n\t\tA[3]*B[2] + A[4]*B[5] + A[5]];\n}\n\nfunction padd( p, q )\n{\n\treturn { x : p.x + q.x, y : p.y + q.y };\n}\n\nfunction psub( p, q )\n{\n\treturn { x : p.x - q.x, y : p.y - q.y };\n}\n\n// Rotation matrix\nfunction trot( ang )\n{\n\tconst c = cos( ang );\n\tconst s = sin( ang );\n\treturn [c, -s, 0, s, c, 0];\n}\n\n// Translation matrix\nfunction ttrans( tx, ty )\n{\n\treturn [1, 0, tx, 0, 1, ty];\n}\n\nfunction rotAbout( p, ang )\n{\n\treturn mul( ttrans( p.x, p.y ), \n\t\tmul( trot( ang ), ttrans( -p.x, -p.y ) ) );\n}\n\n// Matrix * point\nfunction transPt( M, P )\n{\n\treturn pt(M[0]*P.x + M[1]*P.y + M[2], M[3]*P.x + M[4]*P.y + M[5]);\n}\n\n// Match unit interval to line segment p->q\nfunction matchSeg( p, q )\n{\n\treturn [q.x-p.x, p.y-q.y, p.x,  q.y-p.y, q.x-p.x, p.y];\n};\n\n// Match line segment p1->q1 to line segment p2->q2\nfunction matchTwo( p1, q1, p2, q2 )\n{\n\treturn mul( matchSeg( p2, q2 ), inv( matchSeg( p1, q1 ) ) );\n};\n\nfunction intersect( p1, q1, p2, q2 )\n{\n    const d = (q2.y - p2.y) * (q1.x - p1.x) - (q2.x - p2.x) * (q1.y - p1.y);\n    const uA = ((q2.x - p2.x) * (p1.y - p2.y) - (q2.y - p2.y) * (p1.x - p2.x)) / d;\n    const uB = ((q1.x - p1.x) * (p1.y - p2.y) - (q1.y - p1.y) * (p1.x - p2.x)) / d;\n\n    return pt( p1.x + uA * (q1.x - p1.x), p1.y + uA * (q1.y - p1.y) );\n}\n\nfunction drawPolygon( shape, T, f, s, w )\n{\n\tif( f != null ) {\n\t\tfill( ...f );\n\t} else {\n\t\tnoFill();\n\t}\n\tif( s != null ) {\n\t\tstroke( ...s );\n\t\tstrokeWeight( w * lw_scale );\n\t} else {\n\t\tnoStroke();\n\t}\n\tbeginShape();\n\tfor( let p of shape ) {\n\t\tconst tp = transPt( T, p );\n\t\tvertex( tp.x, tp.y );\n\t}\n\tendShape( CLOSE );\n}\n\nclass Geom\n{\n\tconstructor( pgon, fill, stroke ) \n\t{\n\t\tthis.shape = pgon;\n\t\tthis.fill = fill\n\t\tthis.stroke = stroke;\n\t\tthis.width = 1.0;\n\t\tthis.children = [];\n\t\tthis.svg_id = null;\n\t}\n\n\taddChild( T, geom )\n\t{\n\t\tthis.children.push( { T : T, geom : geom } );\n\t}\n\n\tevalChild( n, i )\n\t{\n\t\treturn transPt( this.children[n].T, this.children[n].geom.shape[i] );\n\t}\n\n\tdraw( S, level )\n\t{\n\t\tif( level > 0 ) {\n\t\t\tfor( let g of this.children ) {\n\t\t\t\tg.geom.draw( mul( S, g.T ), level - 1 );\n\t\t\t}\n\t\t} else {\n\t\t\tdrawPolygon( this.shape, S, this.fill, this.stroke, this.width );\n\t\t}\n\t}\n\n\trecentre()\n\t{\n\t\tlet cx = 0;\n\t\tlet cy = 0;\n\t\tfor( let p of this.shape ) {\n\t\t\tcx += p.x;\n\t\t\tcy += p.y;\n\t\t}\n\t\tcx /= this.shape.length;\n\t\tcy /= this.shape.length;\n\t\tconst tr = pt( -cx, -cy );\n\n\t\tfor( let idx = 0; idx < this.shape.length; ++idx ) {\n\t\t\tthis.shape[idx] = padd( this.shape[idx], tr );\n\t\t}\n\n\t\tconst M = ttrans( -cx, -cy );\n\t\tfor( let ch of this.children ) {\n\t\t\tch.T = mul( M, ch.T );\n\t\t}\n\t}\n\n\tresetSVG()\n\t{\n\t\tfor( let ch of this.children ) {\n\t\t\tch.geom.resetSVG();\n\t\t}\n\t\tthis.svg_id = null;\n\t}\n\n\tbuildSVGDefs( stream, sc )\n\t{\n\t\tif( this.svg_id != null ) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.svg_id = 't' + String(svg_serial).padStart( 5, '0' );\n\t\t++svg_serial;\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tch.geom.buildSVGDefs( stream, sc * mag( T[0], T[1] ) );\n\t\t}\n\n\t\t// Stroked group\n\t\tstream.push( `  <g id=\"${this.svg_id}s\">` );\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tconst gid = ch.geom.svg_id;\n\t\t\tstream.push( `    <use xlink:href=\"#${gid}s\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>` );\n\t\t}\n\n\t\tif( (this.shape.length > 0) && (this.fill == null) ) {\n\t\t\tlet verts = '';\n\t\t\tfor( let p of this.shape ) {\n\t\t\t\tif( verts.length > 0 ) {\n\t\t\t\t\tverts = verts + ' ';\n\t\t\t\t}\n\t\t\t\tverts = verts + p.x + ',' + p.y;\n\t\t\t}\n\t\t\tlet str = ' stroke=\"none\"';\n\t\t\tif( this.stroke != null ) {\n\t\t\t\tlet st = this.stroke;\n\t\t\t\tif( st.length == 1 ) {\n\t\t\t\t\tst = [st[0], st[0], st[0]];\n\t\t\t\t}\n\n\t\t\t\t str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${this.width*lw_scale/sc}\"`;\n\t\t\t}\n\n\t\t\tstream.push( `    <polygon points=\"${verts}\" fill=\"none\"${str}/>` );\n\t\t}\n\n\t\tstream.push( '  </g>' );\n\n\t\t// Filled group\n\t\tstream.push( `  <g id=\"${this.svg_id}f\">` );\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tconst gid = ch.geom.svg_id;\n\t\t\tstream.push( `    <use xlink:href=\"#${gid}f\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>` );\n\t\t}\n\n\t\tif( (this.shape.length > 0) && (this.fill != null) ) {\n\t\t\tlet verts = '';\n\t\t\tfor( let p of this.shape ) {\n\t\t\t\tif( verts.length > 0 ) {\n\t\t\t\t\tverts = verts + ' ';\n\t\t\t\t}\n\t\t\t\tverts = verts + p.x + ',' + p.y;\n\t\t\t}\n\t\t\tlet str = ' stroke=\"none\"';\n\t\t\tif( this.stroke != null ) {\n\t\t\t\tlet st = this.stroke;\n\t\t\t\tif( st.length == 1 ) {\n\t\t\t\t\tst = [st[0], st[0], st[0]];\n\t\t\t\t}\n\n\t\t\t\t str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${this.width*lw_scale/sc}\"`;\n\t\t\t}\n\n\t\t\tlet fil = ' fill=\"none\"';\n\t\t\tif( this.fill != null ) {\n\t\t\t\tfil = ` fill=\"rgb(${this.fill[0]},${this.fill[1]},${this.fill[2]})\"`;\n\t\t\t}\n\n\t\t\tstream.push( `    <polygon points=\"${verts}\"${str}${fil}/>` );\n\t\t}\n\n\t\tstream.push( '  </g>' );\n\t}\n}\n\nconst hat_outline = [\n    hexPt(0, 0), hexPt(-1,-1), hexPt(0,-2), hexPt(2,-2),\n    hexPt(2,-1), hexPt(4,-2), hexPt(5,-1), hexPt(4, 0),\n    hexPt(3, 0), hexPt(2, 2), hexPt(0, 3), hexPt(0, 2),\n    hexPt(-1, 2) ];\n\nH1_hat = new Geom( hat_outline, h1_color, [0, 0, 0] );\nH_hat = new Geom( hat_outline, h_color, [0, 0, 0] );\nT_hat = new Geom( hat_outline, t_color, [0, 0, 0] );\nP_hat = new Geom( hat_outline, p_color, [0, 0, 0] );\nF_hat = new Geom( hat_outline, f_color, [0, 0, 0] );\n\nconst H_init = (function () {\n\tconst H_outline = [\n\t\tpt( 0, 0 ), pt( 4, 0 ), pt( 4.5, hr3 ),\n\t\tpt( 2.5, 5 * hr3 ), pt( 1.5, 5 * hr3 ), pt( -0.5, hr3 ) ];\n\tgeom = new Geom( H_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[5], hat_outline[7], H_outline[5], H_outline[0] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[9], hat_outline[11], H_outline[1], H_outline[2] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[5], hat_outline[7], H_outline[3], H_outline[4] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 2.5, hr3 ), \n\t\t\tmul( \n\t\t\t\t[-0.5,-hr3,0,hr3,-0.5,0],\n\t\t\t\t[0.5,0,0,0,-0.5,0] ) ),\n\t\tH1_hat );\n\n\treturn geom; }());\n\nconst T_init = (function () {\n\tconst T_outline = [\n\t\tpt( 0, 0 ), pt( 3, 0 ), pt( 1.5, 3 * hr3 ) ];\n\tgeom = new Geom( T_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 0.5, 0, 0.5, hr3],\n\t\tT_hat );\n\n\treturn geom; }());\n\nconst P_init = (function () {\n\tconst P_outline = [\n\t\tpt( 0, 0 ), pt( 4, 0 ), \n\t\tpt( 3, 2 * hr3 ), pt( -1, 2 * hr3 ) ];\n\tgeom = new Geom( P_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 1.5, 0, 0.5, hr3],\n\t\tP_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 0, 2 * hr3 ), \n\t\t\tmul( [0.5, hr3, 0, -hr3, 0.5, 0],\n\t\t\t\t [0.5, 0.0, 0.0, 0.0, 0.5, 0.0] ) ),\n\t\tP_hat );\n\n\treturn geom; }());\n\nconst F_init = (function () {\n\tconst F_outline = [\n\t\tpt( 0, 0 ), pt( 3, 0 ), \n\t\tpt( 3.5, hr3 ), pt( 3, 2 * hr3 ), pt( -1, 2 * hr3 ) ];\n\tgeom = new Geom( F_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 1.5, 0, 0.5, hr3],\n\t\tF_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 0, 2 * hr3 ), \n\t\t\tmul( [0.5, hr3, 0, -hr3, 0.5, 0],\n\t\t\t\t [0.5, 0.0, 0.0, 0.0, 0.5, 0.0] ) ),\n\t\tF_hat );\n\n\treturn geom; }());\n\nfunction constructPatch( H, T, P, F )\n{\n\tconst rules = [\n\t\t['H'],\n\t\t[0, 0, 'P', 2],\n\t\t[1, 0, 'H', 2],\n\t\t[2, 0, 'P', 2],\n\t\t[3, 0, 'H', 2],\n\t\t[4, 4, 'P', 2],\n\t\t[0, 4, 'F', 3],\n\t\t[2, 4, 'F', 3],\n\t\t[4, 1, 3, 2, 'F', 0],\n\t\t[8, 3, 'H', 0],\n\t\t[9, 2, 'P', 0],\n\t\t[10, 2, 'H', 0],\n\t\t[11, 4, 'P', 2],\n\t\t[12, 0, 'H', 2],\n\t\t[13, 0, 'F', 3],\n\t\t[14, 2, 'F', 1],\n\t\t[15, 3, 'H', 4],\n\t\t[8, 2, 'F', 1], \n\t\t[17, 3, 'H', 0],\n\t\t[18, 2, 'P', 0],\n\t\t[19, 2, 'H', 2],\n\t\t[20, 4, 'F', 3],\n\t\t[20, 0, 'P', 2],\n\t\t[22, 0, 'H', 2],\n\t\t[23, 4, 'F', 3],\n\t\t[23, 0, 'F', 3],\n\t\t[16, 0, 'P', 2],\n\t\t[9, 4, 0, 2, 'T', 2],\n\t\t[4, 0, 'F', 3] \n\t\t];\n\n\tret = new Geom( [], null, null );\n\tret.width = H.width;\n\tshapes = { 'H' : H, 'T' : T, 'P' : P, 'F' : F };\n\n\tfor( let r of rules ) {\n\t\tif( r.length == 1 ) {\n\t\t\tret.addChild( ident, shapes[r[0]] );\n\t\t} else if( r.length == 4 ) {\n\t\t\tconst poly = ret.children[r[0]].geom.shape;\n\t\t\tconst T = ret.children[r[0]].T;\n\t\t\tconst P = transPt( T, poly[(r[1]+1)%poly.length] );\n\t\t\tconst Q = transPt( T, poly[r[1]] );\n\t\t\tconst nshp = shapes[r[2]];\n\t\t\tconst npoly = nshp.shape;\n\n\t\t\tret.addChild(\n\t\t\t\tmatchTwo( npoly[r[3]], npoly[(r[3]+1)%npoly.length], P, Q ),\n\t\t\t\tnshp );\n\t\t} else {\n\t\t\tconst chP = ret.children[r[0]];\n\t\t\tconst chQ = ret.children[r[2]];\n\n\t\t\tconst P = transPt( chQ.T, chQ.geom.shape[r[3]] );\n\t\t\tconst Q = transPt( chP.T, chP.geom.shape[r[1]] );\n\t\t\tconst nshp = shapes[r[4]];\n\t\t\tconst npoly = nshp.shape;\n\n\t\t\tret.addChild(\n\t\t\t\tmatchTwo( npoly[r[5]], npoly[(r[5]+1)%npoly.length], P, Q ),\n\t\t\t\tnshp );\n\t\t}\n\t}\n\n\treturn ret;\n}\n\nfunction constructMetatiles( patch )\n{\n\tconst bps1 = patch.evalChild( 8, 2 );\n\tconst bps2 = patch.evalChild( 21, 2 );\n\tconst rbps = transPt( rotAbout( bps1, -2.0*PI/3.0 ), bps2 );\n\n\tconst p72 = patch.evalChild( 7, 2 );\n\tconst p252 = patch.evalChild( 25, 2 );\n\n\tconst llc = intersect( bps1, rbps,\n\t\tpatch.evalChild( 6, 2 ), p72 );\n\tlet w = psub( patch.evalChild( 6, 2 ), llc );\n\n\tconst new_H_outline = [llc, bps1];\n\tw = transPt( trot( -PI/3 ), w );\n\tnew_H_outline.push( padd( new_H_outline[1], w ) );\n\tnew_H_outline.push( patch.evalChild( 14, 2 ) );\n\tw = transPt( trot( -PI/3 ), w );\n\tnew_H_outline.push( psub( new_H_outline[3], w ) );\n\tnew_H_outline.push( patch.evalChild( 6, 2 ) );\n\n\tconst new_H = new Geom( new_H_outline, null, [0,0,0] );\n\tnew_H.width = patch.width * 2;\n\tfor( let ch of [0, 9, 16, 27, 26, 6, 1, 8, 10, 15] ) {\n\t\tnew_H.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\n\tconst new_P_outline = [ p72, padd( p72, psub( bps1, llc ) ), bps1, llc ];\n\tconst new_P = new Geom( new_P_outline, null, [0,0,0] );\n\tnew_P.width = patch.width * 2;\n\tfor( let ch of [7,2,3,4,28] ) {\n\t\tnew_P.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\n\tconst new_F_outline = [ \n\t\tbps2, patch.evalChild( 24, 2 ), patch.evalChild( 25, 0 ),\n\t\tp252, padd( p252, psub( llc, bps1 ) ) ];\n\tconst new_F = new Geom( new_F_outline, null, [0,0,0] );\n\tnew_F.width = patch.width * 2;\n\tfor( let ch of [21,20,22,23,24,25] ) {\n\t\tnew_F.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\t\n\tconst AAA = new_H_outline[2];\n\tconst BBB = padd( new_H_outline[1], \n\t\tpsub( new_H_outline[4], new_H_outline[5] ) );\n\tconst CCC = transPt( rotAbout( BBB, -PI/3 ), AAA );\n\tconst new_T_outline = [BBB,CCC,AAA];\n\tconst new_T = new Geom( new_T_outline, null, [0,0,0] );\n\tnew_T.width = patch.width * 2;\n\tnew_T.addChild( patch.children[11].T, patch.children[11].geom );\n\n\tnew_H.recentre();\n\tnew_P.recentre();\n\tnew_F.recentre();\n\tnew_T.recentre();\n\n\treturn [new_H, new_T, new_P, new_F]\n}\n\nfunction isButtonActive( but )\n{\n\treturn but.elt.style.border.length > 0;\n}\n\nfunction setButtonActive( but, b )\n{\n\tbut.elt.style.border = (b ? \"3px solid black\" : \"\");\n}\n\nfunction setup() {\n\tcreateCanvas( windowWidth, windowHeight );\n\n\ttiles = [H_init, T_init, P_init, F_init];\n\tlevel = 1;\n\n\treset_button = createButton( \"Reset\" );\n\treset_button.position( 10, box_height );\n\treset_button.size( 125, 25 );\n\treset_button.mousePressed( function() {\n\t\ttiles = [H_init, T_init, P_init, F_init];\n\t\tlevel = 1;\n\t\tradio.selected( 'H' );\n\t\tto_screen = [20, 0, 0, 0, -20, 0];\n\t\tlw_scale = 1;\n\t\tsetButtonActive( draw_hats, true );\n\t\tsetButtonActive( draw_super, true );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\n\tsubst_button = createButton( \"Build Supertiles\" );\n\tsubst_button.position( 10, box_height );\n\tsubst_button.size( 125, 25 );\n\tsubst_button.mousePressed( function() {\n\t\tconst patch = constructPatch( ...tiles );\n\t\ttiles = constructMetatiles( patch );\n\t\t++level;\n\t\tloop();\n\t} );\n\tbox_height += 40;\n\n\tradio = createRadio();\n\tradio.mousePressed( function() { loop() } );\n\tradio.position( 10, box_height );\n\tfor( let s of ['H', 'T', 'P', 'F'] ) {\n\t\tlet o = radio.option( s );\n\t\to.onclick = loop;\n\t}\n\tradio.selected( 'H' );\n\tbox_height += 40;\n\n  // console.log('h1_color', h1_color)\n\tcp_h1 = createColorPicker(color(h1_color));\n\tcp_h1.mousePressed( function() { loop() } );\n\tcp_h1.input(set_h1_color);\n\tcp_h1.position( 10, box_height );\n\tbox_height += 40;\n  \n  // console.log('h_color', h_color)\n\tcp_h = createColorPicker(color(h_color));\n\tcp_h.mousePressed( function() { loop() } );\n\tcp_h.input(set_h_color);\n\tcp_h.position( 10, box_height );\n\tbox_height += 40;\n\n  // console.log('t_color', t_color)\n\tcp_t = createColorPicker(color(t_color));\n\tcp_t.mousePressed( function() { loop() } );\n\tcp_t.input(set_t_color);\n\tcp_t.position( 10, box_height );\n\tbox_height += 40;\n\n\tcp_p = createColorPicker(color(p_color));\n\tcp_p.mousePressed( function() { loop() } );\n\tcp_p.input(set_p_color);\n\tcp_p.position( 10, box_height );\n\tbox_height += 40;\n\n\tcp_f = createColorPicker(color(f_color));\n\tcp_f.mousePressed( function() { loop() } );\n\tcp_f.input(set_f_color);\n\tcp_f.position( 10, box_height );\n\tbox_height += 40;\n\n\ttranslate_button = createButton( \"Translate\" );\n\tsetButtonActive( translate_button, true );\n\ttranslate_button.position( 10, box_height );\n\ttranslate_button.size( 125, 25 );\n\ttranslate_button.mousePressed( function() {\n\t\tsetButtonActive( translate_button, true );\n\t\tsetButtonActive( scale_button, false );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\n\tscale_button = createButton( \"Scale\" );\n\tscale_button.position( 10, box_height );\n\tscale_button.size( 125, 25 );\n\tscale_button.mousePressed( function() {\n\t\tsetButtonActive( translate_button, false );\n\t\tsetButtonActive( scale_button, true );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\t\n\tdraw_hats = createButton( \"Draw Hats\" );\n\tsetButtonActive( draw_hats, true );\n\tdraw_hats.mousePressed( function() {\n\t\tsetButtonActive( draw_hats, !isButtonActive( draw_hats ) );\n\t\tloop();\n\t} );\n\tdraw_hats.position( 10, box_height );\n\tdraw_hats.size( 125, 25 );\n\tbox_height += 30;\n\n\tdraw_super = createButton( \"Draw Supertiles\" );\n\tsetButtonActive( draw_super, true );\n\tdraw_super.mousePressed( function() {\n\t\tsetButtonActive( draw_super, !isButtonActive( draw_super ) );\n\t\tloop();\n\t} );\n\tdraw_super.position( 10, box_height );\n\tdraw_super.size( 125, 25 );\n\tbox_height += 40;\n\n\tlet save_button = createButton( \"Save PNG\" );\n\tsave_button.position( 10, box_height );\n\tsave_button.size( 125, 25 );\n\tsave_button.mousePressed( function () {\n\t\tuibox = false;\n\t\tdraw();\n\t\tsave( \"output.png\" );\n\t\tuibox = true;\n\t\tdraw();\n\t} );\n\tbox_height += 30;\n\n\tlet svg_button = createButton( \"Save SVG\" );\n\tsvg_button.position( 10, box_height );\n\tsvg_button.size( 125, 25 );\n\tsvg_button.mousePressed( function () {\n\t\tsvg_serial = 0;\n\t\tfor( let t of tiles ) {\n\t\t\tt.resetSVG();\n\t\t}\n\n\t\tconst stream = [];\n\t\tstream.push( `<svg viewBox=\"0 0 ${width} ${height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">` );\n\t\tstream.push( '<defs>' );\n\t\tfor( let t of tiles ) {\n\t\t\tt.buildSVGDefs( stream, mag( to_screen[0], to_screen[1] ) );\n\t\t}\n\t\tstream.push( '</defs>' );\n\n\t\tconst idx = {'H':0, 'T':1, 'P':2, 'F':3}[radio.value()];\n\n\t\tif( isButtonActive( draw_hats ) ) {\n\t\t\tstream.push( `<use xlink:href=\"#${tiles[idx].svg_id}f\" transform=\"matrix(${to_screen[0]} ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${to_screen[2]+width/2} ${to_screen[5]+height/2})\"/>` )\n\t\t}\n\t\tif( isButtonActive( draw_super ) ) {\n\t\t\tstream.push( `<use xlink:href=\"#${tiles[idx].svg_id}s\" transform=\"matrix(${to_screen[0]} ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${to_screen[2]+width/2} ${to_screen[5]+height/2})\"/>` )\n\t\t}\n\t\tstream.push( '</svg>' );\n\n\t\tsaveStrings( stream, 'output', 'svg' );\n\t} );\n\tbox_height += 30;\n\tbox_height -= 5; // remove half the padding\n}\n\nfunction draw()\n{\n\tbackground( 255 );\n\n\tpush();\n\ttranslate( width/2, height/2 );\n\tconst idx = {'H':0, 'T':1, 'P':2, 'F':3}[radio.value()];\n\n\tif( isButtonActive( draw_hats ) ) {\n\t\ttiles[idx].draw( to_screen, level );\n\t}\n\n\tif( isButtonActive( draw_super ) ) {\n\t\tfor( let lev = level - 1; lev >= 0; --lev ) {\n\t\t\ttiles[idx].draw( to_screen, lev );\n\t\t}\n\t}\n\tpop();\n\n\tif( uibox ) {\n\t\tstroke( 0 );\n\t\tstrokeWeight( 0.5 );\n\t\tfill( 255, 220 );\n\t\trect( 5, 5, 135, box_height);\n\t}\n\tnoLoop();\n}\n\nfunction windowResized() \n{\n\tresizeCanvas( windowWidth, windowHeight );\n}\n\nfunction mousePressed()\n{\n\tdragging = true;\n\tif( isButtonActive( scale_button ) ) {\n\t\tscale_centre = transPt( inv( to_screen ), pt( width/2, height/2 ) );\n\t\tscale_start = pt( mouseX, mouseY );\n\t\tscale_ts = [...to_screen];\n\t}\n\tloop();\n}\n\nfunction mouseDragged()\n{\n\tif( dragging ) {\n\t\tif( isButtonActive( translate_button ) ) {\n\t\t\tto_screen = mul( ttrans( mouseX - pmouseX, mouseY - pmouseY ), \n\t\t\t\tto_screen );\n\t\t} else if( isButtonActive( scale_button ) ) {\n\t\t\tlet sc = dist( mouseX, mouseY, width/2, height/2 ) / \n\t\t\t\tdist( scale_start.x, scale_start.y, width/2, height/2 );\n\t\t\tto_screen = mul( \n\t\t\t\tmul( ttrans( scale_centre.x, scale_centre.y ),\n\t\t\t\t\tmul( [sc, 0, 0, 0, sc, 0],\n\t\t\t\t\t\tttrans( -scale_centre.x, -scale_centre.y ) ) ),\n\t\t\t\tscale_ts );\n\t\t\tlw_scale = mag( to_screen[0], to_screen[1] ) / 20.0;\n\t\t}\n\t\tloop();\n\t\treturn false;\n\t} \n}\n\nfunction mouseReleased()\n{\n\tdragging = false;\n\tloop();\n}\n\n// 2023-04-06 jht:\n// Added color(h1_color) etc. to avoid script warnings\n\n\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f34b75b11d919d026a646",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-06T21:26:53.342Z",
+        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "id": "642f34b75b11d919d026a646"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f34b75b11d919d026a647",
+        "createdAt": "2023-04-06T21:26:53.342Z",
+        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "isSelectedFile": false,
+        "id": "642f34b75b11d919d026a647"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f34b75b11d919d026a648",
+        "createdAt": "2023-04-06T21:26:53.342Z",
+        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "isSelectedFile": false,
+        "id": "642f34b75b11d919d026a648"
+      }
+    ],
+    "createdAt": "2023-04-06T21:08:43.995Z",
+    "id": "7hzeHDSIl"
+  },
+  {
     "name": "11.4: Brightness getpixel",
     "_id": "J7Zhes2Tc",
     "files": [
@@ -70,8 +127,8 @@
         ],
         "fileType": "folder",
         "_id": "6425ae0385bf81680c394a17",
-        "createdAt": "2023-03-30T15:43:03.790Z",
-        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "createdAt": "2023-04-06T18:00:10.822Z",
+        "updatedAt": "2023-04-06T18:00:10.822Z",
         "id": "6425ae0385bf81680c394a17"
       },
       {
@@ -81,8 +138,8 @@
         "fileType": "file",
         "_id": "6425ae0385bf81680c394a19",
         "isSelectedFile": true,
-        "createdAt": "2023-03-30T15:43:03.790Z",
-        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "createdAt": "2023-04-06T18:00:10.822Z",
+        "updatedAt": "2023-04-06T18:00:10.822Z",
         "id": "6425ae0385bf81680c394a19"
       },
       {
@@ -91,8 +148,8 @@
         "children": [],
         "fileType": "file",
         "_id": "6425ae0385bf81680c394a18",
-        "createdAt": "2023-03-30T15:43:03.790Z",
-        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "createdAt": "2023-04-06T18:00:10.822Z",
+        "updatedAt": "2023-04-06T18:00:10.822Z",
         "id": "6425ae0385bf81680c394a18"
       },
       {
@@ -101,19 +158,76 @@
         "children": [],
         "fileType": "file",
         "_id": "6425ae0385bf81680c394a1a",
-        "createdAt": "2023-03-30T15:43:03.790Z",
-        "updatedAt": "2023-03-30T15:43:03.790Z",
+        "createdAt": "2023-04-06T18:00:10.822Z",
+        "updatedAt": "2023-04-06T18:00:10.822Z",
         "id": "6425ae0385bf81680c394a1a"
       }
     ],
     "createdAt": "2023-03-30T15:42:59.411Z",
-    "updatedAt": "2023-03-30T15:43:03.790Z",
+    "updatedAt": "2023-04-06T18:00:10.822Z",
     "id": "G4K2yaPnz"
+  },
+  {
+    "name": "ims-03-jht truchet tiles pause copy",
+    "_id": "CYMdD77ySc",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "642f047d3bb36654d9f77fd1",
+          "642f047d3bb36654d9f77fd2",
+          "642f047d3bb36654d9f77fd3"
+        ],
+        "fileType": "folder",
+        "_id": "642f047d3bb36654d9f77fd0",
+        "createdAt": "2023-04-06T17:49:28.916Z",
+        "updatedAt": "2023-04-06T17:49:28.916Z",
+        "isSelectedFile": false,
+        "id": "642f047d3bb36654d9f77fd0"
+      },
+      {
+        "name": "sketch.js",
+        "content": "//https://editor.p5js.org/jht9629-nyu/sketches/CYMdD77ySc\n// jht truchet tiles pause copy\n\n// https://editor.p5js.org/jht9629-gmail/sketches/LnPplI2CR\n// truchet tiles pause\n\nlet len = 40;\nlet a_angle = 0;\nlet a_arr = [];\n// {count: seconds,...}\nlet a_pause_dict = {0: 2.0, 90: 2.0, 180: 2.0, 270: 2.0}\nlet a_pause_start = -1;\nlet a_pause_lapse;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noFill();\n  strokeWeight(4);\n  // Fill array a_arr with random true/false values\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = random() > 0.5\n      a_arr.push(odd)\n    }\n  }\n}\n\nfunction draw() {\n  let half = len / 2;\n  background(220);\n  let index = 0\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = a_arr[index]\n      if (odd) {\n        drawLeft(x, y, half);\n      } else {\n        drawRight(x, y, half);\n      }\n      index++;\n    }\n  }\n  if (check_cycle()) {\n    a_angle = (a_angle + 1) % 360;\n  }\n}\n\n// return true to advance cycle\n// use a_angle to find seconds to pause in a_pause_dict\nfunction check_cycle() {\n  if (a_pause_start > 0) {\n    let now = millis(); \n    if (now - a_pause_start > a_pause_lapse) {\n      a_pause_start = 0;\n      return true;\n    }\n    else {\n      return false\n    }\n  }\n  let lapse = a_pause_dict[a_angle];\n  if (lapse) {\n    a_pause_start = millis();\n    a_pause_lapse = lapse * 1000;\n    return false\n  }\n  else {  \n    return true; \n  }\n}\n\nfunction drawLeft(x, y, half) {\n  push();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + 0, -half + 0, len, len, 0, 90);\n  arc(-half + len, -half + len, len, len, 180, 270);\n  pop();\n}\n\nfunction drawRight(x, y, half) {\n  push();\n  noFill();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + len, -half + 0, len, len, 90, 180);\n  arc(-half + 0, -half + len, len, len, 270, 360);\n  pop();\n}\n\n// https://editor.p5js.org/jht9629-gmail/sketches/EfQDCJ5aR\n// truchet tiles array\n\n// https://editor.p5js.org/jht9629-nyu/sketches/5TSs5XB6o\n// truchet tiles rotate\n\n// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles re-factored\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f047d3bb36654d9f77fd2",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-06T17:49:28.916Z",
+        "updatedAt": "2023-04-06T17:49:28.916Z",
+        "id": "642f047d3bb36654d9f77fd2"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f047d3bb36654d9f77fd1",
+        "createdAt": "2023-04-06T17:49:28.916Z",
+        "updatedAt": "2023-04-06T17:49:28.916Z",
+        "isSelectedFile": false,
+        "id": "642f047d3bb36654d9f77fd1"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "642f047d3bb36654d9f77fd3",
+        "createdAt": "2023-04-06T17:49:28.916Z",
+        "updatedAt": "2023-04-06T17:49:28.916Z",
+        "isSelectedFile": false,
+        "id": "642f047d3bb36654d9f77fd3"
+      }
+    ],
+    "createdAt": "2023-04-06T17:42:21.542Z",
+    "updatedAt": "2023-04-06T17:49:28.916Z",
+    "id": "CYMdD77ySc"
   },
   {
     "name": "ims03-jht scrolling color bars",
     "_id": "3VKJ-q8ar",
-    "updatedAt": "2023-04-02T20:39:54.422Z",
+    "updatedAt": "2023-04-06T20:27:08.964Z",
     "files": [
       {
         "name": "root",
@@ -125,19 +239,20 @@
         ],
         "fileType": "folder",
         "_id": "6425fe61defa98523b4bbece",
-        "createdAt": "2023-04-02T20:39:54.422Z",
-        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "createdAt": "2023-04-06T20:27:08.964Z",
+        "updatedAt": "2023-04-06T20:27:08.964Z",
+        "isSelectedFile": false,
         "id": "6425fe61defa98523b4bbece"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(full_screen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_len();\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  xpos = (xpos + 1) % width;\n}\n\nfunction init_len() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction full_screen_action() {\n  ui_remove_all();\n  ui_toggleFullScreen();\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_dim();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\nfunction ui_toggleFullScreen() {\n  fullscreen(1);\n  // if (!document.documentElement.requestFullscreen) {\n  //   console.log(\"NO document.documentElement.requestFullscreen\");\n  //   return;\n  // }\n  // if (!document.fullscreenElement) {\n  //   document.documentElement.requestFullscreen();\n  // } else {\n  //   if (document.exitFullscreen) {\n  //     document.exitFullscreen();\n  //   }\n  // }\n}\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(full_screen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_dim();\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  xpos = (xpos + 1) % width;\n}\n\nfunction init_dim() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction full_screen_action() {\n  ui_remove_all();\n  ui_toggleFullScreen();\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_dim();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\nfunction ui_toggleFullScreen() {\n  fullscreen(1);\n  // if (!document.documentElement.requestFullscreen) {\n  //   console.log(\"NO document.documentElement.requestFullscreen\");\n  //   return;\n  // }\n  // if (!document.fullscreenElement) {\n  //   document.documentElement.requestFullscreen();\n  // } else {\n  //   if (document.exitFullscreen) {\n  //     document.exitFullscreen();\n  //   }\n  // }\n}\n",
         "children": [],
         "fileType": "file",
         "_id": "6425fe61defa98523b4bbecb",
         "isSelectedFile": true,
-        "createdAt": "2023-04-02T20:39:54.422Z",
-        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "createdAt": "2023-04-06T20:27:08.964Z",
+        "updatedAt": "2023-04-06T20:27:08.964Z",
         "id": "6425fe61defa98523b4bbecb"
       },
       {
@@ -146,8 +261,9 @@
         "children": [],
         "fileType": "file",
         "_id": "6425fe61defa98523b4bbecc",
-        "createdAt": "2023-04-02T20:39:54.422Z",
-        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "createdAt": "2023-04-06T20:27:08.964Z",
+        "updatedAt": "2023-04-06T20:27:08.964Z",
+        "isSelectedFile": false,
         "id": "6425fe61defa98523b4bbecc"
       },
       {
@@ -156,8 +272,9 @@
         "children": [],
         "fileType": "file",
         "_id": "6425fe61defa98523b4bbecd",
-        "createdAt": "2023-04-02T20:39:54.422Z",
-        "updatedAt": "2023-04-02T20:39:54.422Z",
+        "createdAt": "2023-04-06T20:27:08.964Z",
+        "updatedAt": "2023-04-06T20:27:08.964Z",
+        "isSelectedFile": false,
         "id": "6425fe61defa98523b4bbecd"
       }
     ],
