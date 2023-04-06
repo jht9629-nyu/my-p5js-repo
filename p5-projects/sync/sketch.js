@@ -58,6 +58,11 @@ function setup() {
 
   playBtn = createButton('Play').mousePressed(togglePlay);
   playBtn.style('font-size:88px');
+
+  // p5-projects/media/qr/qrcode_jht9629-nyu.github.io.png
+  let imgPath = '../media-live/qr/qrcode_jht9629-nyu.github.io.png';
+  let img = createImg(imgPath, 'text');
+  // div.child(img);
 }
 
 function draw() {
