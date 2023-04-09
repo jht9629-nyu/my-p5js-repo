@@ -1,4 +1,4 @@
-let aVersion = '2023-04-09-006';
+let aVersion = '2023-04-09-007';
 let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 // let dim = { width: 360, height: 640 };
 let dim = { width: 888 / 2, height: 1920 / 2 };
@@ -39,7 +39,7 @@ function setup() {
   sync.peepIndex = 0;
   sync.gap = 1; // 1 sec gap between playback
   sync.started = 0;
-
+  sync.duration = 0;
   check_url_param();
 
   // createCanvas(dim.width, dim.height);
