@@ -18,8 +18,10 @@
 
 # setup
 
-cp _env_example .env
+# copy and customize .env to your editor.p5js username
+cp env_example .env
 
+# setup node
 cd node
 npm install
 
