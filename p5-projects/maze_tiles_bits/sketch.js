@@ -13,7 +13,7 @@ let draw_step;
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
-let do_report = 20;
+let do_report = 0; // 4
 let report_lines = [];
 
 let a_timer;
@@ -21,7 +21,7 @@ let a_timer;
 let a_div;
 
 function setup() {
-  createCanvas(320, 320);
+  createCanvas(400, 400);
   noFill();
   strokeWeight(a_len * a_strokeWeight);
 
@@ -37,8 +37,12 @@ function setup() {
   a_timer.setPeriod(maze_step_period);
   draw_step = draw_maze_step;
 
-  a_div = createP();
-  div_report(a_target, 'setup');
+  if (do_report) {
+    report_1ofn();
+    a_div = createP();
+    // a_div.style('margin-left:5px');
+    div_report(a_target, 'setup');
+  }
 }
 
 function draw() {
@@ -65,6 +69,14 @@ function draw_maze() {
   }
 }
 
+function report_1ofn() {
+  let bnum = 2n ** BigInt(a_now.length);
+  let bstr = ' 0x' + bnum.toString(16).toUpperCase();
+  let str = '1 of ' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
+  let div = createP('<code style="font-size:16px">' + str + '</code>');
+  // div.style('margin-left:2px');
+}
+
 function div_report(arr, msg) {
   // console.log('div_report', msg);
   if (!do_report) return;
@@ -73,12 +85,19 @@ function div_report(arr, msg) {
   let str = narr.join('');
   let bnum = BigInt('0b' + str);
   // str = bnum.toLocaleString('en-US') + ' ' + msg + '<br/> ';
-  str = bnum.toLocaleString('en-US') + '<br/> ';
+  let bstr;
+  if (bnum >= 256n) {
+    bstr = ' 0x' + bnum.toString(16).toUpperCase();
+  } else {
+    bstr = ' 0b' + bnum.toString(2);
+  }
+  // &nbsp;
+  str = '' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
   report_lines.unshift(str);
   while (report_lines.length > do_report) {
     report_lines.pop();
   }
-  a_div.elt.innerHTML = report_lines.join('');
+  a_div.elt.innerHTML = '<code style="font-size:16px">' + report_lines.join('') + '</code>';
 }
 
 function draw_maze_step() {
