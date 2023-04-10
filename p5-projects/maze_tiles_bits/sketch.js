@@ -5,6 +5,9 @@ let len = 40;
 let a_now = [];
 let a_next = [];
 
+let draw_step;
+let maze_step_period = 1.0;
+
 let a_timer;
 
 let a_strokeWeight = 8;
@@ -18,13 +21,16 @@ function setup() {
   fill_zero(a_next);
   fill_incr(a_next);
 
-  a_timer = new SecondsTimer(1.0);
+  a_timer = new SecondsTimer(maze_step_period);
+  draw_step = draw_maze_step;
 }
 
 function draw() {
-  background(220);
+  draw_step();
+}
 
-  // let lapse = secsTime() - a_run_start;
+function draw_maze_step() {
+  background(220);
 
   let a_angle = HALF_PI * (a_timer.lapse() / a_timer.period);
 
@@ -47,13 +53,15 @@ function draw() {
   if (a_timer.arrived()) {
     fill_incr(a_now);
     fill_incr(a_next);
-  }
 
-  // if (lapse >= a_run_lapse) {
-  //   a_run_start = secsTime();
-  //   fill_incr(a_now);
-  //   fill_incr(a_next);
-  // }
+    draw_step = draw_maze_pause;
+  }
+}
+
+function draw_maze_pause() {
+  if (a_timer.arrived()) {
+    draw_step = draw_maze_step;
+  }
 }
 
 function secsTime() {

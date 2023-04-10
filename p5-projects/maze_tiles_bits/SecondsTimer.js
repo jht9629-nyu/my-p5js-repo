@@ -5,7 +5,13 @@ class SecondsTimer {
   //      = -1 to never trigger
   //
   constructor(period) {
-    this.period = period;
+    this.setPeriod(period);
+  }
+
+  // setPeriod(newPeriod)
+  // establish a new timer period
+  setPeriod(newPeriod) {
+    this.period = newPeriod;
     this.start();
   }
 
