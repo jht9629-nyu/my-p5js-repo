@@ -26,7 +26,8 @@ class SecondsTimer {
     return nowSecs - this.startSecs;
   }
 
-  // return 1 if period seconds has passed and restart timer
+  // return truthy 1 if period seconds has passed
+  //    and restart timer if so.
   arrived() {
     let nowSecs = secsTime();
     let lapse = nowSecs - this.startSecs;

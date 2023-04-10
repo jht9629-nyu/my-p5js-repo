@@ -30,8 +30,8 @@ function setup() {
   a_target = a_next;
 
   a_timer = new SecondsTimer();
-  draw_step = draw_maze_step;
   a_timer.setPeriod(maze_step_period);
+  draw_step = draw_maze_step;
 }
 
 function draw() {
@@ -65,15 +65,17 @@ function draw_maze_step() {
     fill_incr(a_now);
     fill_incr(a_next);
 
-    draw_step = draw_maze_pause;
     a_timer.setPeriod(maze_pause_period);
+
+    draw_step = draw_maze_pause;
   }
 }
 
 function draw_maze_pause() {
   if (a_timer.arrived()) {
-    draw_step = do_random ? draw_maze_random : draw_maze_step;
     a_timer.setPeriod(maze_step_period);
+
+    draw_step = do_random ? draw_maze_random : draw_maze_step;
   }
 }
 
@@ -81,8 +83,9 @@ function draw_maze_random() {
   fill_random(a_random);
   a_target = a_random;
 
-  draw_step = draw_maze_random_step;
   a_timer.setPeriod(maze_step_period);
+
+  draw_step = draw_maze_random_step;
 }
 
 function draw_maze_random_step() {
@@ -93,15 +96,17 @@ function draw_maze_random_step() {
     a_now = a_target;
     a_target = now_save;
 
-    draw_step = draw_maze_random_pause;
     a_timer.setPeriod(maze_pause_period);
+
+    draw_step = draw_maze_random_pause;
   }
 }
 
 function draw_maze_random_pause() {
   if (a_timer.arrived()) {
-    draw_step = draw_maze_random_pause_step;
     a_timer.setPeriod(maze_step_period);
+
+    draw_step = draw_maze_random_pause_step;
   }
 }
 
@@ -112,15 +117,17 @@ function draw_maze_random_pause_step() {
     a_now = a_target;
     a_target = a_next;
 
-    draw_step = draw_maze_random_pause2;
     a_timer.setPeriod(maze_pause_period);
+
+    draw_step = draw_maze_random_pause2;
   }
 }
 
 function draw_maze_random_pause2() {
   if (a_timer.arrived()) {
-    draw_step = draw_maze_step;
     a_timer.setPeriod(maze_step_period);
+
+    draw_step = draw_maze_step;
   }
 }
 
