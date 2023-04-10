@@ -7,6 +7,7 @@ let a_next = [];
 
 let draw_step;
 let maze_step_period = 1.0;
+let maze_pause_period = 0.5;
 
 let a_timer;
 
@@ -22,6 +23,7 @@ function setup() {
   fill_incr(a_next);
 
   a_timer = new SecondsTimer(maze_step_period);
+
   draw_step = draw_maze_step;
 }
 
@@ -55,12 +57,14 @@ function draw_maze_step() {
     fill_incr(a_next);
 
     draw_step = draw_maze_pause;
+    a_timer.setPeriod(maze_pause_period);
   }
 }
 
 function draw_maze_pause() {
   if (a_timer.arrived()) {
     draw_step = draw_maze_step;
+    a_timer.setPeriod(maze_step_period);
   }
 }
 
