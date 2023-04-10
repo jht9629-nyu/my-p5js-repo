@@ -215,7 +215,6 @@ function drawLeft(x, y, len, half, angle) {
 
 function drawRight(x, y, len, half, angle) {
   push();
-  noFill();
   translate(x + half, y + half);
   rotate(angle);
   line(-half + len, -half + 0, -half + 0, -half + len);
