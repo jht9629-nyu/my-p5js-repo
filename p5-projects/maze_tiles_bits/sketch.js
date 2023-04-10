@@ -138,10 +138,12 @@ function fill_zero(arr) {
 function fill_incr(arr) {
   for (let index = 0; index < arr.length; index++) {
     let bit = arr[index] + 1;
+    // bit is 1 or 2
     if (bit == 1) {
       arr[index] = 1;
       break;
     }
+    // zero and continue to carry the 2
     arr[index] = 0;
   }
 }
@@ -156,7 +158,6 @@ function fill_random(arr) {
   for (let index = 0; index < arr.length; index++) {
     let bit = random([0, 1]);
     arr[index] = bit;
-    index++;
   }
 }
 
