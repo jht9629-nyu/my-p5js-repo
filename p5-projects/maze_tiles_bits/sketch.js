@@ -68,10 +68,6 @@ function draw_maze_pause() {
   }
 }
 
-function secsTime() {
-  return millis() / 1000;
-}
-
 function fill_zero(arr) {
   // Fill array a_arr with random true/false values
   let index = 0;
