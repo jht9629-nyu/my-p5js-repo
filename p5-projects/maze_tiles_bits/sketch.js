@@ -11,7 +11,7 @@ let a_target;
 
 let draw_step;
 let maze_step_period = 1.0;
-let maze_pause_period = 0.5;
+let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
 
 let a_timer;
