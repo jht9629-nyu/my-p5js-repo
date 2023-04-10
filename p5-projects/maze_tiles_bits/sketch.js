@@ -13,8 +13,12 @@ let draw_step;
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
+let do_report = 20;
+let report_lines = [];
 
 let a_timer;
+
+let a_div;
 
 function setup() {
   createCanvas(400, 400);
@@ -32,6 +36,9 @@ function setup() {
   a_timer = new SecondsTimer();
   a_timer.setPeriod(maze_step_period);
   draw_step = draw_maze_step;
+
+  a_div = createP();
+  div_report(a_target, 'setup');
 }
 
 function draw() {
@@ -40,7 +47,7 @@ function draw() {
 
 function draw_maze() {
   background(220);
-  let tangle = HALF_PI * (a_timer.lapse() / a_timer.period);
+  let tangle = HALF_PI * a_timer.progress();
   let half = a_len / 2;
   let index = 0;
   for (let y = 0; y < height; y += a_len) {
@@ -58,12 +65,32 @@ function draw_maze() {
   }
 }
 
+function div_report(arr, msg) {
+  // console.log('div_report', msg);
+  if (!do_report) return;
+  let narr = arr.concat();
+  narr.reverse();
+  let str = narr.join('');
+  let bnum = BigInt('0b' + str);
+  // str = bnum.toLocaleString('en-US') + ' ' + msg + '<br/> ';
+  str = bnum.toLocaleString('en-US') + '<br/> ';
+  report_lines.unshift(str);
+  while (report_lines.length > do_report) {
+    report_lines.pop();
+  }
+  a_div.elt.innerHTML = report_lines.join('');
+}
+
 function draw_maze_step() {
   draw_maze();
 
   if (a_timer.arrived()) {
     fill_incr(a_now);
     fill_incr(a_next);
+
+    if (!do_random) {
+      div_report(a_target, 'draw_maze_step');
+    }
 
     a_timer.setPeriod(maze_pause_period);
 
@@ -83,6 +110,8 @@ function draw_maze_random() {
   fill_random(a_random);
   a_target = a_random;
 
+  div_report(a_target, 'draw_maze_random');
+
   a_timer.setPeriod(maze_step_period);
 
   draw_step = draw_maze_random_step;
@@ -95,6 +124,8 @@ function draw_maze_random_step() {
     let now_save = a_now;
     a_now = a_target;
     a_target = now_save;
+
+    // div_report(a_target, 'draw_maze_random_step');
 
     a_timer.setPeriod(maze_pause_period);
 
@@ -116,6 +147,8 @@ function draw_maze_random_pause_step() {
   if (a_timer.arrived()) {
     a_now = a_target;
     a_target = a_next;
+
+    div_report(a_target, 'draw_maze_random_pause_step');
 
     a_timer.setPeriod(maze_pause_period);
 

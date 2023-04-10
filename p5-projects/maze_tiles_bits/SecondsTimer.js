@@ -37,6 +37,11 @@ class SecondsTimer {
     }
     return 0;
   }
+
+  // return 0 to 1.0 as fraction of time to complete period
+  progress() {
+    return this.lapse() / this.period;
+  }
 }
 
 // return relative time in seconds
