@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-gmail/sketches/IagYeywkY
 // maze tiles bits
 
-let len = 40;
+let a_len = 40;
 let a_strokeWeight = 0.3;
 
 let a_now = [];
@@ -19,7 +19,7 @@ let a_timer;
 function setup() {
   createCanvas(400, 400);
   noFill();
-  strokeWeight(len * a_strokeWeight);
+  strokeWeight(a_len * a_strokeWeight);
 
   fill_zero(a_now);
   fill_zero(a_next);
@@ -40,18 +40,18 @@ function draw() {
 
 function draw_maze() {
   background(220);
-  let a_angle = HALF_PI * (a_timer.lapse() / a_timer.period);
-  let half = len / 2;
+  let tangle = HALF_PI * (a_timer.lapse() / a_timer.period);
+  let half = a_len / 2;
   let index = 0;
-  for (let y = 0; y < height; y += len) {
-    for (let x = 0; x < width; x += len) {
+  for (let y = 0; y < height; y += a_len) {
+    for (let x = 0; x < width; x += a_len) {
       let now = a_now[index];
       let target = a_target[index];
-      let angle = now == target ? 0 : a_angle;
+      let angle = now == target ? 0 : tangle;
       if (now) {
-        drawLeft(x, y, half, angle);
+        drawLeft(x, y, a_len, half, angle);
       } else {
-        drawRight(x, y, half, angle);
+        drawRight(x, y, a_len, half, angle);
       }
       index++;
     }
@@ -134,8 +134,8 @@ function draw_maze_random_pause2() {
 function fill_zero(arr) {
   // Fill array a_arr with random true/false values
   let index = 0;
-  for (let y = 0; y < height; y += len) {
-    for (let x = 0; x < width; x += len) {
+  for (let y = 0; y < height; y += a_len) {
+    for (let x = 0; x < width; x += a_len) {
       arr[index] = 0;
       index++;
     }
@@ -172,7 +172,7 @@ function mousePressed() {
   console.log('mousePressed');
 }
 
-function drawLeft(x, y, half, angle) {
+function drawLeft(x, y, len, half, angle) {
   push();
   translate(x + half, y + half);
   rotate(angle);
@@ -180,7 +180,7 @@ function drawLeft(x, y, half, angle) {
   pop();
 }
 
-function drawRight(x, y, half, angle) {
+function drawRight(x, y, len, half, angle) {
   push();
   noFill();
   translate(x + half, y + half);
