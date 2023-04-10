@@ -155,16 +155,16 @@ function fill_incr(arr) {
   }
 }
 
-function fill_copy_to_from(to, from) {
-  for (let index = 0; index < to.length; index++) {
-    to[index] = from[index];
-  }
-}
-
 function fill_random(arr) {
   for (let index = 0; index < arr.length; index++) {
     let bit = random([0, 1]);
     arr[index] = bit;
+  }
+}
+
+function fill_copy_to_from(to, from) {
+  for (let index = 0; index < to.length; index++) {
+    to[index] = from[index];
   }
 }
 
