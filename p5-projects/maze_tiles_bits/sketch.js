@@ -21,7 +21,7 @@ let a_timer;
 let a_div;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(320, 320);
   noFill();
   strokeWeight(a_len * a_strokeWeight);
 
