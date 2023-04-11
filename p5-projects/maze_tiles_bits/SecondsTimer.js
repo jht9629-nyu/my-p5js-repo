@@ -17,18 +17,19 @@ class SecondsTimer {
 
   // establish start time
   start() {
-    this.startSecs = this.secsTime();
+    this.startSecs = secsTime();
   }
 
   // return seconds since start time established
   lapse() {
-    let nowSecs = this.secsTime();
+    let nowSecs = secsTime();
     return nowSecs - this.startSecs;
   }
 
-  // return 1 if period seconds has passed and restart timer
+  // return truthy 1 if period seconds has passed
+  //    and restart timer if so.
   arrived() {
-    let nowSecs = this.secsTime();
+    let nowSecs = secsTime();
     let lapse = nowSecs - this.startSecs;
     if (this.period >= 0 && lapse > this.period) {
       this.startSecs = nowSecs;
@@ -37,8 +38,13 @@ class SecondsTimer {
     return 0;
   }
 
-  // return relative time in seconds
-  secsTime() {
-    return millis() / 1000;
+  // return 0 to 1.0 as fraction of time to complete period
+  progress() {
+    return this.lapse() / this.period;
   }
+}
+
+// return relative time in seconds
+function secsTime() {
+  return millis() / 1000;
 }
