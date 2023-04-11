@@ -1,11 +1,14 @@
 // https://editor.p5js.org/jht9629-gmail/sketches/zaAsh0DZt
 // spiral walk - create a spiral from the center of the canvas
 
-let my = { width: 400, height: 400, d: 10 };
+// state consolidated to ease tranition to Class object / Function
+let my = { width: 600, height: 400, d: 10 };
 
 function setup() {
   createCanvas(my.width, my.height);
 
+  // start with single pixel box in the center of the canvas
+  // Left Top Right Bottom
   my.L = int(my.width / 2);
   my.T = int(my.height / 2);
   my.R = my.L;
@@ -13,19 +16,22 @@ function setup() {
   my.px = my.L;
   my.py = my.T;
 
-  let n = int(my.width / my.d) * int(my.height / my.d);
-  console.log('n', n);
+  let nw = int(my.width / my.d);
+  let nh = int(my.height / my.d);
+  let n = nw * nh;
+  console.log('nw', nw, 'mh', nh, 'n', n);
 
-  //   grow_box();
   grow_box();
+  // grow_box();
 
   background(220);
 
   my.pts = [];
   let d = my.d;
   let more = 1;
+
   while (more) {
-    // move up
+    // move up out of box
     my.nx = my.px;
     my.ny = my.py - d;
     my_line({ dx: 0, dy: 0 });
@@ -60,7 +66,10 @@ function setup() {
 
     grow_box();
 
-    more = my.px > 0 && my.px < my.width && my.py > 0 && my.py < my.height;
+    morex = my.px > 0 && my.px < my.width;
+    morey = my.py > 0 && my.py < my.height;
+    more = morex || morey;
+    //     more = morex && morey;
   }
   // console.log(my.pts)
   console.log('my.pts.length', my.pts.length);
