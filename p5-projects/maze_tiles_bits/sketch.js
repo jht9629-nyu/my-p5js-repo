@@ -15,13 +15,14 @@ let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
 let do_report = 0; // 4
 let report_lines = [];
-
 let a_timer;
-
 let a_div;
 
+let my = { width: 640, height: 480 };
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(my.width, my.height);
+
   noFill();
   strokeWeight(a_len * a_strokeWeight);
 
@@ -37,12 +38,8 @@ function setup() {
   a_timer.setPeriod(maze_step_period);
   draw_step = draw_maze_step;
 
-  if (do_report) {
-    report_1ofn();
-    a_div = createP();
-    // a_div.style('margin-left:5px');
-    div_report(a_target, 'setup');
-  }
+  report_1ofn();
+  div_report(a_target, 'setup');
 }
 
 function draw() {
@@ -70,6 +67,7 @@ function draw_maze() {
 }
 
 function report_1ofn() {
+  if (!do_report) return;
   let bnum = 2n ** BigInt(a_now.length);
   let bstr = ' 0x' + bnum.toString(16).toUpperCase();
   let str = '1 of ' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
@@ -80,6 +78,9 @@ function report_1ofn() {
 function div_report(arr, msg) {
   // console.log('div_report', msg);
   if (!do_report) return;
+  if (!a_div) {
+    a_div = createP();
+  }
   let narr = arr.concat();
   narr.reverse();
   let str = narr.join('');
