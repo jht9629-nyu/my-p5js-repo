@@ -1,66 +1,69 @@
 // https://editor.p5js.org/jht9629-gmail/sketches/zaAsh0DZt
-// spiral walk
+// spiral walk - create a spiral from the center of the canvas
 
-let my = {};
+let my = { width: 400, height: 400, d: 10 };
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(my.width, my.height);
 
-  my.L = int(width / 2);
-  my.T = int(height / 2);
+  my.L = int(my.width / 2);
+  my.T = int(my.height / 2);
   my.R = my.L;
   my.B = my.T;
   my.px = my.L;
   my.py = my.T;
-  my.d = 10;
 
-  grow_box();
+  let n = int(my.width / my.d) * int(my.height / my.d);
+  console.log('n', n);
+
+  //   grow_box();
   grow_box();
 
   background(220);
 
   my.pts = [];
-  let more = 20;
+  let d = my.d;
+  let more = 1;
   while (more) {
     // move up
     my.nx = my.px;
-    my.ny = my.py - my.d;
+    my.ny = my.py - d;
     my_line({ dx: 0, dy: 0 });
 
     // move right
-    my.nx = my.px + my.d;
+    my.nx = my.px + d;
     while (my.nx < my.R) {
-      my_line({ dx: my.d, dy: 0 });
+      my_line({ dx: d, dy: 0 });
     }
-    my.nx -= my.d;
+    my.nx -= d;
 
     // move down
-    my.ny += my.d;
+    my.ny += d;
     while (my.ny < my.B) {
-      my_line(0, my.d);
+      my_line({ dx: 0, dy: d });
     }
-    my.ny -= my.d;
+    my.ny -= d;
 
     // move left
-    my.nx = my.px - my.d;
+    my.nx = my.px - d;
     while (my.nx > my.L) {
-      my_line(-my.d, 0);
+      my_line({ dx: -d, dy: 0 });
     }
-
-    my.nx += my.d;
+    my.nx += d;
 
     // move up
-    my.ny -= my.d;
+    my.ny -= d;
     while (my.ny > my.T) {
-      my_line(0, -my.d);
+      my_line({ dx: 0, dy: -d });
     }
-    my.ny += my.d;
+    my.ny += d;
 
     grow_box();
 
-    more--;
+    more = my.px > 0 && my.px < my.width && my.py > 0 && my.py < my.height;
   }
   // console.log(my.pts)
+  console.log('my.pts.length', my.pts.length);
 }
 
 function my_line({ dx, dy }) {
