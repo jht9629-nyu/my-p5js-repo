@@ -1,7 +1,6 @@
 // https://editor.p5js.org/jht9629-gmail/sketches/IagYeywkY
 // maze tiles bits
 
-let a_len = 40;
 let a_strokeWeight = 0.3;
 
 let a_now = [];
@@ -12,23 +11,27 @@ let a_target;
 let draw_step;
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
-let do_random = 1;
+let do_random = 0;
 let do_report = 0; // 4
 let report_lines = [];
 let a_timer;
 let a_div;
 
-let my = { width: 640, height: 480 };
+// let my = { width: 640, height: 480, d: 40 };
+let my = { width: 400, height: 400, d: 40 };
 
 function setup() {
   createCanvas(my.width, my.height);
 
   noFill();
-  strokeWeight(a_len * a_strokeWeight);
+  strokeWeight(my.d * a_strokeWeight);
 
-  fill_zero(a_now);
-  fill_zero(a_next);
-  fill_zero(a_random);
+  // let n = make_grid_pts();
+  let n = make_spiral_pts();
+
+  fill_zero(a_now, n);
+  fill_zero(a_next, n);
+  fill_zero(a_random, n);
 
   fill_incr(a_next);
 
@@ -46,22 +49,52 @@ function draw() {
   draw_step();
 }
 
+function make_spiral_pts() {
+  // let h = int(my.d / 2);
+  // my.pts = new SpiralWalker(my).points().map((pt) => {
+  //   return [pt[0] - h, pt[1] - h];
+  // });
+  my.pts = new SpiralWalker(my).points();
+  return my.pts.length;
+}
+
+function make_grid_pts() {
+  let pts = [];
+  for (let y = 0; y < height; y += my.d) {
+    for (let x = 0; x < width; x += my.d) {
+      pts.push([x, y]);
+    }
+  }
+  let n = pts.length;
+  let nw = int(my.width / my.d);
+  let nh = int(my.height / my.d);
+  let half = int(n / 2);
+  console.log('n', n, 'half', half);
+  console.log('nw', nw, 'nh', nh);
+
+  let offset = int(nw / 2) + int(nh / 2) * nw;
+  let npts = [];
+  for (let index = 0; index < n; index++) {
+    npts.push(pts[(index + offset) % n]);
+  }
+  my.pts = npts;
+  return n;
+}
+
 function draw_maze() {
   background(220);
   let tangle = HALF_PI * a_timer.progress();
-  let half = a_len / 2;
+  let half = my.d / 2;
   let index = 0;
-  for (let y = 0; y < height; y += a_len) {
-    for (let x = 0; x < width; x += a_len) {
-      let now = a_now[index];
-      let target = a_target[index];
-      let angle = now == target ? 0 : tangle;
-      if (now) {
-        drawLeft(x, y, a_len, half, angle);
-      } else {
-        drawRight(x, y, a_len, half, angle);
-      }
-      index++;
+  for (let index = 0; index < my.pts.length; index++) {
+    let [x, y] = my.pts[index];
+    let now = a_now[index];
+    let target = a_target[index];
+    let angle = now == target ? 0 : tangle;
+    if (now) {
+      drawLeft(x, y, my.d, half, angle);
+    } else {
+      drawRight(x, y, my.d, half, angle);
     }
   }
 }
@@ -184,14 +217,10 @@ function draw_maze_random_pause2() {
   }
 }
 
-function fill_zero(arr) {
+function fill_zero(arr, n) {
   // Fill array a_arr with random true/false values
-  let index = 0;
-  for (let y = 0; y < height; y += a_len) {
-    for (let x = 0; x < width; x += a_len) {
-      arr[index] = 0;
-      index++;
-    }
+  for (let index = 0; index < n; index++) {
+    arr[index] = 0;
   }
 }
 
