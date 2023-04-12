@@ -16,7 +16,7 @@ let draw_step;
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
-let do_report = 4; // 4
+let do_report = 0; // 4
 let report_lines = [];
 let a_timer;
 let a_div;
