@@ -2,7 +2,7 @@
 // spiral walk - create a spiral from the center of the canvas
 
 // state consolidated to ease tranition to Class object / Function
-let n = 6;
+let n = 10;
 let d = 40;
 let my = { width: d * n, height: d * n, d: d };
 

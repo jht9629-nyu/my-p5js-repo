@@ -11,11 +11,12 @@ let a_target;
 let draw_step;
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
-let do_random = 0;
-let do_report = 0; // 4
+let do_random = 1;
+let do_report = 4; // 4
 let report_lines = [];
 let a_timer;
 let a_div;
+let a_delta = 1;
 
 // let my = { width: 640, height: 480, d: 40 };
 let my = { width: 400, height: 400, d: 40 };
@@ -29,11 +30,11 @@ function setup() {
   // let n = make_grid_pts();
   let n = make_spiral_pts();
 
-  fill_zero(a_now, n);
-  fill_zero(a_next, n);
-  fill_zero(a_random, n);
+  array_zero(a_now, n);
+  array_zero(a_next, n);
+  array_zero(a_random, n);
 
-  fill_incr(a_next);
+  array_add(a_next, a_delta);
 
   a_target = a_next;
 
@@ -138,8 +139,8 @@ function draw_maze_step() {
   draw_maze();
 
   if (a_timer.arrived()) {
-    fill_incr(a_now);
-    fill_incr(a_next);
+    array_add(a_now, a_delta);
+    array_add(a_next, a_delta);
 
     if (!do_random) {
       div_report(a_target, 'draw_maze_step');
@@ -160,7 +161,7 @@ function draw_maze_pause() {
 }
 
 function draw_maze_random() {
-  fill_random(a_random);
+  array_random(a_random);
   a_target = a_random;
 
   div_report(a_target, 'draw_maze_random');
@@ -217,18 +218,39 @@ function draw_maze_random_pause2() {
   }
 }
 
-function fill_zero(arr, n) {
+function array_zero(arr, n) {
   // Fill array a_arr with random true/false values
   for (let index = 0; index < n; index++) {
     arr[index] = 0;
   }
 }
 
-function fill_incr(arr) {
+function array_add(arr, n) {
+  if (n == 1) {
+    array_incr(arr);
+  } else if (n == -1) {
+    array_decr(arr);
+  } else {
+    console.log('array_add bad n', n);
+  }
+}
+
+function array_decr(arr) {
+  let carry = 0;
   for (let index = 0; index < arr.length; index++) {
-    let bit = arr[index] + 1;
-    // bit is 1 or 2
-    if (bit == 1) {
+    let sum = arr[index] + 1 + carry;
+    // sum = 1, 2, 3
+    arr[index] = sum & 1;
+    carry = sum >> 1;
+    // carry = 0 or 1
+  }
+}
+
+function array_incr(arr) {
+  for (let index = 0; index < arr.length; index++) {
+    let sum = arr[index] + 1;
+    // sum is 1 or 2
+    if (sum == 1) {
       arr[index] = 1;
       break;
     }
@@ -237,14 +259,14 @@ function fill_incr(arr) {
   }
 }
 
-function fill_random(arr) {
+function array_random(arr) {
   for (let index = 0; index < arr.length; index++) {
     let bit = random([0, 1]);
     arr[index] = bit;
   }
 }
 
-function fill_copy_to_from(to, from) {
+function array_copy_to_from(to, from) {
   for (let index = 0; index < to.length; index++) {
     to[index] = from[index];
   }

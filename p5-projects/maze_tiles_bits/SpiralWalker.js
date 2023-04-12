@@ -9,16 +9,17 @@ class SpiralWalker {
   points() {
     // start with single pixel box in the center
     // Left Top Right Bottom
-    this.L = int(this.width / 2);
-    this.T = int(this.height / 2);
+    this.L = this.width / 2;
+    this.T = this.height / 2;
     this.R = this.L;
     this.B = this.T;
 
-    let nw = int(this.width / this.d);
-    let nh = int(this.height / this.d);
+    let nw = this.width / this.d;
+    let nh = this.height / this.d;
     let n = nw * nh;
     console.log('nw', nw, 'mh', nh, 'n', n);
 
+    this.offset = (nw & 1) * (-this.d / 2);
     this.px = this.L;
     this.py = this.T;
 
@@ -71,13 +72,23 @@ class SpiralWalker {
       // more = morex && morey;
     }
     // console.log(this.pts)
+
+    // first element repeat for length > 1
+    if (this.pts.length > 1) this.pts.splice(0, 1);
+
     console.log('this.pts.length', this.pts.length);
 
     return this.pts;
   }
 
   my_line({ dx, dy }) {
-    this.pts.push([this.px, this.py]);
+    let x = this.nx;
+    let y = this.ny;
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      x += this.offset;
+      y += this.offset;
+      this.pts.push([x, y]);
+    }
     // line(this.nx, this.ny, this.px, this.py);
     this.px = this.nx;
     this.py = this.ny;

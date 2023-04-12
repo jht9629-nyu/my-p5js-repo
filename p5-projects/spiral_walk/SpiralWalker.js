@@ -1,9 +1,5 @@
 // create points for a spiral from the center
 
-function myint(n) {
-  return n;
-}
-
 class SpiralWalker {
   //
   // { width: 600, height: 400, d: 10 }
@@ -13,13 +9,13 @@ class SpiralWalker {
   points() {
     // start with single pixel box in the center
     // Left Top Right Bottom
-    this.L = myint(this.width / 2);
-    this.T = myint(this.height / 2);
+    this.L = this.width / 2;
+    this.T = this.height / 2;
     this.R = this.L;
     this.B = this.T;
 
-    let nw = myint(this.width / this.d);
-    let nh = myint(this.height / this.d);
+    let nw = this.width / this.d;
+    let nh = this.height / this.d;
     let n = nw * nh;
     console.log('nw', nw, 'mh', nh, 'n', n);
 
@@ -27,8 +23,6 @@ class SpiralWalker {
     this.px = this.L;
     this.py = this.T;
 
-    // this.h = myint(this.d / 2);
-    this.h = this.d;
     this.grow_box();
 
     this.pts = [];
@@ -103,9 +97,9 @@ class SpiralWalker {
   }
 
   grow_box() {
-    this.L -= this.h;
-    this.R += this.h;
-    this.T -= this.h;
-    this.B += this.h;
+    this.L -= this.d;
+    this.R += this.d;
+    this.T -= this.d;
+    this.B += this.d;
   }
 }
