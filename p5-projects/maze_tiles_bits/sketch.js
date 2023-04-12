@@ -1,5 +1,7 @@
 // https://editor.p5js.org/jht9629-gmail/sketches/IagYeywkY
 // maze tiles bits
+// state machine using function references - draw_step
+// timing using SecondsTimer
 
 let a_strokeWeight = 0.3;
 
@@ -9,6 +11,8 @@ let a_random = [];
 let a_target;
 
 let draw_step;
+// var draw_step;
+
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
 let do_random = 1;
@@ -44,9 +48,12 @@ function setup() {
 
   report_1ofn();
   div_report(a_target, 'setup');
+
+  // console.log('setup this', this);
 }
 
 function draw() {
+  // console.log('draw this', this);
   draw_step();
 }
 
