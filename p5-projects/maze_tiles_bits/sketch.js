@@ -11,7 +11,6 @@ let a_random = [];
 let a_target;
 
 let draw_step;
-// var draw_step;
 
 let maze_step_period = 1.0;
 let maze_pause_period = 1.0; // 0.5;
@@ -24,7 +23,8 @@ let a_delta = 1;
 
 // let my = { width: 640, height: 480, d: 40 };
 // let my = { width: 400, height: 400, d: 40 };
-let my = { width: 0, height: 0, d: 40 };
+let my = { width: 400, height: 800, d: 40 };
+// let my = { width: 0, height: 0, d: 40 };
 
 function setup() {
   my.width = my.width || windowWidth;
