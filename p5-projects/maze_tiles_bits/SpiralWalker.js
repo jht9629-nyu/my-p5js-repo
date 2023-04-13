@@ -19,7 +19,7 @@ class SpiralWalker {
     let n = nw * nh;
     console.log('nw', nw, 'mh', nh, 'n', n);
 
-    this.offset = (nw & 1) * (-this.d / 2);
+    this.offset = nw & 1 ? -this.d / 2 : 0;
     this.px = this.L;
     this.py = this.T;
 

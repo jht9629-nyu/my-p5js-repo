@@ -23,9 +23,12 @@ let a_div;
 let a_delta = 1;
 
 // let my = { width: 640, height: 480, d: 40 };
-let my = { width: 400, height: 400, d: 40 };
+// let my = { width: 400, height: 400, d: 40 };
+let my = { width: 0, height: 0, d: 40 };
 
 function setup() {
+  my.width = my.width || windowWidth;
+  my.height = my.height || windowHeight;
   createCanvas(my.width, my.height);
 
   noFill();
@@ -232,13 +235,13 @@ function array_zero(arr, n) {
   }
 }
 
-function array_add(arr, n) {
-  if (n == 1) {
+function array_add(arr, d) {
+  if (d == 1) {
     array_incr(arr);
-  } else if (n == -1) {
+  } else if (d == -1) {
     array_decr(arr);
   } else {
-    console.log('array_add bad n', n);
+    console.log('array_add bad d', d);
   }
 }
 
