@@ -1,0 +1,5 @@
+class MazeSpin {
+  constructor(period) {
+    //
+  }
+}

@@ -3,7 +3,7 @@
 // state machine using function references - draw_step
 // timing using SecondsTimer
 
-let a_strokeWeight = 0.3;
+let a_strokeWeight = 0.5;
 
 let a_now = [];
 let a_next = [];
@@ -23,13 +23,15 @@ let a_delta = 1;
 
 // let my = { width: 640, height: 480, d: 40 };
 // let my = { width: 400, height: 400, d: 40 };
-let my = { width: 400, height: 800, d: 40 };
-// let my = { width: 0, height: 0, d: 40 };
+// let my = { width: 400, height: 800, d: 40 };
+let my = { width: 0, height: 0, n: 9 };
 
 function setup() {
   my.width = my.width || windowWidth;
   my.height = my.height || windowHeight;
   createCanvas(my.width, my.height);
+
+  my.d = int(width / my.n);
 
   noFill();
   strokeWeight(my.d * a_strokeWeight);
@@ -108,41 +110,6 @@ function draw_maze() {
       drawRight(x, y, my.d, half, angle);
     }
   }
-}
-
-function report_1ofn() {
-  if (!do_report) return;
-  let bnum = 2n ** BigInt(a_now.length);
-  let bstr = ' 0x' + bnum.toString(16).toUpperCase();
-  let str = '1 of ' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
-  let div = createP('<code style="font-size:16px">' + str + '</code>');
-  // div.style('margin-left:2px');
-}
-
-function div_report(arr, msg) {
-  // console.log('div_report', msg);
-  if (!do_report) return;
-  if (!a_div) {
-    a_div = createP();
-  }
-  let narr = arr.concat();
-  narr.reverse();
-  let str = narr.join('');
-  let bnum = BigInt('0b' + str);
-  // str = bnum.toLocaleString('en-US') + ' ' + msg + '<br/> ';
-  let bstr;
-  if (bnum >= 256n) {
-    bstr = ' 0x' + bnum.toString(16).toUpperCase();
-  } else {
-    bstr = ' 0b' + bnum.toString(2);
-  }
-  // &nbsp;
-  str = '' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
-  report_lines.unshift(str);
-  while (report_lines.length > do_report) {
-    report_lines.pop();
-  }
-  a_div.elt.innerHTML = '<code style="font-size:16px">' + report_lines.join('') + '</code>';
 }
 
 function draw_maze_step() {
@@ -226,64 +193,6 @@ function draw_maze_random_pause2() {
 
     draw_step = draw_maze_step;
   }
-}
-
-function array_zero(arr, n) {
-  // Fill array a_arr with random true/false values
-  for (let index = 0; index < n; index++) {
-    arr[index] = 0;
-  }
-}
-
-function array_add(arr, d) {
-  if (d == 1) {
-    array_incr(arr);
-  } else if (d == -1) {
-    array_decr(arr);
-  } else {
-    console.log('array_add bad d', d);
-  }
-}
-
-function array_decr(arr) {
-  let carry = 0;
-  for (let index = 0; index < arr.length; index++) {
-    let sum = arr[index] + 1 + carry;
-    // sum = 1, 2, 3
-    arr[index] = sum & 1;
-    carry = sum >> 1;
-    // carry = 0 or 1
-  }
-}
-
-function array_incr(arr) {
-  for (let index = 0; index < arr.length; index++) {
-    let sum = arr[index] + 1;
-    // sum is 1 or 2
-    if (sum == 1) {
-      arr[index] = 1;
-      break;
-    }
-    // zero and continue to carry the 2
-    arr[index] = 0;
-  }
-}
-
-function array_random(arr) {
-  for (let index = 0; index < arr.length; index++) {
-    let bit = random([0, 1]);
-    arr[index] = bit;
-  }
-}
-
-function array_copy_to_from(to, from) {
-  for (let index = 0; index < to.length; index++) {
-    to[index] = from[index];
-  }
-}
-
-function mousePressed() {
-  console.log('mousePressed');
 }
 
 function drawLeft(x, y, len, half, angle) {
