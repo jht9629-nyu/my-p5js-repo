@@ -27,7 +27,6 @@ class SpiralWalker {
 
     this.pts = [];
     let d = this.d;
-    // this.pts.push([this.px, this.py - d]);
 
     let more = 1;
     while (more) {

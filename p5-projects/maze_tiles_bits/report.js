@@ -1,17 +1,17 @@
-function report_1ofn() {
-  if (!do_report) return;
-  let bnum = 2n ** BigInt(a_now.length);
+function report_1ofn(my) {
+  if (!my.do_report) return;
+  let bnum = 2n ** BigInt(my.now.length);
   let bstr = ' 0x' + bnum.toString(16).toUpperCase();
   let str = '1 of ' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
   let div = createP('<code style="font-size:16px">' + str + '</code>');
   // div.style('margin-left:2px');
 }
 
-function div_report(arr, msg) {
+function div_report(my, arr, msg) {
   // console.log('div_report', msg);
-  if (!do_report) return;
-  if (!a_div) {
-    a_div = createP();
+  if (!my.do_report) return;
+  if (!my.div) {
+    my.div = createP();
   }
   let narr = arr.concat();
   narr.reverse();
@@ -26,9 +26,9 @@ function div_report(arr, msg) {
   }
   // &nbsp;
   str = '' + bnum.toLocaleString('en-US') + bstr + '<br/> ';
-  report_lines.unshift(str);
-  while (report_lines.length > do_report) {
-    report_lines.pop();
+  my.report_lines.unshift(str);
+  while (my.report_lines.length > my.do_report) {
+    my.report_lines.pop();
   }
-  a_div.elt.innerHTML = '<code style="font-size:16px">' + report_lines.join('') + '</code>';
+  my.div.elt.innerHTML = '<code style="font-size:16px">' + my.report_lines.join('') + '</code>';
 }
