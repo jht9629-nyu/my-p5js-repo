@@ -25,15 +25,16 @@ function setup() {
   createButton('stopTimedDrawing').mousePressed(stopTimedDrawing);
   createButton('clearDrawing').mousePressed(clearDrawing);
   createElement('br');
-  // ider(min, max, oldVal, step)
-  lapse_slider = createSlider(0, 60 * 5, a_lapse).input(function () {
+
+  // createSlider(min, max, oldVal, step)
+  lapse_slider = createSlider(0, 60, a_lapse).input(function () {
     a_lapse = this.value();
     // console.log('create_slider aVal ', aVal, 'type', typeof aVal);
-    valSpan.elt.innerHTML = formatNumber(a_lapse) + '';
+    valSpan.html(formatNumber(a_lapse) + '');
   });
   // lapse_slider.style('width:300px');
   lapse_slider.style('width:50%');
-  let valSpan = createSpan('');
+  let valSpan = createSpan(a_lapse + '');
 }
 
 function draw() {
@@ -74,8 +75,10 @@ function mouseDragged() {
   }
   // let r = random(10, 50);
   let r = 5;
-  let b = new Point(mouseX, mouseY, r);
-  a_points.push(b);
+  let x = mouseX;
+  let y = mouseY;
+  // let b = new Point(mouseX, mouseY, r);
+  a_points.push({ x, y, r });
 }
 
 function draw_timed() {
@@ -102,7 +105,8 @@ function draw_to(stopIndex) {
     if (!point) {
       console.log('i', i, 'point', point);
     }
-    point.lineFrom(previous, a_xoffset);
+    // point.lineFrom(previous, a_xoffset);
+    lineFrom(point, previous, a_xoffset);
   }
 }
 
@@ -115,8 +119,13 @@ function draw_points() {
     let previous = a_points[i - 1];
     let point = a_points[i];
     // console.log('bub', bub)
-    point.lineFrom(previous, 0);
+    // point.lineFrom(previous, 0);
+    lineFrom(point, previous, 0);
   }
+}
+
+function lineFrom(my, previous, xoffset) {
+  line(previous.x + xoffset, previous.y, my.x + xoffset, my.y);
 }
 
 class Point {
