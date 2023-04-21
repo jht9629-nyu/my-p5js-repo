@@ -1,0 +1,8 @@
+# timed drawing
+
+## TODO
+
+- [] export / import as URL
+- [] export / import as json file
+
+- [] mouse events on a_canvas

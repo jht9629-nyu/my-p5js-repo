@@ -36,7 +36,6 @@ function setup() {
     valSpan.html(formatNumber(a_lapse) + '');
     startTimedDraw();
   });
-  // lapse_slider.style('width:300px');
   lapse_slider.style('width:50%');
   let valSpan = createSpan(a_lapse + '');
 }
@@ -87,10 +86,7 @@ function mouseDragged() {
     a_points = [];
     a_drawings.push(a_points);
   }
-  let r = 5;
-  let x = mouseX;
-  let y = mouseY;
-  a_points.push({ x, y, r });
+  a_points.push({ x: mouseX, y: mouseY });
 }
 
 function mouseReleased() {
