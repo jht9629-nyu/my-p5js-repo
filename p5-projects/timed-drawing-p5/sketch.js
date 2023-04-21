@@ -64,6 +64,7 @@ function startTimedDraw() {
   for (let points of a_drawings) {
     a_npoints += points.length;
   }
+  console.log('startTimedDraw a_npoints', a_npoints);
 }
 
 function stopTimedDraw() {
