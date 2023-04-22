@@ -1,9 +1,13 @@
+// https://github.com/jht9629-nyu/my-p5js-repo.git
 // timed-drawing
 
-let a_lapse = 10; // seconds to re-draw points
+let a_lapse = 5; // seconds to re-draw points
 let a_xoffset = 300;
-let a_playback_color = 'yellow';
+let a_playback_colors = ['red', 'green', 'yellow'];
 let a_draw_color = 'white';
+let a_strokeWeight = 30;
+let a_strokeWeightDiff = 4;
+let a_run = 1;
 
 let a_timedDrawing = 0;
 let a_startTime;
@@ -15,7 +19,6 @@ let a_npoints = 0;
 
 function setup() {
   createCanvas(600, 400);
-  strokeWeight(4);
   noFill();
 
   let msg = [
@@ -27,6 +30,7 @@ function setup() {
   createButton('startTimedDraw').mousePressed(startTimedDraw);
   createButton('stopTimedDraw').mousePressed(stopTimedDraw);
   createButton('clearDrawing').mousePressed(clearDrawing);
+  createButton('toggleRun').mousePressed(toggleRun);
   createElement('br');
 
   // createSlider(min, max, oldVal, step)
@@ -41,6 +45,8 @@ function setup() {
 }
 
 function draw() {
+  if (!a_run) return;
+
   background(0);
 
   draw_points();
@@ -50,9 +56,86 @@ function draw() {
   }
 }
 
-function formatNumber(num) {
-  let prec = 1000;
-  return int(num * prec) / prec;
+function draw_points() {
+  draw_to(-1, a_draw_color, 0);
+}
+
+function draw_timed() {
+  let n = a_npoints;
+  let now = secsTime() - a_startTime;
+  let progress = now / a_lapse;
+
+  let stopIndex = int(n * progress);
+
+  let icolor = int(stopIndex / n) % a_playback_colors.length;
+  // console.log(frameCount, 'draw_timed stopIndex', stopIndex, 'icolor', icolor);
+
+  // let color = a_playback_colors[0];
+  // draw_to(stopIndex, color, a_xoffset);
+  let color = -1;
+  draw_to(stopIndex, color, a_xoffset);
+}
+
+// let a_playback_colors = ['red', 'green', 'yellow'];
+
+function draw_to(startStopIndex, color, xoffset) {
+  stroke(color);
+  strokeWeight(a_strokeWeight);
+  let npoints = a_npoints;
+  let ncolor = a_playback_colors.length;
+  let full = startStopIndex > 0;
+  let stopIndex = full ? startStopIndex : npoints;
+  stopIndex = stopIndex % (npoints * (ncolor + 3));
+  let ipoint = 0;
+  while (ipoint < stopIndex) {
+    if (full) {
+      let icycle = int(ipoint / npoints) % ncolor;
+      let icolor = a_playback_colors[icycle];
+      if (icolor != color) {
+        stroke(icolor);
+        let nw = a_strokeWeight - a_strokeWeightDiff * icycle;
+        console.log(
+          frameCount,
+          'ipoint',
+          ipoint,
+          'stopIndex',
+          stopIndex,
+          'nw',
+          nw,
+          'icycle',
+          icycle,
+          'icolor',
+          icolor,
+          'color',
+          color
+        );
+        strokeWeight(nw);
+        color = icolor;
+      }
+    }
+    let prior_ipoint = ipoint;
+    for (let points of a_drawings) {
+      for (let i = 1; i < points.length; i++) {
+        ipoint++;
+        if (ipoint > stopIndex) return;
+        let prev = points[i - 1];
+        let point = points[i];
+        if (!point) {
+          console.log('i', i, 'point', point);
+        }
+        lineFrom(point, prev, xoffset);
+      }
+    }
+    // detect no change
+    if (prior_ipoint == ipoint) {
+      console.log('stopIndex_draw prior_ipoint', prior_ipoint);
+      break;
+    }
+  }
+}
+
+function toggleRun() {
+  a_run = !a_run;
 }
 
 function startTimedDraw() {
@@ -87,54 +170,27 @@ function mouseDragged() {
     a_drawings.push(a_points);
   }
   a_points.push({ x: mouseX, y: mouseY });
+  a_npoints++;
 }
 
 function mouseReleased() {
   console.log('mouseReleased');
   a_points = null;
+  startTimedDraw();
 }
 
-function draw_timed() {
-  let n = a_npoints;
-  let now = secsTime() - a_startTime;
-  let progress = now / a_lapse;
-  let stopIndex = int(n * progress);
-  if (stopIndex > n) stopIndex = n;
-
-  draw_to(stopIndex, a_playback_color, a_xoffset);
-}
-
-function draw_points() {
-  // if (!a_points) return;
-  draw_to(Number.MAX_SAFE_INTEGER, a_draw_color, 0);
-}
-
-function draw_to(stopIndex, color, xoffset) {
-  // console.log('stopIndex_draw stopIndex', stopIndex)
-  // if (!a_points) return;
-  stroke(color);
-  let ipoint = 0;
-  for (let points of a_drawings) {
-    for (let i = 1; i < points.length; i++) {
-      ipoint++;
-      if (ipoint > stopIndex) return;
-      let previous = points[i - 1];
-      let point = points[i];
-      if (!point) {
-        console.log('i', i, 'point', point);
-      }
-      lineFrom(point, previous, xoffset);
-    }
-  }
-}
-
-function lineFrom(my, previous, xoffset) {
-  line(previous.x + xoffset, previous.y, my.x + xoffset, my.y);
+function lineFrom(my, prev, xoffset) {
+  line(prev.x + xoffset, prev.y, my.x + xoffset, my.y);
 }
 
 // return seconds since start of sketch
 function secsTime() {
   return millis() / 1000;
+}
+
+function formatNumber(num) {
+  let prec = 1000;
+  return int(num * prec) / prec;
 }
 
 // startTimedDraw as slider changes

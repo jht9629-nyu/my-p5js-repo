@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [] local save/restor 1 / 2
+- [] local save/restore 1 / 2
 - [] mouse events on a_canvas
 
 - [] export / import as URL
