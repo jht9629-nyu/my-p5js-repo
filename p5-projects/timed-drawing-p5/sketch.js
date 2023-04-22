@@ -40,7 +40,7 @@ function setup() {
   createElement('br');
 
   // createSlider(min, max, oldVal, step)
-  let lapse_slider = createSlider(0, 60, a_lapse).input(function () {
+  let lapse_slider = createSlider(0, 30, a_lapse).input(function () {
     a_lapse = this.value();
     // console.log('create_slider aVal ', aVal, 'type', typeof aVal);
     valSpan.html(formatNumber(a_lapse) + '');
@@ -66,67 +66,57 @@ function draw() {
   }
 }
 
-function restore_drawing() {
-  let str = localStorage.getItem('a_drawings');
-  if (!str) return;
-  console.log('restore_drawing str.length', str.length);
-  a_drawings = JSON.parse(str);
-  calc_npoints();
-  console.log('restore_drawing a_npoints', a_npoints);
-}
-
-function save_drawings() {
-  let str = JSON.stringify(a_drawings);
-  localStorage.setItem('a_drawings', str);
-  console.log('save_drawings str.length', str.length);
-}
-
 function draw_points() {
-  draw_to(-1, a_draw_color, 0);
+  let args = {
+    color: a_draw_color,
+    strokeWeight: a_strokeWeight,
+    stopIndex: a_npoints,
+    xoffset: 0,
+  };
+  draw_to(args);
 }
 
 function draw_timed() {
-  let n = a_npoints;
+  let ncolor = a_playback_colors.length;
+  let npoints = a_npoints;
   let now = secsTime() - a_startTime;
   let progress = now / a_lapse;
-
-  let stopIndex = int(n * progress);
-
-  let icolor = int(stopIndex / n) % a_playback_colors.length;
-  // console.log(frameCount, 'draw_timed stopIndex', stopIndex, 'icolor', icolor);
-
-  // let color = a_playback_colors[0];
-  // draw_to(stopIndex, color, a_xoffset);
-  let color = -1;
-  draw_to(stopIndex, color, a_xoffset);
+  let stopIndex = int(npoints * progress) % (npoints * ncolor);
+  let args = {
+    color: a_playback_colors[0],
+    strokeWeight: a_strokeWeight,
+    stopIndex: stopIndex,
+    xoffset: a_xoffset,
+    stepper: stepper,
+  };
+  function stepper(ipoint) {
+    let icycle = int(ipoint / npoints) % ncolor;
+    let icolor = a_playback_colors[icycle];
+    if (icolor != args.color) {
+      stroke(icolor);
+      let nw = a_strokeWeight - a_strokeWeightDiff * icycle;
+      let str = frameCount + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' nw ' + nw;
+      str += ' icycle ' + icycle + ' icolor ' + icolor + ' color ' + args.color;
+      console.log(str);
+      strokeWeight(nw);
+      args.color = icolor;
+    }
+  }
+  draw_to(args);
 }
 
 // let a_playback_colors = ['red', 'green', 'yellow'];
 
-function draw_to(initStopIndex, color, xoffset) {
-  stroke(color);
-  strokeWeight(a_strokeWeight);
-  let npoints = a_npoints;
-  let ncolor = a_playback_colors.length;
-  let full = initStopIndex > 0;
-  let stopIndex = full ? initStopIndex : npoints;
-  stopIndex = stopIndex % (npoints * (ncolor + 3));
+function draw_to(args) {
+  stroke(args.color);
+  strokeWeight(args.strokeWeight);
+  let stepper = args.stepper;
+  let stopIndex = args.stopIndex;
+  let xoffset = args.xoffset;
   let ipoint = 0;
   while (ipoint < stopIndex) {
-    if (full) {
-      let icycle = int(ipoint / npoints) % ncolor;
-      let icolor = a_playback_colors[icycle];
-      if (icolor != color) {
-        stroke(icolor);
-        let nw = a_strokeWeight - a_strokeWeightDiff * icycle;
-        let str = frameCount + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' nw ' + nw;
-        str += ' icycle ' + icycle + ' icolor ' + icolor + ' color ' + color;
-        console.log(str);
-        strokeWeight(nw);
-        color = icolor;
-      }
-    }
-    // let prior_ipoint = ipoint;
+    if (stepper) stepper(ipoint);
+    // Draw all points up until stopIndex
     for (let points of a_drawings) {
       for (let i = 1; i < points.length; i++) {
         if (ipoint > stopIndex) return;
@@ -208,6 +198,21 @@ function secsTime() {
 function formatNumber(num) {
   let prec = 1000;
   return int(num * prec) / prec;
+}
+
+function restore_drawing() {
+  let str = localStorage.getItem('a_drawings');
+  if (!str) return;
+  console.log('restore_drawing str.length', str.length);
+  a_drawings = JSON.parse(str);
+  calc_npoints();
+  console.log('restore_drawing a_npoints', a_npoints);
+}
+
+function save_drawings() {
+  let str = JSON.stringify(a_drawings);
+  localStorage.setItem('a_drawings', str);
+  console.log('save_drawings str.length', str.length);
 }
 
 // startTimedDraw as slider changes
