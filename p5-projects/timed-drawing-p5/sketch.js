@@ -42,6 +42,8 @@ function setup() {
   });
   lapse_slider.style('width:50%');
   let valSpan = createSpan(a_lapse + '');
+
+  restore_drawing();
 }
 
 function draw() {
@@ -54,6 +56,19 @@ function draw() {
   if (a_timedDrawing) {
     draw_timed();
   }
+}
+
+function restore_drawing() {
+  let str = localStorage.getItem('a_drawings');
+  if (!str) return;
+  console.log('restore_drawing str.length', str.length);
+  a_drawings = JSON.parse(str);
+}
+
+function save_drawings() {
+  let str = JSON.stringify(a_drawings);
+  localStorage.setItem('a_drawings', str);
+  console.log('save_drawings str.length', str.length);
 }
 
 function draw_points() {
@@ -78,13 +93,13 @@ function draw_timed() {
 
 // let a_playback_colors = ['red', 'green', 'yellow'];
 
-function draw_to(startStopIndex, color, xoffset) {
+function draw_to(initStopIndex, color, xoffset) {
   stroke(color);
   strokeWeight(a_strokeWeight);
   let npoints = a_npoints;
   let ncolor = a_playback_colors.length;
-  let full = startStopIndex > 0;
-  let stopIndex = full ? startStopIndex : npoints;
+  let full = initStopIndex > 0;
+  let stopIndex = full ? initStopIndex : npoints;
   stopIndex = stopIndex % (npoints * (ncolor + 3));
   let ipoint = 0;
   while (ipoint < stopIndex) {
@@ -94,21 +109,9 @@ function draw_to(startStopIndex, color, xoffset) {
       if (icolor != color) {
         stroke(icolor);
         let nw = a_strokeWeight - a_strokeWeightDiff * icycle;
-        console.log(
-          frameCount,
-          'ipoint',
-          ipoint,
-          'stopIndex',
-          stopIndex,
-          'nw',
-          nw,
-          'icycle',
-          icycle,
-          'icolor',
-          icolor,
-          'color',
-          color
-        );
+        let str = frameCount + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' nw ' + nw;
+        str += ' icycle ' + icycle + ' icolor ' + icolor + ' color ' + color;
+        console.log(str);
         strokeWeight(nw);
         color = icolor;
       }
@@ -177,6 +180,7 @@ function mouseReleased() {
   console.log('mouseReleased');
   a_points = null;
   startTimedDraw();
+  save_drawings();
 }
 
 function lineFrom(my, prev, xoffset) {
