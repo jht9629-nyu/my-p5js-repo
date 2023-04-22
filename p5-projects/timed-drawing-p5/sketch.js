@@ -5,9 +5,10 @@ let a_lapse = 5; // seconds to re-draw points
 let a_xoffset = 300;
 let a_playback_colors = ['red', 'green', 'yellow'];
 let a_draw_color = 'white';
-let a_strokeWeight = 30;
-let a_strokeWeightDiff = 4;
+let a_strokeWeight = 10;
+let a_strokeWeightDiff = 3;
 let a_run = 1;
+let a_npoint_limit = 0;
 
 let a_timedDrawing = 0;
 let a_startTime;
@@ -76,36 +77,39 @@ function draw_points() {
   draw_to(args);
 }
 
+// let a_playback_colors = ['red', 'green', 'yellow'];
+
 function draw_timed() {
-  let ncolor = a_playback_colors.length;
+  let ncolors = a_playback_colors.length;
   let npoints = a_npoints;
   let now = secsTime() - a_startTime;
   let progress = now / a_lapse;
-  let stopIndex = int(npoints * progress) % (npoints * ncolor);
+  // let stopIndex = int(npoints * progress) % (npoints * (ncolors + 1));
+  let stopIndex = int(npoints * progress) % (npoints * ncolors);
   let args = {
     color: a_playback_colors[0],
     strokeWeight: a_strokeWeight,
     stopIndex: stopIndex,
     xoffset: a_xoffset,
     stepper: stepper,
+    icycle: 0,
   };
   function stepper(ipoint) {
-    let icycle = int(ipoint / npoints) % ncolor;
-    let icolor = a_playback_colors[icycle];
-    if (icolor != args.color) {
+    if (ipoint % npoints == 0) {
+      let icycle = args.icycle;
+      let icolor = a_playback_colors[icycle];
+      let istrokeWeight = a_strokeWeight - a_strokeWeightDiff * icycle;
+      // let str = formatNumber(progress);
+      // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;
+      // str += ' icycle ' + icycle + ' icolor ' + icolor;
+      // console.log(str);
       stroke(icolor);
-      let nw = a_strokeWeight - a_strokeWeightDiff * icycle;
-      let str = frameCount + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' nw ' + nw;
-      str += ' icycle ' + icycle + ' icolor ' + icolor + ' color ' + args.color;
-      console.log(str);
-      strokeWeight(nw);
-      args.color = icolor;
+      strokeWeight(istrokeWeight);
+      args.icycle = (args.icycle + 1) % ncolors;
     }
   }
   draw_to(args);
 }
-
-// let a_playback_colors = ['red', 'green', 'yellow'];
 
 function draw_to(args) {
   stroke(args.color);
@@ -115,11 +119,11 @@ function draw_to(args) {
   let xoffset = args.xoffset;
   let ipoint = 0;
   while (ipoint < stopIndex) {
-    if (stepper) stepper(ipoint);
     // Draw all points up until stopIndex
     for (let points of a_drawings) {
       for (let i = 1; i < points.length; i++) {
         if (ipoint > stopIndex) return;
+        if (stepper) stepper(ipoint);
         let prev = points[i - 1];
         let point = points[i];
         lineFrom(point, prev, xoffset);
@@ -169,6 +173,10 @@ function clearDrawing() {
 function mouseDragged() {
   console.log('mouseDragged');
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
+    return;
+  }
+  if (a_npoint_limit && a_npoints >= a_npoint_limit) {
+    console.log('mouseDragged a_npoint_limit', a_npoint_limit, 'a_npoints', a_npoints);
     return;
   }
   if (!a_points) {
