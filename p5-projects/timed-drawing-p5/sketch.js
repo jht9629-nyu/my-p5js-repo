@@ -16,9 +16,10 @@ let a_drawings = [];
 let a_drawing_index = 0;
 let a_points = null;
 let a_npoints = 0;
+let a_canvas;
 
 function setup() {
-  createCanvas(600, 400);
+  a_canvas = createCanvas(600, 400);
   noFill();
 
   let msg = [
@@ -27,10 +28,15 @@ function setup() {
   ];
   createDiv(msg.join('<br/>'));
 
+  runCheckBox = createCheckbox('Run ', a_run).changed(function () {
+    a_run = this.checked();
+  });
+  runCheckBox.style('display:inline;');
+
   createButton('startTimedDraw').mousePressed(startTimedDraw);
   createButton('stopTimedDraw').mousePressed(stopTimedDraw);
   createButton('clearDrawing').mousePressed(clearDrawing);
-  createButton('toggleRun').mousePressed(toggleRun);
+
   createElement('br');
 
   // createSlider(min, max, oldVal, step)
@@ -42,6 +48,8 @@ function setup() {
   });
   lapse_slider.style('width:50%');
   let valSpan = createSpan(a_lapse + '');
+
+  a_canvas.mouseReleased(canvas_mouseReleased);
 
   restore_drawing();
 }
@@ -63,6 +71,8 @@ function restore_drawing() {
   if (!str) return;
   console.log('restore_drawing str.length', str.length);
   a_drawings = JSON.parse(str);
+  calc_npoints();
+  console.log('restore_drawing a_npoints', a_npoints);
 }
 
 function save_drawings() {
@@ -116,22 +126,19 @@ function draw_to(initStopIndex, color, xoffset) {
         color = icolor;
       }
     }
-    let prior_ipoint = ipoint;
+    // let prior_ipoint = ipoint;
     for (let points of a_drawings) {
       for (let i = 1; i < points.length; i++) {
-        ipoint++;
         if (ipoint > stopIndex) return;
         let prev = points[i - 1];
         let point = points[i];
-        if (!point) {
-          console.log('i', i, 'point', point);
-        }
         lineFrom(point, prev, xoffset);
+        ipoint++;
       }
     }
     // detect no change
-    if (prior_ipoint == ipoint) {
-      console.log('stopIndex_draw prior_ipoint', prior_ipoint);
+    if (!ipoint) {
+      console.log('stopIndex_draw No change ipoint', ipoint);
       break;
     }
   }
@@ -145,11 +152,15 @@ function startTimedDraw() {
   console.log('startTimedDraw');
   a_timedDrawing = 1;
   a_startTime = secsTime();
+  calc_npoints();
+  console.log('startTimedDraw a_npoints', a_npoints);
+}
+
+function calc_npoints() {
   a_npoints = 0;
   for (let points of a_drawings) {
     a_npoints += points.length;
   }
-  console.log('startTimedDraw a_npoints', a_npoints);
 }
 
 function stopTimedDraw() {
@@ -160,11 +171,13 @@ function stopTimedDraw() {
 function clearDrawing() {
   console.log('clearDrawing');
   a_drawings = [];
-  a_points = [];
+  a_points = null;
+  a_npoints = 0;
   a_timedDrawing = 0;
 }
 
 function mouseDragged() {
+  console.log('mouseDragged');
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
     return;
   }
@@ -176,7 +189,7 @@ function mouseDragged() {
   a_npoints++;
 }
 
-function mouseReleased() {
+function canvas_mouseReleased() {
   console.log('mouseReleased');
   a_points = null;
   startTimedDraw();
