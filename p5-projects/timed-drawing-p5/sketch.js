@@ -25,6 +25,7 @@ function my_init() {
   my.npoints = 0;
   // my.canvas;
   my.output = createGraphics(my.width, my.height);
+  my.output.noFill();
 }
 
 let my = { width: 640, height: 480 };
@@ -32,7 +33,6 @@ let my = { width: 640, height: 480 };
 function setup() {
   my_init();
   my.canvas = createCanvas(my.width, my.height);
-  noFill();
 
   let msg = [
     'drag mouse on left side of canvas to create line drawing',
