@@ -207,8 +207,8 @@ function canvas_mouseReleased() {
   save_drawings();
 }
 
-function lineFrom(my, prev, xoffset) {
-  line(prev.x + xoffset, prev.y, my.x + xoffset, my.y);
+function lineFrom(point, prev, xoffset) {
+  my.output.line(prev.x + xoffset, prev.y, point.x + xoffset, point.y);
 }
 
 // return seconds since start of sketch
