@@ -67,8 +67,6 @@ function setup() {
 }
 
 function draw() {
-  if (!my.run) return;
-
   background(0);
 
   prepareOutput();
@@ -77,6 +75,8 @@ function draw() {
 }
 
 function prepareOutput() {
+  if (!my.run) return;
+
   draw_points();
 
   if (my.timedDrawing) {
