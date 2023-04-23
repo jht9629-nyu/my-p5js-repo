@@ -4,6 +4,7 @@
 let my = { width: 640, height: 480 };
 
 function my_init() {
+  my.save_label = 'my.drawings';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = 300;
   my.draw_specs = [
@@ -225,7 +226,7 @@ function formatNumber(num) {
 }
 
 function restore_drawing() {
-  let str = localStorage.getItem('my.drawings');
+  let str = localStorage.getItem(my.save_label);
   if (!str) return;
   console.log('restore_drawing str.length', str.length);
   my.drawings = JSON.parse(str);
@@ -235,7 +236,7 @@ function restore_drawing() {
 
 function save_drawings() {
   let str = JSON.stringify(my.drawings);
-  localStorage.setItem('my.drawings', str);
+  localStorage.setItem(my.save_label, str);
   console.log('save_drawings str.length', str.length);
 }
 
