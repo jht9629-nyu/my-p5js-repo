@@ -181,6 +181,10 @@ function clearDrawing() {
   my.points = null;
   my.npoints = 0;
   my.timedDrawing = 0;
+
+  my.output.clear();
+
+  save_drawings();
 }
 
 function mouseDragged() {
