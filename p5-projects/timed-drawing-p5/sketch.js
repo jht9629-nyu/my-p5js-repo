@@ -1,6 +1,8 @@
 // https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-p5
 // timed-drawing
 
+let my = { width: 640, height: 480 };
+
 function my_init() {
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = 300;
@@ -26,8 +28,6 @@ function my_init() {
   my.output = createGraphics(my.width, my.height);
   my.output.noFill();
 }
-
-let my = { width: 640, height: 480 };
 
 function setup() {
   my_init();
