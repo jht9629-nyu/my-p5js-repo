@@ -24,6 +24,7 @@ function my_init() {
   my.points = null;
   my.npoints = 0;
   // my.canvas;
+  my.output = createGraphics(my.width, my.height);
 }
 
 let my = { width: 640, height: 480 };
@@ -70,6 +71,12 @@ function draw() {
 
   background(0);
 
+  prepareOutput();
+
+  image(my.output, 0, 0);
+}
+
+function prepareOutput() {
   draw_points();
 
   if (my.timedDrawing) {
@@ -113,8 +120,8 @@ function draw_timed() {
       // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;
       // str += ' icycle ' + icycle + ' icolor ' + icolor;
       // console.log(str);
-      stroke(spec.color);
-      strokeWeight(spec.strokeWeight);
+      my.output.stroke(spec.color);
+      my.output.strokeWeight(spec.strokeWeight);
       args.icycle = (args.icycle + 1) % ncolors;
     }
   }
@@ -122,8 +129,8 @@ function draw_timed() {
 }
 
 function draw_to(args) {
-  stroke(args.color);
-  strokeWeight(args.strokeWeight);
+  my.output.stroke(args.color);
+  my.output.strokeWeight(args.strokeWeight);
   let stepper = args.stepper;
   let stopIndex = args.stopIndex;
   let xoffset = args.xoffset;
