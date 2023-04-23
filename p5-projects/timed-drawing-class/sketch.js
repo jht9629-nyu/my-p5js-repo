@@ -4,8 +4,9 @@
 let my = { width: 640, height: 480 };
 
 function my_init() {
+  my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
-  my.xoffset = 300;
+  my.xoffset = my.width / 2;
   my.draw_specs = [
     { color: 'red', strokeWeight: 12 },
     { color: 'green', strokeWeight: 7 },
@@ -60,7 +61,16 @@ function setup() {
   lapse_slider.style('width:50%');
   let valSpan = createSpan(my.lapse + '');
 
+  createElement('br');
+  createSpan('save_label: ');
+
+  createInput(my.save_label).input(function () {
+    my.save_label = this.value();
+    // save_drawing(); // too many saves
+  });
   my.canvas.mouseReleased(canvas_mouseReleased);
+  createButton('save').mousePressed(save_drawing);
+  createButton('load').mousePressed(restore_drawing);
 
   restore_drawing();
 }
@@ -183,7 +193,7 @@ function clearDrawing() {
 
   my.output.clear();
 
-  save_drawings();
+  save_drawing();
 }
 
 function mouseDragged() {
@@ -207,7 +217,7 @@ function canvas_mouseReleased() {
   console.log('canvas_mouseReleased');
   my.points = null;
   startTimedDraw();
-  save_drawings();
+  save_drawing();
 }
 
 function lineFrom(point, prev, xoffset) {
@@ -225,7 +235,7 @@ function formatNumber(num) {
 }
 
 function restore_drawing() {
-  let str = localStorage.getItem('my.drawings');
+  let str = localStorage.getItem(my.save_label);
   if (!str) return;
   console.log('restore_drawing str.length', str.length);
   my.drawings = JSON.parse(str);
@@ -233,11 +243,13 @@ function restore_drawing() {
   console.log('restore_drawing my.npoints', my.npoints);
 }
 
-function save_drawings() {
+function save_drawing() {
   let str = JSON.stringify(my.drawings);
-  localStorage.setItem('my.drawings', str);
-  console.log('save_drawings str.length', str.length);
+  localStorage.setItem(my.save_label, str);
+  console.log('save_drawing str.length', str.length);
 }
+
+// localStorage.clear()
 
 // https://www.buildingh.org
 
