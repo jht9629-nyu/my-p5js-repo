@@ -93,7 +93,8 @@ function draw_timed() {
   let ncolors = my.draw_specs.length;
   let npoints = my.npoints;
   let now = secsTime() - my.startTime;
-  let progress = now / my.lapse;
+  // let progress = now / my.lapse; // take lapse seconds per single drawing
+  let progress = now / (my.lapse / ncolors); // take lapse seconds n drawings
   let stopIndex = int(npoints * progress) % (npoints * ncolors);
   let spec = my.draw_specs[0];
   let args = {
