@@ -1,0 +1,14 @@
+# timed drawing
+
+## TODO
+
+[] local storage prefix text input field
+[] save / load buttons
+
+[] export / import as URL
+
+[] export / import as json file
+
+## Done
+
+[x] mouse events on a_canvas
