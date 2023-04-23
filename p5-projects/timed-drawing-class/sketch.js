@@ -2,6 +2,7 @@
 // timed-drawing
 
 let my = { width: 640, height: 480 };
+// let my = { width: 640 / 2, height: 480 / 2 };
 
 function my_init() {
   my.save_label = 'plea';
@@ -238,13 +239,22 @@ function restore_drawing() {
   let str = localStorage.getItem(my.save_label);
   if (!str) return;
   console.log('restore_drawing str.length', str.length);
-  my.drawings = JSON.parse(str);
+  // my.drawings = JSON.parse(str);
+  let store = JSON.parse(str);
+  my.drawings = store.drawings;
   calc_npoints();
   console.log('restore_drawing my.npoints', my.npoints);
 }
 
 function save_drawing() {
-  let str = JSON.stringify(my.drawings);
+  // let str = JSON.stringify(my.drawings);
+  let store = {
+    label: my.save_drawing,
+    width: my.width,
+    height: my.height,
+    drawings: my.drawings,
+  };
+  let str = JSON.stringify(store);
   localStorage.setItem(my.save_label, str);
   console.log('save_drawing str.length', str.length);
 }
