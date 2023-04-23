@@ -11,7 +11,6 @@ function my_init() {
   ];
   my.draw_color = 'white';
   my.strokeWeight = 10;
-  my.strokeWeightDiff = 3;
   my.run = 1;
   // npoint_limit = 200; // limit number of points in drawing
   my.npoint_limit = 0; // no limit
