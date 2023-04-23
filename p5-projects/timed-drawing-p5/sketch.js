@@ -1,43 +1,46 @@
 // https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-p5
 // timed-drawing
 
-let a_lapse = 5; // seconds to re-draw points
-let a_xoffset = 300;
-let a_draw_specs = [
-  { color: 'red', strokeWeight: 12 },
-  { color: 'green', strokeWeight: 7 },
-  { color: 'yellow', strokeWeight: 2 },
-];
-let a_draw_color = 'white';
-let a_strokeWeight = 10;
-let a_strokeWeightDiff = 3;
-let a_run = 1;
-// let a_npoint_limit = 200; // limit number of points in drawing
-let a_npoint_limit = 0; // no limit
+function my_init() {
+  my.lapse = 5; // seconds to re-draw points
+  my.xoffset = 300;
+  my.draw_specs = [
+    { color: 'red', strokeWeight: 12 },
+    { color: 'green', strokeWeight: 7 },
+    { color: 'yellow', strokeWeight: 2 },
+  ];
+  my.draw_color = 'white';
+  my.strokeWeight = 10;
+  my.strokeWeightDiff = 3;
+  my.run = 1;
+  // npoint_limit = 200; // limit number of points in drawing
+  my.npoint_limit = 0; // no limit
 
-let a_timedDrawing = 0;
-let a_startTime;
+  my.timedDrawing = 0;
+  // my.startTime;
 
-let a_drawings = [];
-let a_drawing_index = 0;
-let a_points = null;
-let a_npoints = 0;
-let a_canvas;
+  my.drawings = [];
+  my.drawing_index = 0;
+  my.points = null;
+  my.npoints = 0;
+  // my.canvas;
+}
 
 let my = { width: 640, height: 480 };
 
 function setup() {
-  a_canvas = createCanvas(my.width, my.height);
+  my_init();
+  my.canvas = createCanvas(my.width, my.height);
   noFill();
 
   let msg = [
     'drag mouse on left side of canvas to create line drawing',
-    'press startTimedDraw to re-draw on right in ' + a_lapse + ' seconds',
+    'press startTimedDraw to re-draw on right in ' + my.lapse + ' seconds',
   ];
   createDiv(msg.join('<br/>'));
 
-  runCheckBox = createCheckbox('Run ', a_run).changed(function () {
-    a_run = this.checked();
+  runCheckBox = createCheckbox('Run ', my.run).changed(function () {
+    my.run = this.checked();
   });
   runCheckBox.style('display:inline;');
 
@@ -48,63 +51,63 @@ function setup() {
   createElement('br');
 
   // createSlider(min, max, oldVal, step)
-  let lapse_slider = createSlider(0, 30, a_lapse).input(function () {
-    a_lapse = this.value();
+  let lapse_slider = createSlider(0, 30, my.lapse).input(function () {
+    my.lapse = this.value();
     // console.log('create_slider aVal ', aVal, 'type', typeof aVal);
-    valSpan.html(formatNumber(a_lapse) + '');
+    valSpan.html(formatNumber(my.lapse) + '');
     startTimedDraw();
   });
   lapse_slider.style('width:50%');
-  let valSpan = createSpan(a_lapse + '');
+  let valSpan = createSpan(my.lapse + '');
 
-  a_canvas.mouseReleased(canvas_mouseReleased);
+  my.canvas.mouseReleased(canvas_mouseReleased);
 
   restore_drawing();
 }
 
 function draw() {
-  if (!a_run) return;
+  if (!my.run) return;
 
   background(0);
 
   draw_points();
 
-  if (a_timedDrawing) {
+  if (my.timedDrawing) {
     draw_timed();
   }
 }
 
 function draw_points() {
   let args = {
-    color: a_draw_color,
-    strokeWeight: a_strokeWeight,
-    stopIndex: a_npoints,
+    color: my.draw_color,
+    strokeWeight: my.strokeWeight,
+    stopIndex: my.npoints,
     xoffset: 0,
   };
   draw_to(args);
 }
 
-// let a_playback_colors = ['red', 'green', 'yellow'];
+// let my.playback_colors = ['red', 'green', 'yellow'];
 
 function draw_timed() {
-  let ncolors = a_draw_specs.length;
-  let npoints = a_npoints;
-  let now = secsTime() - a_startTime;
-  let progress = now / a_lapse;
+  let ncolors = my.draw_specs.length;
+  let npoints = my.npoints;
+  let now = secsTime() - my.startTime;
+  let progress = now / my.lapse;
   let stopIndex = int(npoints * progress) % (npoints * ncolors);
-  let spec = a_draw_specs[0];
+  let spec = my.draw_specs[0];
   let args = {
     color: spec.color,
     strokeWeight: spec.strokeWeight,
     stopIndex: stopIndex,
-    xoffset: a_xoffset,
+    xoffset: my.xoffset,
     stepper: stepper,
     icycle: 0,
   };
   function stepper(ipoint) {
     if (ipoint % npoints == 0) {
       let icycle = args.icycle;
-      let spec = a_draw_specs[icycle];
+      let spec = my.draw_specs[icycle];
       // let str = formatNumber(progress);
       // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;
       // str += ' icycle ' + icycle + ' icolor ' + icolor;
@@ -126,7 +129,7 @@ function draw_to(args) {
   let ipoint = 0;
   while (ipoint < stopIndex) {
     // Draw all points up until stopIndex
-    for (let points of a_drawings) {
+    for (let points of my.drawings) {
       for (let i = 1; i < points.length; i++) {
         if (ipoint > stopIndex) return;
         if (stepper) stepper(ipoint);
@@ -146,30 +149,30 @@ function draw_to(args) {
 
 function startTimedDraw() {
   console.log('startTimedDraw');
-  a_timedDrawing = 1;
-  a_startTime = secsTime();
+  my.timedDrawing = 1;
+  my.startTime = secsTime();
   calc_npoints();
-  console.log('startTimedDraw a_npoints', a_npoints);
+  console.log('startTimedDraw my.npoints', my.npoints);
 }
 
 function calc_npoints() {
-  a_npoints = 0;
-  for (let points of a_drawings) {
-    a_npoints += points.length;
+  my.npoints = 0;
+  for (let points of my.drawings) {
+    my.npoints += points.length;
   }
 }
 
 function stopTimedDraw() {
   console.log('stopTimedDraw');
-  a_timedDrawing = 0;
+  my.timedDrawing = 0;
 }
 
 function clearDrawing() {
   console.log('clearDrawing');
-  a_drawings = [];
-  a_points = null;
-  a_npoints = 0;
-  a_timedDrawing = 0;
+  my.drawings = [];
+  my.points = null;
+  my.npoints = 0;
+  my.timedDrawing = 0;
 }
 
 function mouseDragged() {
@@ -177,21 +180,21 @@ function mouseDragged() {
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
     return;
   }
-  if (a_npoint_limit && a_npoints >= a_npoint_limit) {
-    console.log('mouseDragged a_npoint_limit', a_npoint_limit, 'a_npoints', a_npoints);
+  if (my.npoint_limit && my.npoints >= my.npoint_limit) {
+    console.log('mouseDragged my.npoint_limit', my.npoint_limit, 'my.npoints', my.npoints);
     return;
   }
-  if (!a_points) {
-    a_points = [];
-    a_drawings.push(a_points);
+  if (!my.points) {
+    my.points = [];
+    my.drawings.push(my.points);
   }
-  a_points.push({ x: mouseX, y: mouseY });
-  a_npoints++;
+  my.points.push({ x: mouseX, y: mouseY });
+  my.npoints++;
 }
 
 function canvas_mouseReleased() {
   console.log('canvas_mouseReleased');
-  a_points = null;
+  my.points = null;
   startTimedDraw();
   save_drawings();
 }
@@ -211,20 +214,21 @@ function formatNumber(num) {
 }
 
 function restore_drawing() {
-  let str = localStorage.getItem('a_drawings');
+  let str = localStorage.getItem('my.drawings');
   if (!str) return;
   console.log('restore_drawing str.length', str.length);
-  a_drawings = JSON.parse(str);
+  my.drawings = JSON.parse(str);
   calc_npoints();
-  console.log('restore_drawing a_npoints', a_npoints);
+  console.log('restore_drawing my.npoints', my.npoints);
 }
 
 function save_drawings() {
-  let str = JSON.stringify(a_drawings);
-  localStorage.setItem('a_drawings', str);
+  let str = JSON.stringify(my.drawings);
+  localStorage.setItem('my.drawings', str);
   console.log('save_drawings str.length', str.length);
 }
 
+// convert to my.
 // startTimedDraw as slider changes
 // added a_drawings
 // generalize draw_to
