@@ -239,6 +239,9 @@ function save_drawings() {
   console.log('save_drawings str.length', str.length);
 }
 
+// https://editor.p5js.org/jht9629-nyu/sketches/MbS5C3j-F
+// Necessary-forgery-timed-drawing
+
 // convert to my.
 // startTimedDraw as slider changes
 // added a_drawings
@@ -249,6 +252,7 @@ function save_drawings() {
 // project files created with p5.vscode "Create p5.js Project"
 // https://editor.p5js.org/jht9629-nyu/sketches/-t2O5JfBr
 // timed-drawing
+// !!@ p5.js/0.10.2
 
 // TRY: use storeItem / getItem to save drawing locally
 // https://p5js.org/reference/#/p5/storeItem
