@@ -40,7 +40,7 @@ function setup() {
   ];
   createDiv(msg.join('<br/>'));
 
-  runCheckBox = createCheckbox('Run ', my.run).changed(function () {
+  let runCheckBox = createCheckbox('Run ', my.run).changed(function () {
     my.run = this.checked();
   });
   runCheckBox.style('display:inline;');
