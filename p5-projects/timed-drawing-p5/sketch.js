@@ -1,14 +1,19 @@
-// https://github.com/jht9629-nyu/my-p5js-repo.git
+// https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-p5
 // timed-drawing
 
 let a_lapse = 5; // seconds to re-draw points
 let a_xoffset = 300;
-let a_playback_colors = ['red', 'green', 'yellow'];
+let a_draw_specs = [
+  { color: 'red', strokeWeight: 12 },
+  { color: 'green', strokeWeight: 7 },
+  { color: 'yellow', strokeWeight: 2 },
+];
 let a_draw_color = 'white';
 let a_strokeWeight = 10;
 let a_strokeWeightDiff = 3;
 let a_run = 1;
-let a_npoint_limit = 0;
+// let a_npoint_limit = 200; // limit number of points in drawing
+let a_npoint_limit = 0; // no limit
 
 let a_timedDrawing = 0;
 let a_startTime;
@@ -19,8 +24,10 @@ let a_points = null;
 let a_npoints = 0;
 let a_canvas;
 
+let my = { width: 640, height: 480 };
+
 function setup() {
-  a_canvas = createCanvas(600, 400);
+  a_canvas = createCanvas(my.width, my.height);
   noFill();
 
   let msg = [
@@ -80,15 +87,15 @@ function draw_points() {
 // let a_playback_colors = ['red', 'green', 'yellow'];
 
 function draw_timed() {
-  let ncolors = a_playback_colors.length;
+  let ncolors = a_draw_specs.length;
   let npoints = a_npoints;
   let now = secsTime() - a_startTime;
   let progress = now / a_lapse;
-  // let stopIndex = int(npoints * progress) % (npoints * (ncolors + 1));
   let stopIndex = int(npoints * progress) % (npoints * ncolors);
+  let spec = a_draw_specs[0];
   let args = {
-    color: a_playback_colors[0],
-    strokeWeight: a_strokeWeight,
+    color: spec.color,
+    strokeWeight: spec.strokeWeight,
     stopIndex: stopIndex,
     xoffset: a_xoffset,
     stepper: stepper,
@@ -97,14 +104,13 @@ function draw_timed() {
   function stepper(ipoint) {
     if (ipoint % npoints == 0) {
       let icycle = args.icycle;
-      let icolor = a_playback_colors[icycle];
-      let istrokeWeight = a_strokeWeight - a_strokeWeightDiff * icycle;
+      let spec = a_draw_specs[icycle];
       // let str = formatNumber(progress);
       // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;
       // str += ' icycle ' + icycle + ' icolor ' + icolor;
       // console.log(str);
-      stroke(icolor);
-      strokeWeight(istrokeWeight);
+      stroke(spec.color);
+      strokeWeight(spec.strokeWeight);
       args.icycle = (args.icycle + 1) % ncolors;
     }
   }
@@ -136,10 +142,6 @@ function draw_to(args) {
       break;
     }
   }
-}
-
-function toggleRun() {
-  a_run = !a_run;
 }
 
 function startTimedDraw() {
@@ -188,7 +190,7 @@ function mouseDragged() {
 }
 
 function canvas_mouseReleased() {
-  console.log('mouseReleased');
+  console.log('canvas_mouseReleased');
   a_points = null;
   startTimedDraw();
   save_drawings();

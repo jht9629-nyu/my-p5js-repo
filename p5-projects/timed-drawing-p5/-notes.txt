@@ -2,10 +2,13 @@
 
 ## TODO
 
-- [] local save/restore 1 / 2
-- [] mouse events on a_canvas
+[] local storage prefix text input field
+[] save / load buttons
 
-- [] export / import as URL
+[] export / import as URL
 
-- [] export / import as json file
+[] export / import as json file
 
+## Done
+
+[x] mouse events on a_canvas
