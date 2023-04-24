@@ -31,9 +31,9 @@ function setup() {
 
   drawPoints = new DrawPoints(my);
 
-  ui_init();
-
   drawPoints.restore_drawing();
+
+  ui_init();
 }
 
 function draw() {

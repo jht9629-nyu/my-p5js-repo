@@ -1,6 +1,5 @@
 // Draw points store in array drawings
 class DrawPoints {
-  // this.do_random = 0;
   constructor(props) {
     console.log('DrawPoints props', props);
     Object.assign(this, props);
@@ -32,8 +31,6 @@ class DrawPoints {
     };
     this.draw_to(args);
   }
-
-  // let this.playback_colors = ['red', 'green', 'yellow'];
 
   draw_timed() {
     let ncolors = this.draw_specs.length;
@@ -94,6 +91,10 @@ class DrawPoints {
     }
   }
 
+  lineFrom(point, prev, xoffset) {
+    this.output.line(prev.x + xoffset, prev.y, point.x + xoffset, point.y);
+  }
+
   startTimedDraw() {
     console.log('startTimedDraw');
     this.timedDrawing = 1;
@@ -150,10 +151,6 @@ class DrawPoints {
     let str = JSON.stringify(store);
     localStorage.setItem(this.save_label, str);
     console.log('save_drawing str.length', str.length);
-  }
-
-  lineFrom(point, prev, xoffset) {
-    this.output.line(prev.x + xoffset, prev.y, point.x + xoffset, point.y);
   }
 
   mouseDragged() {
