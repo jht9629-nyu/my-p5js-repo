@@ -12,7 +12,7 @@
 
 - [timed-drawing-p5](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/timed-drawing-p5/)
 
-- [timed-drawing-p5](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/timed-drawing-classes/)
+- [timed-drawing-class](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/timed-drawing-class/)
 
 ## Notes
 
