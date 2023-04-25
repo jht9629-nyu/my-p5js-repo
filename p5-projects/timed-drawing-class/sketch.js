@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 4;
+  my.version = 5;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -20,15 +20,14 @@ function my_init() {
   my.run = 1;
   // npoint_limit = 200; // limit number of points in drawing
   my.npoint_limit = 0; // no limit
-
   my.timedDrawing = 0;
+  my.staticDrawing = 1;
 
   // simple test for mobile phone
   if (window.screen.width < window.screen.height) {
     my.width = window.screen.width;
     my.height = my.width;
     my.xoffset = 0;
-    my.timedDrawing = 1;
   }
 }
 
@@ -111,6 +110,7 @@ function ui_init() {
 function mouseDragged() {
   // console.log('mouseDragged');
   drawPoints.mouseDragged();
+  return true;
 }
 
 function canvas_mouseReleased() {

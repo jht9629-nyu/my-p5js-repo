@@ -13,10 +13,12 @@ class DrawPoints {
   }
 
   prepareOutput() {
-    if (!this.run) return;
-
-    this.draw_points();
-
+    if (!this.run) {
+      return;
+    }
+    if (this.staticDrawing) {
+      this.draw_points();
+    }
     if (this.timedDrawing) {
       this.draw_timed();
     }
@@ -145,6 +147,11 @@ class DrawPoints {
     this.calc_npoints();
     this.output.clear();
     console.log('restore_drawing this.npoints', this.npoints);
+
+    if (nstore) {
+      this.staticDrawing = 0;
+      this.startTimedDraw();
+    }
   }
 
   save_drawing(url) {
