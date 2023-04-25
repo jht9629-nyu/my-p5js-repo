@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 7;
+  my.version = 8;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -155,6 +155,7 @@ function params_query(query) {
 function prevent_scrolling() {
   document.querySelector('body').addEventListener('wheel', preventScroll, { passive: false });
   function preventScroll(e) {
+    console.log('preventScroll');
     e.preventDefault();
     e.stopPropagation();
     return false;
