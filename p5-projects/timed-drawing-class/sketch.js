@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 10;
+  my.version = 11;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -120,7 +120,7 @@ function mouseDragged() {
 function touchStarted(event) {
   console.log('touchStarted event', event);
   // prevent default
-  return false;
+  // return false; // stops buttons on google Pixel phone
 }
 
 function touchEnded() {
