@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 9;
+  my.version = 10;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -107,12 +107,36 @@ function ui_init() {
   });
 
   my.canvas.mouseReleased(canvas_mouseReleased);
+  my.canvas.touchEnded(canvas_touchEnded);
+  my.canvas.touchStarted(canvas_touchStarted);
 }
 
 function mouseDragged() {
   // console.log('mouseDragged');
   drawPoints.mouseDragged();
-  return true;
+  return false;
+}
+
+function touchStarted(event) {
+  console.log('touchStarted event', event);
+  // prevent default
+  return false;
+}
+
+function touchEnded() {
+  console.log('touchEnded');
+  drawPoints.mouseReleased();
+}
+
+function canvas_touchStarted() {
+  console.log('canvas_touchStarted');
+  // prevent default
+  return false;
+}
+
+function canvas_touchEnded() {
+  console.log('canvas_touchEnded');
+  drawPoints.mouseReleased();
 }
 
 function canvas_mouseReleased() {
