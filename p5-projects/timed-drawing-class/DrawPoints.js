@@ -134,6 +134,7 @@ class DrawPoints {
     console.log('restore_drawing str.length', str.length);
     // this.drawings = JSON.parse(str);
     let store = JSON.parse(str);
+    this.expand_drawings(store);
     this.drawings = store.drawings;
     this.calc_npoints();
     this.output.clear();
@@ -141,16 +142,56 @@ class DrawPoints {
   }
 
   save_drawing() {
-    // let str = JSON.stringify(this.drawings);
     let store = {
       label: this.save_drawing,
       width: this.width,
       height: this.height,
       drawings: this.drawings,
     };
+    this.shrink_drawings(store);
     let str = JSON.stringify(store);
     localStorage.setItem(this.save_label, str);
     console.log('save_drawing str.length', str.length);
+    // Report full string size. Typically %50 more
+    let full = JSON.stringify(this.drawings);
+    console.log('save_drawing full.length', full.length);
+  }
+
+  // Transform drawings to delta array to save space
+  // [{x: x0, y: y0}, {x: x1, y: y1}, {x: x2, y: y2} ...]
+  //  --> [[x0, y0, [x1-x0, y1-y0], [x2-x0, y2-y0] ...]]
+  shrink_drawings(store) {
+    let x0;
+    let y0;
+    let d = store.drawings.map((arr) => {
+      return arr.map((item, index) => {
+        if (index == 0) {
+          x0 = item.x;
+          y0 = item.y;
+          return [x0, y0];
+        }
+        return [item.x - x0, item.y - y0];
+      });
+    });
+    store.version = 1;
+    store.drawings = d;
+  }
+
+  expand_drawings(store) {
+    if (!store.version) return;
+    let x0;
+    let y0;
+    let d = store.drawings.map((arr) => {
+      return arr.map((item, index) => {
+        if (index == 0) {
+          x0 = item[0];
+          y0 = item[1];
+          return { x: x0, y: y0 };
+        }
+        return { x: item[0] + x0, y: item[1] + y0 };
+      });
+    });
+    store.drawings = d;
   }
 
   mouseDragged() {
