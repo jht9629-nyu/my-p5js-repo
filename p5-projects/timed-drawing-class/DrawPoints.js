@@ -128,8 +128,14 @@ class DrawPoints {
     // this.save_drawing();
   }
 
-  restore_drawing() {
-    let str = localStorage.getItem(this.save_label);
+  restore_drawing(nstore) {
+    // console.log('restore_drawing nstore |' + nstore + '|');
+    let str;
+    if (nstore) {
+      str = nstore;
+    } else {
+      str = localStorage.getItem(this.save_label);
+    }
     if (!str) return;
     console.log('restore_drawing str.length', str.length);
     // this.drawings = JSON.parse(str);
@@ -141,20 +147,29 @@ class DrawPoints {
     console.log('restore_drawing this.npoints', this.npoints);
   }
 
-  save_drawing() {
+  save_drawing(url) {
     let store = {
       label: this.save_drawing,
       width: this.width,
       height: this.height,
       drawings: this.drawings,
     };
+
     this.shrink_drawings(store);
+
     let str = JSON.stringify(store);
     localStorage.setItem(this.save_label, str);
     console.log('save_drawing str.length', str.length);
+
+    if (url) {
+      let url = new URL(window.location.href);
+      url.search = '?store=' + encodeURIComponent(str);
+      console.log(url.href);
+      window.location = url.href;
+    }
     // Report full string size. Typically %50 more
-    let full = JSON.stringify(this.drawings);
-    console.log('save_drawing full.length', full.length);
+    // let full = JSON.stringify(this.drawings);
+    // console.log('save_drawing full.length', full.length);
   }
 
   // Transform drawings to delta array to save space
