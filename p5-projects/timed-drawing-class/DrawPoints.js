@@ -156,7 +156,8 @@ class DrawPoints {
 
   save_drawing(url) {
     let store = {
-      label: this.save_drawing,
+      version: 2,
+      label: this.save_label,
       width: this.width,
       height: this.height,
       drawings: this.drawings,
@@ -195,7 +196,6 @@ class DrawPoints {
         return [item.x - x0, item.y - y0];
       });
     });
-    store.version = 1;
     store.drawings = d;
   }
 

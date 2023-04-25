@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 6;
+  my.version = 7;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -42,6 +42,8 @@ function setup() {
   drawPoints.restore_drawing(nstore);
 
   ui_init();
+
+  prevent_scrolling();
 }
 
 function draw() {
@@ -149,6 +151,15 @@ function params_query(query) {
   return params;
 }
 
+// https://alvarotrigo.com/blog/prevent-scroll-on-scrollable-element-js/
+function prevent_scrolling() {
+  document.querySelector('body').addEventListener('wheel', preventScroll, { passive: false });
+  function preventScroll(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+}
 // localStorage.clear()
 
 // https://www.buildingh.org
