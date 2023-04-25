@@ -141,7 +141,13 @@ class DrawPoints {
     if (!str) return;
     console.log('restore_drawing str.length', str.length);
     // this.drawings = JSON.parse(str);
-    let store = JSON.parse(str);
+    let store;
+    try {
+      store = JSON.parse(str);
+    } catch (err) {
+      console.log('restore_drawing parse err', err);
+      return;
+    }
     this.expand_drawings(store);
     this.drawings = store.drawings;
     this.calc_npoints();
@@ -149,6 +155,7 @@ class DrawPoints {
     console.log('restore_drawing this.npoints', this.npoints);
 
     if (nstore) {
+      this.xoffset = 0;
       this.staticDrawing = 0;
       this.startTimedDraw();
     }
