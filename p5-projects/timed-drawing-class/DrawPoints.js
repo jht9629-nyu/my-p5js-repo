@@ -224,6 +224,8 @@ class DrawPoints {
   }
 
   mouseDragged() {
+    this.staticDrawing = 1;
+
     if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
       return;
     }

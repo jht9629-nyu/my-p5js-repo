@@ -2,13 +2,15 @@
 
 ## TODO
 
-[] local storage prefix text input field
-[] save / load buttons
-
-[] export / import as URL
-
 [] export / import as json file
 
 ## Done
+
+2023-04-25 15:20:51
+
+[x] local storage prefix text input field
+[x] save / load buttons
+[x] export / import as URL
+
 
 [x] mouse events on a_canvas
