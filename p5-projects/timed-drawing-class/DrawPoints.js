@@ -237,11 +237,16 @@ class DrawPoints {
       this.points = [];
       this.drawings.push(this.points);
     }
-    this.points.push({ x: mouseX, y: mouseY });
+    let x = int(mouseX);
+    let y = int(mouseY);
+    this.points.push({ x, y });
     this.npoints++;
   }
 
+  // Save current drawing and prepare for next group of points
   mouseReleased() {
+    console.log('DrawPoints mouseReleased');
+    // null points will start fresh point array
     this.points = null;
     this.startTimedDraw();
     this.save_drawing();
