@@ -130,23 +130,34 @@ class DrawPoints {
     // this.save_drawing();
   }
 
-  restore_drawing(nstore) {
+  restore_drawing(urlParams) {
     // console.log('restore_drawing nstore |' + nstore + '|');
-    let str;
-    if (nstore) {
-      str = nstore;
-    } else {
-      str = localStorage.getItem(this.save_label);
-    }
-    if (!str) return;
-    console.log('restore_drawing str.length', str.length);
-    // this.drawings = JSON.parse(str);
     let store;
-    try {
-      store = JSON.parse(str);
-    } catch (err) {
-      console.log('restore_drawing parse err', err);
-      return;
+    if (urlParams) {
+      store = { drawings: [] };
+      if (urlParams.drawings) {
+        let dstr = expand_decode(urlParams.drawings);
+        try {
+          store.drawings = JSON.parse(dstr);
+        } catch (err) {
+          console.log('restore_drawing drawings parse err', err);
+          return;
+        }
+      }
+      if (urlParams.save_label) {
+        this.save_label = urlParams.save_label;
+      }
+    } else {
+      let str = localStorage.getItem(this.save_label);
+      if (!str) return;
+      console.log('restore_drawing str.length', str.length);
+      // this.drawings = JSON.parse(str);
+      try {
+        store = JSON.parse(str);
+      } catch (err) {
+        console.log('restore_drawing parse err', err);
+        return;
+      }
     }
     this.expand_drawings(store);
     this.drawings = store.drawings;
@@ -154,7 +165,7 @@ class DrawPoints {
     this.output.clear();
     console.log('restore_drawing this.npoints', this.npoints);
 
-    if (nstore) {
+    if (urlParams) {
       this.xoffset = 0;
       this.staticDrawing = 0;
       this.startTimedDraw();
@@ -163,8 +174,8 @@ class DrawPoints {
 
   save_drawing(url) {
     let store = {
-      version: 2,
-      label: this.save_label,
+      version: 3,
+      // label: this.save_label,
       width: this.width,
       height: this.height,
       drawings: this.drawings,
@@ -178,7 +189,14 @@ class DrawPoints {
 
     if (url) {
       let url = new URL(window.location.href);
-      url.search = '?store=' + encodeURIComponent(str);
+      // url.search = '?store=' + encodeURIComponent(str);
+      let str = '?label=' + encodeURIComponent(this.save_label);
+      str += '&version=' + encodeURIComponent(store.version + '');
+      str += '&width=' + encodeURIComponent(store.width + '');
+      str += '&height=' + encodeURIComponent(store.height + '');
+      let dstr = JSON.stringify(store.drawings);
+      str += '&drawings=' + shrink_encode(dstr);
+      url.search = str;
       console.log(url.href);
       window.location = url.href;
     }
@@ -187,14 +205,14 @@ class DrawPoints {
     // console.log('save_drawing full.length', full.length);
   }
 
-  // Transform drawings to delta array to save space
+  // Transform drawings to delta array to save on stringify length
   // [{x: x0, y: y0}, {x: x1, y: y1}, {x: x2, y: y2} ...]
-  //  --> [[x0, y0, [x1-x0, y1-y0], [x2-x0, y2-y0] ...]]
+  //  --> [x0, y0, x1-x0, y1-y0, x2-x0, y2-y0 ...]
   shrink_drawings(store) {
     let x0;
     let y0;
     let d = store.drawings.map((arr) => {
-      return arr.map((item, index) => {
+      return arr.flatMap((item, index) => {
         if (index == 0) {
           x0 = item.x;
           y0 = item.y;
@@ -207,18 +225,21 @@ class DrawPoints {
   }
 
   expand_drawings(store) {
-    if (!store.version) return;
+    // if (!store.version) return;
     let x0;
     let y0;
     let d = store.drawings.map((arr) => {
-      return arr.map((item, index) => {
+      let narr = [];
+      for (let index = 0; index < arr.length; index += 2) {
         if (index == 0) {
-          x0 = item[0];
-          y0 = item[1];
-          return { x: x0, y: y0 };
+          x0 = arr[0];
+          y0 = arr[1];
+          narr.push({ x: x0, y: y0 });
+        } else {
+          narr.push({ x: arr[index] + x0, y: arr[index + 1] + y0 });
         }
-        return { x: item[0] + x0, y: item[1] + y0 };
-      });
+      }
+      return narr;
     });
     store.drawings = d;
   }
@@ -251,4 +272,43 @@ class DrawPoints {
     this.startTimedDraw();
     this.save_drawing();
   }
+}
+
+// ABCDEFGHILKMNOPQRTSTUVWXYZ
+// {}[]:,"+
+
+let char0_index = 'A'.charCodeAt(0);
+// let encode_chars = '{}[]:,"+';
+let encode_chars = '[],:"+{}';
+let encode_dict = {};
+let decode_dict = {};
+for (let index = 0; index < encode_chars.length; index++) {
+  let ch1 = encode_chars[index];
+  let ch2 = String.fromCharCode(index + char0_index);
+  encode_dict[ch1] = ch2;
+  decode_dict[ch2] = ch1;
+}
+
+function shrink_encode(str) {
+  let nstr = '';
+  let nch;
+  for (let ch of str) {
+    nch = encode_dict[ch];
+    if (!nch) nch = ch;
+    nstr += nch;
+  }
+  // console.log('shrink_encode nstr', nstr);
+  return nstr;
+}
+
+function expand_decode(str) {
+  let nstr = '';
+  let nch;
+  for (let ch of str) {
+    nch = decode_dict[ch];
+    if (!nch) nch = ch;
+    nstr += nch;
+  }
+  // console.log('expand_decode nstr', nstr);
+  return nstr;
 }

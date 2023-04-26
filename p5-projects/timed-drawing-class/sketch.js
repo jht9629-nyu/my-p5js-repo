@@ -6,7 +6,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 12;
+  my.version = 13;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -38,12 +38,12 @@ function setup() {
 
   drawPoints = new DrawPoints(my);
 
-  let nstore = check_url_param();
-  drawPoints.restore_drawing(nstore);
+  let urlParams = get_url_params();
+  drawPoints.restore_drawing(urlParams);
 
   ui_init();
 
-  prevent_scrolling();
+  // prevent_scrolling();
 }
 
 function draw() {
@@ -155,15 +155,16 @@ function formatNumber(num) {
 }
 
 //
-function check_url_param() {
+function get_url_params() {
   let query = window.location.search;
   // console.log('query |' + query + '|');
   console.log('query.length', query.length);
   if (query.length < 1) return null;
   let params = params_query(query);
-  let store = params['store'];
+  return params;
+  // let store = params['store'];
   // console.log('nstore', store);
-  return store;
+  // return store;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
