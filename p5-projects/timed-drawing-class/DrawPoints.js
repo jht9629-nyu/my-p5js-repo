@@ -98,7 +98,7 @@ class DrawPoints {
   }
 
   startTimedDraw() {
-    console.log('startTimedDraw');
+    // console.log('startTimedDraw');
     this.timedDrawing = 1;
     this.startTime = secsTime();
     this.calc_npoints();
@@ -134,30 +134,9 @@ class DrawPoints {
     // console.log('restore_drawing nstore |' + nstore + '|');
     let store;
     if (urlParams) {
-      store = { drawings: [] };
-      if (urlParams.drawings) {
-        let dstr = expand_decode(urlParams.drawings);
-        try {
-          store.drawings = JSON.parse(dstr);
-        } catch (err) {
-          console.log('restore_drawing drawings parse err', err);
-          return;
-        }
-      }
-      if (urlParams.save_label) {
-        this.save_label = urlParams.save_label;
-      }
+      store = this.restore_urlParams(urlParams);
     } else {
-      let str = localStorage.getItem(this.save_label);
-      if (!str) return;
-      console.log('restore_drawing str.length', str.length);
-      // this.drawings = JSON.parse(str);
-      try {
-        store = JSON.parse(str);
-      } catch (err) {
-        console.log('restore_drawing parse err', err);
-        return;
-      }
+      store = this.restore_localStorage();
     }
     this.expand_drawings(store);
     this.drawings = store.drawings;
@@ -170,6 +149,38 @@ class DrawPoints {
       this.staticDrawing = 0;
       this.startTimedDraw();
     }
+  }
+
+  restore_urlParams(urlParams) {
+    let store = { drawings: [] };
+    if (urlParams.drawings) {
+      let str = expand_decode(urlParams.drawings);
+      try {
+        store.drawings = JSON.parse(str);
+      } catch (err) {
+        console.log('restore_drawing drawings parse err', err);
+        return;
+      }
+    }
+    if (urlParams.save_label) {
+      this.save_label = urlParams.save_label;
+    }
+    return store;
+  }
+
+  restore_localStorage() {
+    let store;
+    let str = localStorage.getItem(this.save_label);
+    if (!str) return;
+    console.log('restore_drawing str.length', str.length);
+    // this.drawings = JSON.parse(str);
+    try {
+      store = JSON.parse(str);
+    } catch (err) {
+      console.log('restore_drawing parse err', err);
+      return;
+    }
+    return store;
   }
 
   save_drawing(url) {
@@ -203,6 +214,13 @@ class DrawPoints {
     // Report full string size. Typically %50 more
     // let full = JSON.stringify(this.drawings);
     // console.log('save_drawing full.length', full.length);
+  }
+
+  clear_url() {
+    let index = window.location.href.indexOf('?');
+    if (index < 0) return;
+    let nhref = window.location.href.substring(0, index);
+    location.replace(nhref);
   }
 
   // Transform drawings to delta array to save on stringify length

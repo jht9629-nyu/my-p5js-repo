@@ -105,6 +105,9 @@ function ui_init() {
   createButton('save_url').mousePressed(function () {
     drawPoints.save_drawing({ url: 1 });
   });
+  createButton('clear_url').mousePressed(function () {
+    drawPoints.clear_url();
+  });
 
   my.canvas.mouseReleased(canvas_mouseReleased);
   my.canvas.touchEnded(canvas_touchEnded);
@@ -118,13 +121,13 @@ function mouseDragged() {
 }
 
 function touchStarted(event) {
-  console.log('touchStarted event', event);
+  // console.log('touchStarted event', event);
   // prevent default
   // return false; // stops buttons on google Pixel phone
 }
 
 function touchEnded() {
-  console.log('touchEnded');
+  // console.log('touchEnded');
   // drawPoints.mouseReleased();
 }
 
@@ -135,12 +138,12 @@ function canvas_touchStarted() {
 }
 
 function canvas_touchEnded() {
-  console.log('canvas_touchEnded');
+  // console.log('canvas_touchEnded');
   drawPoints.mouseReleased();
 }
 
 function canvas_mouseReleased() {
-  console.log('canvas_mouseReleased');
+  // console.log('canvas_mouseReleased');
   drawPoints.mouseReleased();
 }
 
