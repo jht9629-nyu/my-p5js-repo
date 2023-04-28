@@ -1,5 +1,5 @@
-let aVersion = '2023-04-09-010';
-let imgQRPath = 'https://jht1493.net/p5VideoKit/stage/qrcode3/qrcode3.png';
+let aVersion = '2023-04-09-011';
+let imgQRPath = 'https://jht1493.net/p5VideoKit/stage/qrcode2/qrcode2.png';
 let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 // let dim = { width: 360, height: 640 };
 let dim = { width: 888 / 2, height: 1920 / 2 };
