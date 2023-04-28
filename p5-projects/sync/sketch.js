@@ -1,4 +1,5 @@
-let aVersion = '2023-04-09-008';
+let aVersion = '2023-04-09-009';
+let imgQRPath = 'https://jht1493.net/p5VideoKit/stage/qrcode3/';
 let mediaPath = '../media/rusty/MEHQE5386.MOV'; // Shindy Melani Johnson
 // let dim = { width: 360, height: 640 };
 let dim = { width: 888 / 2, height: 1920 / 2 };
@@ -61,8 +62,8 @@ function setup() {
   playBtn.style('font-size:88px');
 
   // p5-projects/media/qr/qrcode_jht9629-nyu.github.io.png
-  let imgPath = '../media-live/qr/qrcode_jht9629-nyu.github.io.png';
-  let img = createImg(imgPath, 'text');
+  // let imgPath = '../media-live/qr/qrcode_jht9629-nyu.github.io.png';
+  let img = createImg(imgQRPath, 'text');
   // div.child(img);
 }
 
