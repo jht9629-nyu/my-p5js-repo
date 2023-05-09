@@ -1,12 +1,13 @@
 // https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-class
 // timed-drawing
+// my.version update required here and in index.html ?v=xx to see github pages update
 
 let my = { width: 640, height: 480 };
 // let my = { width: 640 / 2, height: 480 / 2 };
 let drawPoints;
 
 function my_init() {
-  my.version = 14;
+  my.version = 16;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -117,7 +118,7 @@ function ui_init() {
 function mouseDragged() {
   // console.log('mouseDragged');
   drawPoints.mouseDragged();
-  return false;
+  // return false; // v=16
 }
 
 function touchStarted(event) {
