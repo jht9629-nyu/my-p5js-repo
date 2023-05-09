@@ -7,7 +7,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 18;
+  my.version = 19;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -111,7 +111,7 @@ function ui_init() {
   });
 
   my.canvas.mouseReleased(canvas_mouseReleased);
-  my.canvas.touchEnded(canvas_touchEnded);
+  // my.canvas.touchEnded(canvas_touchEnded);
   // my.canvas.touchStarted(canvas_touchStarted); // my.version = 14;
 }
 
@@ -121,32 +121,32 @@ function mouseDragged() {
   return false; // required to prevent touch drag moving canvas on mobile
 }
 
-function touchStarted(event) {
-  // console.log('touchStarted event', event);
-  // prevent default
-  // return false; // stops buttons on google Pixel phone
-}
-
-function touchEnded() {
-  // console.log('touchEnded');
-  // drawPoints.mouseReleased();
-}
-
-function canvas_touchStarted() {
-  console.log('canvas_touchStarted');
-  // prevent default
-  return false;
-}
-
-function canvas_touchEnded() {
-  // console.log('canvas_touchEnded');
-  drawPoints.mouseReleased();
-}
-
 function canvas_mouseReleased() {
   // console.log('canvas_mouseReleased');
   drawPoints.mouseReleased();
 }
+
+// function touchStarted(event) {
+//   // console.log('touchStarted event', event);
+//   // prevent default
+//   // return false; // stops buttons on google Pixel phone
+// }
+
+// function touchEnded() {
+//   // console.log('touchEnded');
+//   // drawPoints.mouseReleased();
+// }
+
+// function canvas_touchStarted() {
+//   console.log('canvas_touchStarted');
+//   // prevent default
+//   return false;
+// }
+
+// function canvas_touchEnded() {
+//   // console.log('canvas_touchEnded');
+//   drawPoints.mouseReleased();
+// }
 
 // return seconds since start of sketch
 function secsTime() {
