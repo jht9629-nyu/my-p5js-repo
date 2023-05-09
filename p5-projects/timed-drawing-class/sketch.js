@@ -7,7 +7,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 19;
+  my.version = 20;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -44,7 +44,9 @@ function setup() {
 
   ui_init();
 
-  // prevent_scrolling();
+  my.canvas.mouseReleased(canvas_mouseReleased);
+  // my.canvas.touchEnded(canvas_touchEnded);
+  // my.canvas.touchStarted(canvas_touchStarted); // my.version = 14;
 }
 
 function draw() {
@@ -55,6 +57,16 @@ function draw() {
   image(drawPoints.output, 0, 0);
 }
 
+function mouseDragged() {
+  // console.log('mouseDragged');
+  drawPoints.mouseDragged();
+  return false; // required to prevent touch drag moving canvas on mobile
+}
+
+function canvas_mouseReleased() {
+  // console.log('canvas_mouseReleased');
+  drawPoints.mouseReleased();
+}
 function ui_init() {
   let msg = [
     '(' + my.version + ') drag mouse on left side of canvas to create line drawing',
@@ -109,21 +121,6 @@ function ui_init() {
   createButton('clear_url').mousePressed(function () {
     drawPoints.clear_url();
   });
-
-  my.canvas.mouseReleased(canvas_mouseReleased);
-  // my.canvas.touchEnded(canvas_touchEnded);
-  // my.canvas.touchStarted(canvas_touchStarted); // my.version = 14;
-}
-
-function mouseDragged() {
-  // console.log('mouseDragged');
-  drawPoints.mouseDragged();
-  return false; // required to prevent touch drag moving canvas on mobile
-}
-
-function canvas_mouseReleased() {
-  // console.log('canvas_mouseReleased');
-  drawPoints.mouseReleased();
 }
 
 // function touchStarted(event) {
@@ -180,6 +177,7 @@ function params_query(query) {
   return params;
 }
 
+// prevent_scrolling(); !!@ Not used
 // https://alvarotrigo.com/blog/prevent-scroll-on-scrollable-element-js/
 function prevent_scrolling() {
   document.querySelector('body').addEventListener('wheel', preventScroll, { passive: false });
