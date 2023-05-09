@@ -7,7 +7,7 @@ let my = { width: 640, height: 480 };
 let drawPoints;
 
 function my_init() {
-  my.version = 16;
+  my.version = 17;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -118,7 +118,7 @@ function ui_init() {
 function mouseDragged() {
   // console.log('mouseDragged');
   drawPoints.mouseDragged();
-  // return false; // v=16
+  return false; // required to prevent touch drag moving canvas on mobile
 }
 
 function touchStarted(event) {
