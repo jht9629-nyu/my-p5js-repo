@@ -14,6 +14,8 @@
 
 - [timed-drawing-class](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/timed-drawing-class/?v=4)
 
+- [Simple-Draw](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/Simple-Draw/?v=4)
+
 ## Notes
 
 ```
