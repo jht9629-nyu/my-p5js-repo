@@ -2,12 +2,11 @@
 // timed-drawing
 // my.version update required here and in index.html ?v=xx to see github pages update
 
-let my = { width: 640, height: 480 };
+let my = { version: 21, width: 640, height: 480 };
 // let my = { width: 640 / 2, height: 480 / 2 };
 let drawPoints;
 
 function my_init() {
-  my.version = 20;
   my.save_label = 'plea';
   my.lapse = 5; // seconds to re-draw points
   my.xoffset = my.width / 2;
@@ -45,16 +44,8 @@ function setup() {
   ui_init();
 
   my.canvas.mouseReleased(canvas_mouseReleased);
-  // my.canvas.touchEnded(canvas_touchEnded);
+  my.canvas.touchEnded(canvas_touchEnded);
   // my.canvas.touchStarted(canvas_touchStarted); // my.version = 14;
-}
-
-function draw() {
-  background(0);
-
-  drawPoints.prepareOutput();
-
-  image(drawPoints.output, 0, 0);
 }
 
 function mouseDragged() {
@@ -67,6 +58,25 @@ function canvas_mouseReleased() {
   // console.log('canvas_mouseReleased');
   drawPoints.mouseReleased();
 }
+
+function canvas_touchEnded() {
+  // console.log('canvas_touchEnded');
+  drawPoints.mouseReleased();
+}
+
+// function touchEnded() {
+//   // console.log('touchEnded');
+//   drawPoints.mouseReleased();
+// }
+
+function draw() {
+  background(0);
+
+  drawPoints.prepareOutput();
+
+  image(drawPoints.output, 0, 0);
+}
+
 function ui_init() {
   let msg = [
     '(' + my.version + ') drag mouse on left side of canvas to create line drawing',
@@ -129,20 +139,10 @@ function ui_init() {
 //   // return false; // stops buttons on google Pixel phone
 // }
 
-// function touchEnded() {
-//   // console.log('touchEnded');
-//   // drawPoints.mouseReleased();
-// }
-
 // function canvas_touchStarted() {
 //   console.log('canvas_touchStarted');
 //   // prevent default
 //   return false;
-// }
-
-// function canvas_touchEnded() {
-//   // console.log('canvas_touchEnded');
-//   drawPoints.mouseReleased();
 // }
 
 // return seconds since start of sketch
