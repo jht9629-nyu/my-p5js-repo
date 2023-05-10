@@ -6,7 +6,7 @@
 
 ## Links
 
-- [video-meter-rgb-tall v15](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall?v=15)
+- [video-meter-rgb-tall v=16](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall?v=16)
 
 - [p5-projects/sync pages](https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/sync/)
 
