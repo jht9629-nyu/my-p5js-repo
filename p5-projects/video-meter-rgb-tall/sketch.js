@@ -1,6 +1,8 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni
 // video meter rgb tall
 
+// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
+
 let my = { version: 10, width: 640, height: 480, vscale: 4, cscale: 64 };
 
 function setup() {
