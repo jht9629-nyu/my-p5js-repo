@@ -3,7 +3,7 @@
 
 // https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
 
-let my = { version: 18, width: 640, height: 480, vscale: 4, cscale: 64 };
+let my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };
 
 function setup() {
   // simple test for mobile phone
