@@ -1,7 +1,12 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/oVJEGvodF
 // Simple Draw
 // issue: on mobile device drags entire window
+//  ok on Google Pixel 3a XL
+//  fails iPhone Safari and Chrome
 // tried style: overflow-y: hidden;
+
+// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/Simple-Draw/?v=4
+//  ok on iPhone Safari and Chrome
 
 var aCanv;
 
@@ -20,10 +25,8 @@ function setup() {
   createDiv('Version:' + my.version);
   // createDiv('JHT is here 9').elt.appendChild(aCanv.elt)
 
-  strokeWeight(10);
+  strokeWeight(20);
   stroke(0);
-
-  //aCanv.mouseMoved(touchMoved2)
 
   let url = 'Simple-Draw.png';
   createImg(url, 'Draw');
