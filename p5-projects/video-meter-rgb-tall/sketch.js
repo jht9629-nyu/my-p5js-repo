@@ -3,7 +3,7 @@
 
 // https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
 
-let my = { version: 12, width: 640, height: 480, vscale: 4, cscale: 64 };
+let my = { version: 13, width: 640, height: 480, vscale: 4, cscale: 64 };
 
 function setup() {
   // simple test for mobile phone
@@ -19,7 +19,7 @@ function setup() {
   let vheight = my.height / my.vscale;
   console.log('vwidth', vwidth, 'vheight', vheight);
 
-  my.video = createCapture(VIDEO, videoLoadedFunc);
+  my.video = createCapture(VIDEO);
   my.video.size(vwidth, vheight);
   my.video.hide();
 
@@ -31,14 +31,13 @@ function setup() {
   createDiv('Version:' + my.version);
 }
 
-function videoLoadedFunc() {
-  my.videoLoaded = 1;
+function videoIsReady() {
+  return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;
 }
 
 function draw() {
-  if (!my.videoLoaded) {
-    return;
-  }
+  if (!videoIsReady()) return;
+
   let vwidth = my.video.width;
   let vheight = my.video.height;
 
