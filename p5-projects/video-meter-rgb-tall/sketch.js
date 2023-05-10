@@ -3,14 +3,13 @@
 
 // https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
 
-let my = { version: 17, width: 640, height: 480, vscale: 4, cscale: 64 };
+let my = { version: 18, width: 640, height: 480, vscale: 4, cscale: 64 };
 
 function setup() {
   // simple test for mobile phone
   if (window.screen.width < window.screen.height) {
     my.width = window.screen.width;
     my.height = window.screen.height;
-    my.vscale = 1;
   }
 
   createCanvas(my.width, my.height);
