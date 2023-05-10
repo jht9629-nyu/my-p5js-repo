@@ -2,7 +2,7 @@
   {
     "name": "03-jht-hatviz",
     "_id": "7hzeHDSIl",
-    "updatedAt": "2023-04-06T21:26:53.342Z",
+    "updatedAt": "2023-04-09T01:41:50.719Z",
     "files": [
       {
         "name": "root",
@@ -14,20 +14,20 @@
         ],
         "fileType": "folder",
         "_id": "642f34b75b11d919d026a649",
-        "createdAt": "2023-04-06T21:26:53.342Z",
-        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "createdAt": "2023-04-09T01:41:50.719Z",
+        "updatedAt": "2023-04-09T01:41:50.719Z",
         "isSelectedFile": false,
         "id": "642f34b75b11d919d026a649"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/7hzeHDSIl\n// 03-jht hatviz\n// https://github.com/isohedral/hatviz\n// https://cs.uwaterloo.ca/~csk/hat/\n\nconst r3 = 1.7320508075688772;\nconst hr3 = 0.8660254037844386;\nconst ident = [1,0,0,0,1,0];\n\nlet to_screen = [20, 0, 0, 0, -20, 0];\nlet lw_scale = 1;\nlet tiles;\nlet level;\n\nlet scale_centre;\nlet scale_start;\nlet scale_ts;\n\nlet reset_button;\nlet subst_button;\nlet translate_button;\nlet scale_button;\nlet draw_hats;\nlet draw_super;\nlet radio;\nlet cp_h1;\nlet cp_h;\nlet cp_t;\nlet cp_p;\nlet cp_f;\nlet dragging = false;\nlet uibox = true;\nlet box_height = 10;\n\nlet H1_hat;\nlet H_hat;\nlet T_hat;\nlet P_hat;\nlet F_hat;\n\nlet svg_serial = 0;\nlet h1_color = [0, 137, 212];\nlet h_color = [148, 205, 235];\nlet t_color = [251, 251, 251];\nlet p_color = [250, 250, 250];\nlet f_color = [191, 191, 191];\n\nfunction color2rgb(c)\n{\n\treturn [c.levels[0], c.levels[1], c.levels[2]];\n}\nfunction set_h1_color()\n{\n\tH1_hat.fill = color2rgb(cp_h1.color());\n}\nfunction set_h_color()\n{\n\tH_hat.fill = color2rgb(cp_h.color());\n}\nfunction set_t_color()\n{\n\tT_hat.fill = color2rgb(cp_t.color());\n}\nfunction set_p_color()\n{\n\tP_hat.fill = color2rgb(cp_p.color());\n}\nfunction set_f_color()\n{\n\tF_hat.fill = color2rgb(cp_f.color());\n}\n\nfunction pt( x, y )\n{\n\treturn { x : x, y : y };\n}\n\nfunction hexPt( x, y )\n{\n\treturn pt( x + 0.5*y, hr3*y );\n}\n\n// Affine matrix inverse\nfunction inv( T ) {\n\tconst det = T[0]*T[4] - T[1]*T[3];\n\treturn [T[4]/det, -T[1]/det, (T[1]*T[5]-T[2]*T[4])/det,\n\t\t-T[3]/det, T[0]/det, (T[2]*T[3]-T[0]*T[5])/det];\n};\n\n// Affine matrix multiply\nfunction mul( A, B )\n{\n\treturn [A[0]*B[0] + A[1]*B[3], \n\t\tA[0]*B[1] + A[1]*B[4],\n\t\tA[0]*B[2] + A[1]*B[5] + A[2],\n\n\t\tA[3]*B[0] + A[4]*B[3], \n\t\tA[3]*B[1] + A[4]*B[4],\n\t\tA[3]*B[2] + A[4]*B[5] + A[5]];\n}\n\nfunction padd( p, q )\n{\n\treturn { x : p.x + q.x, y : p.y + q.y };\n}\n\nfunction psub( p, q )\n{\n\treturn { x : p.x - q.x, y : p.y - q.y };\n}\n\n// Rotation matrix\nfunction trot( ang )\n{\n\tconst c = cos( ang );\n\tconst s = sin( ang );\n\treturn [c, -s, 0, s, c, 0];\n}\n\n// Translation matrix\nfunction ttrans( tx, ty )\n{\n\treturn [1, 0, tx, 0, 1, ty];\n}\n\nfunction rotAbout( p, ang )\n{\n\treturn mul( ttrans( p.x, p.y ), \n\t\tmul( trot( ang ), ttrans( -p.x, -p.y ) ) );\n}\n\n// Matrix * point\nfunction transPt( M, P )\n{\n\treturn pt(M[0]*P.x + M[1]*P.y + M[2], M[3]*P.x + M[4]*P.y + M[5]);\n}\n\n// Match unit interval to line segment p->q\nfunction matchSeg( p, q )\n{\n\treturn [q.x-p.x, p.y-q.y, p.x,  q.y-p.y, q.x-p.x, p.y];\n};\n\n// Match line segment p1->q1 to line segment p2->q2\nfunction matchTwo( p1, q1, p2, q2 )\n{\n\treturn mul( matchSeg( p2, q2 ), inv( matchSeg( p1, q1 ) ) );\n};\n\nfunction intersect( p1, q1, p2, q2 )\n{\n    const d = (q2.y - p2.y) * (q1.x - p1.x) - (q2.x - p2.x) * (q1.y - p1.y);\n    const uA = ((q2.x - p2.x) * (p1.y - p2.y) - (q2.y - p2.y) * (p1.x - p2.x)) / d;\n    const uB = ((q1.x - p1.x) * (p1.y - p2.y) - (q1.y - p1.y) * (p1.x - p2.x)) / d;\n\n    return pt( p1.x + uA * (q1.x - p1.x), p1.y + uA * (q1.y - p1.y) );\n}\n\nfunction drawPolygon( shape, T, f, s, w )\n{\n\tif( f != null ) {\n\t\tfill( ...f );\n\t} else {\n\t\tnoFill();\n\t}\n\tif( s != null ) {\n\t\tstroke( ...s );\n\t\tstrokeWeight( w * lw_scale );\n\t} else {\n\t\tnoStroke();\n\t}\n\tbeginShape();\n\tfor( let p of shape ) {\n\t\tconst tp = transPt( T, p );\n\t\tvertex( tp.x, tp.y );\n\t}\n\tendShape( CLOSE );\n}\n\nclass Geom\n{\n\tconstructor( pgon, fill, stroke ) \n\t{\n\t\tthis.shape = pgon;\n\t\tthis.fill = fill\n\t\tthis.stroke = stroke;\n\t\tthis.width = 1.0;\n\t\tthis.children = [];\n\t\tthis.svg_id = null;\n\t}\n\n\taddChild( T, geom )\n\t{\n\t\tthis.children.push( { T : T, geom : geom } );\n\t}\n\n\tevalChild( n, i )\n\t{\n\t\treturn transPt( this.children[n].T, this.children[n].geom.shape[i] );\n\t}\n\n\tdraw( S, level )\n\t{\n\t\tif( level > 0 ) {\n\t\t\tfor( let g of this.children ) {\n\t\t\t\tg.geom.draw( mul( S, g.T ), level - 1 );\n\t\t\t}\n\t\t} else {\n\t\t\tdrawPolygon( this.shape, S, this.fill, this.stroke, this.width );\n\t\t}\n\t}\n\n\trecentre()\n\t{\n\t\tlet cx = 0;\n\t\tlet cy = 0;\n\t\tfor( let p of this.shape ) {\n\t\t\tcx += p.x;\n\t\t\tcy += p.y;\n\t\t}\n\t\tcx /= this.shape.length;\n\t\tcy /= this.shape.length;\n\t\tconst tr = pt( -cx, -cy );\n\n\t\tfor( let idx = 0; idx < this.shape.length; ++idx ) {\n\t\t\tthis.shape[idx] = padd( this.shape[idx], tr );\n\t\t}\n\n\t\tconst M = ttrans( -cx, -cy );\n\t\tfor( let ch of this.children ) {\n\t\t\tch.T = mul( M, ch.T );\n\t\t}\n\t}\n\n\tresetSVG()\n\t{\n\t\tfor( let ch of this.children ) {\n\t\t\tch.geom.resetSVG();\n\t\t}\n\t\tthis.svg_id = null;\n\t}\n\n\tbuildSVGDefs( stream, sc )\n\t{\n\t\tif( this.svg_id != null ) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.svg_id = 't' + String(svg_serial).padStart( 5, '0' );\n\t\t++svg_serial;\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tch.geom.buildSVGDefs( stream, sc * mag( T[0], T[1] ) );\n\t\t}\n\n\t\t// Stroked group\n\t\tstream.push( `  <g id=\"${this.svg_id}s\">` );\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tconst gid = ch.geom.svg_id;\n\t\t\tstream.push( `    <use xlink:href=\"#${gid}s\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>` );\n\t\t}\n\n\t\tif( (this.shape.length > 0) && (this.fill == null) ) {\n\t\t\tlet verts = '';\n\t\t\tfor( let p of this.shape ) {\n\t\t\t\tif( verts.length > 0 ) {\n\t\t\t\t\tverts = verts + ' ';\n\t\t\t\t}\n\t\t\t\tverts = verts + p.x + ',' + p.y;\n\t\t\t}\n\t\t\tlet str = ' stroke=\"none\"';\n\t\t\tif( this.stroke != null ) {\n\t\t\t\tlet st = this.stroke;\n\t\t\t\tif( st.length == 1 ) {\n\t\t\t\t\tst = [st[0], st[0], st[0]];\n\t\t\t\t}\n\n\t\t\t\t str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${this.width*lw_scale/sc}\"`;\n\t\t\t}\n\n\t\t\tstream.push( `    <polygon points=\"${verts}\" fill=\"none\"${str}/>` );\n\t\t}\n\n\t\tstream.push( '  </g>' );\n\n\t\t// Filled group\n\t\tstream.push( `  <g id=\"${this.svg_id}f\">` );\n\n\t\tfor( let ch of this.children ) {\n\t\t\tconst T = ch.T;\n\t\t\tconst gid = ch.geom.svg_id;\n\t\t\tstream.push( `    <use xlink:href=\"#${gid}f\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>` );\n\t\t}\n\n\t\tif( (this.shape.length > 0) && (this.fill != null) ) {\n\t\t\tlet verts = '';\n\t\t\tfor( let p of this.shape ) {\n\t\t\t\tif( verts.length > 0 ) {\n\t\t\t\t\tverts = verts + ' ';\n\t\t\t\t}\n\t\t\t\tverts = verts + p.x + ',' + p.y;\n\t\t\t}\n\t\t\tlet str = ' stroke=\"none\"';\n\t\t\tif( this.stroke != null ) {\n\t\t\t\tlet st = this.stroke;\n\t\t\t\tif( st.length == 1 ) {\n\t\t\t\t\tst = [st[0], st[0], st[0]];\n\t\t\t\t}\n\n\t\t\t\t str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${this.width*lw_scale/sc}\"`;\n\t\t\t}\n\n\t\t\tlet fil = ' fill=\"none\"';\n\t\t\tif( this.fill != null ) {\n\t\t\t\tfil = ` fill=\"rgb(${this.fill[0]},${this.fill[1]},${this.fill[2]})\"`;\n\t\t\t}\n\n\t\t\tstream.push( `    <polygon points=\"${verts}\"${str}${fil}/>` );\n\t\t}\n\n\t\tstream.push( '  </g>' );\n\t}\n}\n\nconst hat_outline = [\n    hexPt(0, 0), hexPt(-1,-1), hexPt(0,-2), hexPt(2,-2),\n    hexPt(2,-1), hexPt(4,-2), hexPt(5,-1), hexPt(4, 0),\n    hexPt(3, 0), hexPt(2, 2), hexPt(0, 3), hexPt(0, 2),\n    hexPt(-1, 2) ];\n\nH1_hat = new Geom( hat_outline, h1_color, [0, 0, 0] );\nH_hat = new Geom( hat_outline, h_color, [0, 0, 0] );\nT_hat = new Geom( hat_outline, t_color, [0, 0, 0] );\nP_hat = new Geom( hat_outline, p_color, [0, 0, 0] );\nF_hat = new Geom( hat_outline, f_color, [0, 0, 0] );\n\nconst H_init = (function () {\n\tconst H_outline = [\n\t\tpt( 0, 0 ), pt( 4, 0 ), pt( 4.5, hr3 ),\n\t\tpt( 2.5, 5 * hr3 ), pt( 1.5, 5 * hr3 ), pt( -0.5, hr3 ) ];\n\tgeom = new Geom( H_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[5], hat_outline[7], H_outline[5], H_outline[0] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[9], hat_outline[11], H_outline[1], H_outline[2] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmatchTwo( \n\t\t\that_outline[5], hat_outline[7], H_outline[3], H_outline[4] ),\n\t\tH_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 2.5, hr3 ), \n\t\t\tmul( \n\t\t\t\t[-0.5,-hr3,0,hr3,-0.5,0],\n\t\t\t\t[0.5,0,0,0,-0.5,0] ) ),\n\t\tH1_hat );\n\n\treturn geom; }());\n\nconst T_init = (function () {\n\tconst T_outline = [\n\t\tpt( 0, 0 ), pt( 3, 0 ), pt( 1.5, 3 * hr3 ) ];\n\tgeom = new Geom( T_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 0.5, 0, 0.5, hr3],\n\t\tT_hat );\n\n\treturn geom; }());\n\nconst P_init = (function () {\n\tconst P_outline = [\n\t\tpt( 0, 0 ), pt( 4, 0 ), \n\t\tpt( 3, 2 * hr3 ), pt( -1, 2 * hr3 ) ];\n\tgeom = new Geom( P_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 1.5, 0, 0.5, hr3],\n\t\tP_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 0, 2 * hr3 ), \n\t\t\tmul( [0.5, hr3, 0, -hr3, 0.5, 0],\n\t\t\t\t [0.5, 0.0, 0.0, 0.0, 0.5, 0.0] ) ),\n\t\tP_hat );\n\n\treturn geom; }());\n\nconst F_init = (function () {\n\tconst F_outline = [\n\t\tpt( 0, 0 ), pt( 3, 0 ), \n\t\tpt( 3.5, hr3 ), pt( 3, 2 * hr3 ), pt( -1, 2 * hr3 ) ];\n\tgeom = new Geom( F_outline, null, [0,0,0] );\n\tgeom.width = 2;\n\n\tgeom.addChild( \n\t\t[0.5, 0, 1.5, 0, 0.5, hr3],\n\t\tF_hat );\n\tgeom.addChild( \n\t\tmul( ttrans( 0, 2 * hr3 ), \n\t\t\tmul( [0.5, hr3, 0, -hr3, 0.5, 0],\n\t\t\t\t [0.5, 0.0, 0.0, 0.0, 0.5, 0.0] ) ),\n\t\tF_hat );\n\n\treturn geom; }());\n\nfunction constructPatch( H, T, P, F )\n{\n\tconst rules = [\n\t\t['H'],\n\t\t[0, 0, 'P', 2],\n\t\t[1, 0, 'H', 2],\n\t\t[2, 0, 'P', 2],\n\t\t[3, 0, 'H', 2],\n\t\t[4, 4, 'P', 2],\n\t\t[0, 4, 'F', 3],\n\t\t[2, 4, 'F', 3],\n\t\t[4, 1, 3, 2, 'F', 0],\n\t\t[8, 3, 'H', 0],\n\t\t[9, 2, 'P', 0],\n\t\t[10, 2, 'H', 0],\n\t\t[11, 4, 'P', 2],\n\t\t[12, 0, 'H', 2],\n\t\t[13, 0, 'F', 3],\n\t\t[14, 2, 'F', 1],\n\t\t[15, 3, 'H', 4],\n\t\t[8, 2, 'F', 1], \n\t\t[17, 3, 'H', 0],\n\t\t[18, 2, 'P', 0],\n\t\t[19, 2, 'H', 2],\n\t\t[20, 4, 'F', 3],\n\t\t[20, 0, 'P', 2],\n\t\t[22, 0, 'H', 2],\n\t\t[23, 4, 'F', 3],\n\t\t[23, 0, 'F', 3],\n\t\t[16, 0, 'P', 2],\n\t\t[9, 4, 0, 2, 'T', 2],\n\t\t[4, 0, 'F', 3] \n\t\t];\n\n\tret = new Geom( [], null, null );\n\tret.width = H.width;\n\tshapes = { 'H' : H, 'T' : T, 'P' : P, 'F' : F };\n\n\tfor( let r of rules ) {\n\t\tif( r.length == 1 ) {\n\t\t\tret.addChild( ident, shapes[r[0]] );\n\t\t} else if( r.length == 4 ) {\n\t\t\tconst poly = ret.children[r[0]].geom.shape;\n\t\t\tconst T = ret.children[r[0]].T;\n\t\t\tconst P = transPt( T, poly[(r[1]+1)%poly.length] );\n\t\t\tconst Q = transPt( T, poly[r[1]] );\n\t\t\tconst nshp = shapes[r[2]];\n\t\t\tconst npoly = nshp.shape;\n\n\t\t\tret.addChild(\n\t\t\t\tmatchTwo( npoly[r[3]], npoly[(r[3]+1)%npoly.length], P, Q ),\n\t\t\t\tnshp );\n\t\t} else {\n\t\t\tconst chP = ret.children[r[0]];\n\t\t\tconst chQ = ret.children[r[2]];\n\n\t\t\tconst P = transPt( chQ.T, chQ.geom.shape[r[3]] );\n\t\t\tconst Q = transPt( chP.T, chP.geom.shape[r[1]] );\n\t\t\tconst nshp = shapes[r[4]];\n\t\t\tconst npoly = nshp.shape;\n\n\t\t\tret.addChild(\n\t\t\t\tmatchTwo( npoly[r[5]], npoly[(r[5]+1)%npoly.length], P, Q ),\n\t\t\t\tnshp );\n\t\t}\n\t}\n\n\treturn ret;\n}\n\nfunction constructMetatiles( patch )\n{\n\tconst bps1 = patch.evalChild( 8, 2 );\n\tconst bps2 = patch.evalChild( 21, 2 );\n\tconst rbps = transPt( rotAbout( bps1, -2.0*PI/3.0 ), bps2 );\n\n\tconst p72 = patch.evalChild( 7, 2 );\n\tconst p252 = patch.evalChild( 25, 2 );\n\n\tconst llc = intersect( bps1, rbps,\n\t\tpatch.evalChild( 6, 2 ), p72 );\n\tlet w = psub( patch.evalChild( 6, 2 ), llc );\n\n\tconst new_H_outline = [llc, bps1];\n\tw = transPt( trot( -PI/3 ), w );\n\tnew_H_outline.push( padd( new_H_outline[1], w ) );\n\tnew_H_outline.push( patch.evalChild( 14, 2 ) );\n\tw = transPt( trot( -PI/3 ), w );\n\tnew_H_outline.push( psub( new_H_outline[3], w ) );\n\tnew_H_outline.push( patch.evalChild( 6, 2 ) );\n\n\tconst new_H = new Geom( new_H_outline, null, [0,0,0] );\n\tnew_H.width = patch.width * 2;\n\tfor( let ch of [0, 9, 16, 27, 26, 6, 1, 8, 10, 15] ) {\n\t\tnew_H.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\n\tconst new_P_outline = [ p72, padd( p72, psub( bps1, llc ) ), bps1, llc ];\n\tconst new_P = new Geom( new_P_outline, null, [0,0,0] );\n\tnew_P.width = patch.width * 2;\n\tfor( let ch of [7,2,3,4,28] ) {\n\t\tnew_P.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\n\tconst new_F_outline = [ \n\t\tbps2, patch.evalChild( 24, 2 ), patch.evalChild( 25, 0 ),\n\t\tp252, padd( p252, psub( llc, bps1 ) ) ];\n\tconst new_F = new Geom( new_F_outline, null, [0,0,0] );\n\tnew_F.width = patch.width * 2;\n\tfor( let ch of [21,20,22,23,24,25] ) {\n\t\tnew_F.addChild( patch.children[ch].T, patch.children[ch].geom );\n\t}\n\t\n\tconst AAA = new_H_outline[2];\n\tconst BBB = padd( new_H_outline[1], \n\t\tpsub( new_H_outline[4], new_H_outline[5] ) );\n\tconst CCC = transPt( rotAbout( BBB, -PI/3 ), AAA );\n\tconst new_T_outline = [BBB,CCC,AAA];\n\tconst new_T = new Geom( new_T_outline, null, [0,0,0] );\n\tnew_T.width = patch.width * 2;\n\tnew_T.addChild( patch.children[11].T, patch.children[11].geom );\n\n\tnew_H.recentre();\n\tnew_P.recentre();\n\tnew_F.recentre();\n\tnew_T.recentre();\n\n\treturn [new_H, new_T, new_P, new_F]\n}\n\nfunction isButtonActive( but )\n{\n\treturn but.elt.style.border.length > 0;\n}\n\nfunction setButtonActive( but, b )\n{\n\tbut.elt.style.border = (b ? \"3px solid black\" : \"\");\n}\n\nfunction setup() {\n\tcreateCanvas( windowWidth, windowHeight );\n\n\ttiles = [H_init, T_init, P_init, F_init];\n\tlevel = 1;\n\n\treset_button = createButton( \"Reset\" );\n\treset_button.position( 10, box_height );\n\treset_button.size( 125, 25 );\n\treset_button.mousePressed( function() {\n\t\ttiles = [H_init, T_init, P_init, F_init];\n\t\tlevel = 1;\n\t\tradio.selected( 'H' );\n\t\tto_screen = [20, 0, 0, 0, -20, 0];\n\t\tlw_scale = 1;\n\t\tsetButtonActive( draw_hats, true );\n\t\tsetButtonActive( draw_super, true );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\n\tsubst_button = createButton( \"Build Supertiles\" );\n\tsubst_button.position( 10, box_height );\n\tsubst_button.size( 125, 25 );\n\tsubst_button.mousePressed( function() {\n\t\tconst patch = constructPatch( ...tiles );\n\t\ttiles = constructMetatiles( patch );\n\t\t++level;\n\t\tloop();\n\t} );\n\tbox_height += 40;\n\n\tradio = createRadio();\n\tradio.mousePressed( function() { loop() } );\n\tradio.position( 10, box_height );\n\tfor( let s of ['H', 'T', 'P', 'F'] ) {\n\t\tlet o = radio.option( s );\n\t\to.onclick = loop;\n\t}\n\tradio.selected( 'H' );\n\tbox_height += 40;\n\n  // console.log('h1_color', h1_color)\n\tcp_h1 = createColorPicker(color(h1_color));\n\tcp_h1.mousePressed( function() { loop() } );\n\tcp_h1.input(set_h1_color);\n\tcp_h1.position( 10, box_height );\n\tbox_height += 40;\n  \n  // console.log('h_color', h_color)\n\tcp_h = createColorPicker(color(h_color));\n\tcp_h.mousePressed( function() { loop() } );\n\tcp_h.input(set_h_color);\n\tcp_h.position( 10, box_height );\n\tbox_height += 40;\n\n  // console.log('t_color', t_color)\n\tcp_t = createColorPicker(color(t_color));\n\tcp_t.mousePressed( function() { loop() } );\n\tcp_t.input(set_t_color);\n\tcp_t.position( 10, box_height );\n\tbox_height += 40;\n\n\tcp_p = createColorPicker(color(p_color));\n\tcp_p.mousePressed( function() { loop() } );\n\tcp_p.input(set_p_color);\n\tcp_p.position( 10, box_height );\n\tbox_height += 40;\n\n\tcp_f = createColorPicker(color(f_color));\n\tcp_f.mousePressed( function() { loop() } );\n\tcp_f.input(set_f_color);\n\tcp_f.position( 10, box_height );\n\tbox_height += 40;\n\n\ttranslate_button = createButton( \"Translate\" );\n\tsetButtonActive( translate_button, true );\n\ttranslate_button.position( 10, box_height );\n\ttranslate_button.size( 125, 25 );\n\ttranslate_button.mousePressed( function() {\n\t\tsetButtonActive( translate_button, true );\n\t\tsetButtonActive( scale_button, false );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\n\tscale_button = createButton( \"Scale\" );\n\tscale_button.position( 10, box_height );\n\tscale_button.size( 125, 25 );\n\tscale_button.mousePressed( function() {\n\t\tsetButtonActive( translate_button, false );\n\t\tsetButtonActive( scale_button, true );\n\t\tloop();\n\t} );\n\tbox_height += 30;\n\t\n\tdraw_hats = createButton( \"Draw Hats\" );\n\tsetButtonActive( draw_hats, true );\n\tdraw_hats.mousePressed( function() {\n\t\tsetButtonActive( draw_hats, !isButtonActive( draw_hats ) );\n\t\tloop();\n\t} );\n\tdraw_hats.position( 10, box_height );\n\tdraw_hats.size( 125, 25 );\n\tbox_height += 30;\n\n\tdraw_super = createButton( \"Draw Supertiles\" );\n\tsetButtonActive( draw_super, true );\n\tdraw_super.mousePressed( function() {\n\t\tsetButtonActive( draw_super, !isButtonActive( draw_super ) );\n\t\tloop();\n\t} );\n\tdraw_super.position( 10, box_height );\n\tdraw_super.size( 125, 25 );\n\tbox_height += 40;\n\n\tlet save_button = createButton( \"Save PNG\" );\n\tsave_button.position( 10, box_height );\n\tsave_button.size( 125, 25 );\n\tsave_button.mousePressed( function () {\n\t\tuibox = false;\n\t\tdraw();\n\t\tsave( \"output.png\" );\n\t\tuibox = true;\n\t\tdraw();\n\t} );\n\tbox_height += 30;\n\n\tlet svg_button = createButton( \"Save SVG\" );\n\tsvg_button.position( 10, box_height );\n\tsvg_button.size( 125, 25 );\n\tsvg_button.mousePressed( function () {\n\t\tsvg_serial = 0;\n\t\tfor( let t of tiles ) {\n\t\t\tt.resetSVG();\n\t\t}\n\n\t\tconst stream = [];\n\t\tstream.push( `<svg viewBox=\"0 0 ${width} ${height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">` );\n\t\tstream.push( '<defs>' );\n\t\tfor( let t of tiles ) {\n\t\t\tt.buildSVGDefs( stream, mag( to_screen[0], to_screen[1] ) );\n\t\t}\n\t\tstream.push( '</defs>' );\n\n\t\tconst idx = {'H':0, 'T':1, 'P':2, 'F':3}[radio.value()];\n\n\t\tif( isButtonActive( draw_hats ) ) {\n\t\t\tstream.push( `<use xlink:href=\"#${tiles[idx].svg_id}f\" transform=\"matrix(${to_screen[0]} ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${to_screen[2]+width/2} ${to_screen[5]+height/2})\"/>` )\n\t\t}\n\t\tif( isButtonActive( draw_super ) ) {\n\t\t\tstream.push( `<use xlink:href=\"#${tiles[idx].svg_id}s\" transform=\"matrix(${to_screen[0]} ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${to_screen[2]+width/2} ${to_screen[5]+height/2})\"/>` )\n\t\t}\n\t\tstream.push( '</svg>' );\n\n\t\tsaveStrings( stream, 'output', 'svg' );\n\t} );\n\tbox_height += 30;\n\tbox_height -= 5; // remove half the padding\n}\n\nfunction draw()\n{\n\tbackground( 255 );\n\n\tpush();\n\ttranslate( width/2, height/2 );\n\tconst idx = {'H':0, 'T':1, 'P':2, 'F':3}[radio.value()];\n\n\tif( isButtonActive( draw_hats ) ) {\n\t\ttiles[idx].draw( to_screen, level );\n\t}\n\n\tif( isButtonActive( draw_super ) ) {\n\t\tfor( let lev = level - 1; lev >= 0; --lev ) {\n\t\t\ttiles[idx].draw( to_screen, lev );\n\t\t}\n\t}\n\tpop();\n\n\tif( uibox ) {\n\t\tstroke( 0 );\n\t\tstrokeWeight( 0.5 );\n\t\tfill( 255, 220 );\n\t\trect( 5, 5, 135, box_height);\n\t}\n\tnoLoop();\n}\n\nfunction windowResized() \n{\n\tresizeCanvas( windowWidth, windowHeight );\n}\n\nfunction mousePressed()\n{\n\tdragging = true;\n\tif( isButtonActive( scale_button ) ) {\n\t\tscale_centre = transPt( inv( to_screen ), pt( width/2, height/2 ) );\n\t\tscale_start = pt( mouseX, mouseY );\n\t\tscale_ts = [...to_screen];\n\t}\n\tloop();\n}\n\nfunction mouseDragged()\n{\n\tif( dragging ) {\n\t\tif( isButtonActive( translate_button ) ) {\n\t\t\tto_screen = mul( ttrans( mouseX - pmouseX, mouseY - pmouseY ), \n\t\t\t\tto_screen );\n\t\t} else if( isButtonActive( scale_button ) ) {\n\t\t\tlet sc = dist( mouseX, mouseY, width/2, height/2 ) / \n\t\t\t\tdist( scale_start.x, scale_start.y, width/2, height/2 );\n\t\t\tto_screen = mul( \n\t\t\t\tmul( ttrans( scale_centre.x, scale_centre.y ),\n\t\t\t\t\tmul( [sc, 0, 0, 0, sc, 0],\n\t\t\t\t\t\tttrans( -scale_centre.x, -scale_centre.y ) ) ),\n\t\t\t\tscale_ts );\n\t\t\tlw_scale = mag( to_screen[0], to_screen[1] ) / 20.0;\n\t\t}\n\t\tloop();\n\t\treturn false;\n\t} \n}\n\nfunction mouseReleased()\n{\n\tdragging = false;\n\tloop();\n}\n\n// 2023-04-06 jht:\n// Added color(h1_color) etc. to avoid script warnings\n\n\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/7hzeHDSIl\n// 03-jht-hatviz\n// https://github.com/isohedral/hatviz\n// https://cs.uwaterloo.ca/~csk/hat/\n\nconst r3 = 1.7320508075688772;\nconst hr3 = 0.8660254037844386;\nconst ident = [1, 0, 0, 0, 1, 0];\n\nlet to_screen = [20, 0, 0, 0, -20, 0];\nlet lw_scale = 1;\nlet tiles;\nlet level;\n\nlet scale_centre;\nlet scale_start;\nlet scale_ts;\n\nlet reset_button;\nlet subst_button;\nlet translate_button;\nlet scale_button;\nlet draw_hats;\nlet draw_super;\nlet radio;\nlet cp_h1;\nlet cp_h;\nlet cp_t;\nlet cp_p;\nlet cp_f;\nlet dragging = false;\nlet uibox = true;\nlet box_height = 10;\n\nlet H1_hat;\nlet H_hat;\nlet T_hat;\nlet P_hat;\nlet F_hat;\n\nlet svg_serial = 0;\nlet h1_color = [0, 137, 212];\nlet h_color = [148, 205, 235];\nlet t_color = [251, 251, 251];\nlet p_color = [250, 250, 250];\nlet f_color = [191, 191, 191];\n\nfunction color2rgb(c) {\n  return [c.levels[0], c.levels[1], c.levels[2]];\n}\nfunction set_h1_color() {\n  H1_hat.fill = color2rgb(cp_h1.color());\n}\nfunction set_h_color() {\n  H_hat.fill = color2rgb(cp_h.color());\n}\nfunction set_t_color() {\n  T_hat.fill = color2rgb(cp_t.color());\n}\nfunction set_p_color() {\n  P_hat.fill = color2rgb(cp_p.color());\n}\nfunction set_f_color() {\n  F_hat.fill = color2rgb(cp_f.color());\n}\n\nfunction pt(x, y) {\n  return { x: x, y: y };\n}\n\nfunction hexPt(x, y) {\n  return pt(x + 0.5 * y, hr3 * y);\n}\n\n// Affine matrix inverse\nfunction inv(T) {\n  const det = T[0] * T[4] - T[1] * T[3];\n  return [\n    T[4] / det,\n    -T[1] / det,\n    (T[1] * T[5] - T[2] * T[4]) / det,\n    -T[3] / det,\n    T[0] / det,\n    (T[2] * T[3] - T[0] * T[5]) / det,\n  ];\n}\n\n// Affine matrix multiply\nfunction mul(A, B) {\n  return [\n    A[0] * B[0] + A[1] * B[3],\n    A[0] * B[1] + A[1] * B[4],\n    A[0] * B[2] + A[1] * B[5] + A[2],\n\n    A[3] * B[0] + A[4] * B[3],\n    A[3] * B[1] + A[4] * B[4],\n    A[3] * B[2] + A[4] * B[5] + A[5],\n  ];\n}\n\nfunction padd(p, q) {\n  return { x: p.x + q.x, y: p.y + q.y };\n}\n\nfunction psub(p, q) {\n  return { x: p.x - q.x, y: p.y - q.y };\n}\n\n// Rotation matrix\nfunction trot(ang) {\n  const c = cos(ang);\n  const s = sin(ang);\n  return [c, -s, 0, s, c, 0];\n}\n\n// Translation matrix\nfunction ttrans(tx, ty) {\n  return [1, 0, tx, 0, 1, ty];\n}\n\nfunction rotAbout(p, ang) {\n  return mul(ttrans(p.x, p.y), mul(trot(ang), ttrans(-p.x, -p.y)));\n}\n\n// Matrix * point\nfunction transPt(M, P) {\n  return pt(M[0] * P.x + M[1] * P.y + M[2], M[3] * P.x + M[4] * P.y + M[5]);\n}\n\n// Match unit interval to line segment p->q\nfunction matchSeg(p, q) {\n  return [q.x - p.x, p.y - q.y, p.x, q.y - p.y, q.x - p.x, p.y];\n}\n\n// Match line segment p1->q1 to line segment p2->q2\nfunction matchTwo(p1, q1, p2, q2) {\n  return mul(matchSeg(p2, q2), inv(matchSeg(p1, q1)));\n}\n\nfunction intersect(p1, q1, p2, q2) {\n  const d = (q2.y - p2.y) * (q1.x - p1.x) - (q2.x - p2.x) * (q1.y - p1.y);\n  const uA =\n    ((q2.x - p2.x) * (p1.y - p2.y) - (q2.y - p2.y) * (p1.x - p2.x)) / d;\n  const uB =\n    ((q1.x - p1.x) * (p1.y - p2.y) - (q1.y - p1.y) * (p1.x - p2.x)) / d;\n\n  return pt(p1.x + uA * (q1.x - p1.x), p1.y + uA * (q1.y - p1.y));\n}\n\nfunction drawPolygon(shape, T, f, s, w) {\n  if (f != null) {\n    fill(...f);\n  } else {\n    noFill();\n  }\n  if (s != null) {\n    stroke(...s);\n    strokeWeight(w * lw_scale);\n  } else {\n    noStroke();\n  }\n  beginShape();\n  for (let p of shape) {\n    const tp = transPt(T, p);\n    vertex(tp.x, tp.y);\n  }\n  endShape(CLOSE);\n}\n\nclass Geom {\n  constructor(pgon, fill, stroke) {\n    this.shape = pgon;\n    this.fill = fill;\n    this.stroke = stroke;\n    this.width = 1.0;\n    this.children = [];\n    this.svg_id = null;\n  }\n\n  addChild(T, geom) {\n    this.children.push({ T: T, geom: geom });\n  }\n\n  evalChild(n, i) {\n    return transPt(this.children[n].T, this.children[n].geom.shape[i]);\n  }\n\n  draw(S, level) {\n    if (level > 0) {\n      for (let g of this.children) {\n        g.geom.draw(mul(S, g.T), level - 1);\n      }\n    } else {\n      drawPolygon(this.shape, S, this.fill, this.stroke, this.width);\n    }\n  }\n\n  recentre() {\n    let cx = 0;\n    let cy = 0;\n    for (let p of this.shape) {\n      cx += p.x;\n      cy += p.y;\n    }\n    cx /= this.shape.length;\n    cy /= this.shape.length;\n    const tr = pt(-cx, -cy);\n\n    for (let idx = 0; idx < this.shape.length; ++idx) {\n      this.shape[idx] = padd(this.shape[idx], tr);\n    }\n\n    const M = ttrans(-cx, -cy);\n    for (let ch of this.children) {\n      ch.T = mul(M, ch.T);\n    }\n  }\n\n  resetSVG() {\n    for (let ch of this.children) {\n      ch.geom.resetSVG();\n    }\n    this.svg_id = null;\n  }\n\n  buildSVGDefs(stream, sc) {\n    if (this.svg_id != null) {\n      return;\n    }\n\n    this.svg_id = \"t\" + String(svg_serial).padStart(5, \"0\");\n    ++svg_serial;\n\n    for (let ch of this.children) {\n      const T = ch.T;\n      ch.geom.buildSVGDefs(stream, sc * mag(T[0], T[1]));\n    }\n\n    // Stroked group\n    stream.push(`  <g id=\"${this.svg_id}s\">`);\n\n    for (let ch of this.children) {\n      const T = ch.T;\n      const gid = ch.geom.svg_id;\n      stream.push(\n        `    <use xlink:href=\"#${gid}s\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>`\n      );\n    }\n\n    if (this.shape.length > 0 && this.fill == null) {\n      let verts = \"\";\n      for (let p of this.shape) {\n        if (verts.length > 0) {\n          verts = verts + \" \";\n        }\n        verts = verts + p.x + \",\" + p.y;\n      }\n      let str = ' stroke=\"none\"';\n      if (this.stroke != null) {\n        let st = this.stroke;\n        if (st.length == 1) {\n          st = [st[0], st[0], st[0]];\n        }\n\n        str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${\n          (this.width * lw_scale) / sc\n        }\"`;\n      }\n\n      stream.push(`    <polygon points=\"${verts}\" fill=\"none\"${str}/>`);\n    }\n\n    stream.push(\"  </g>\");\n\n    // Filled group\n    stream.push(`  <g id=\"${this.svg_id}f\">`);\n\n    for (let ch of this.children) {\n      const T = ch.T;\n      const gid = ch.geom.svg_id;\n      stream.push(\n        `    <use xlink:href=\"#${gid}f\" transform=\"matrix(${T[0]} ${T[3]} ${T[1]} ${T[4]} ${T[2]} ${T[5]})\"/>`\n      );\n    }\n\n    if (this.shape.length > 0 && this.fill != null) {\n      let verts = \"\";\n      for (let p of this.shape) {\n        if (verts.length > 0) {\n          verts = verts + \" \";\n        }\n        verts = verts + p.x + \",\" + p.y;\n      }\n      let str = ' stroke=\"none\"';\n      if (this.stroke != null) {\n        let st = this.stroke;\n        if (st.length == 1) {\n          st = [st[0], st[0], st[0]];\n        }\n\n        str = ` stroke=\"rgb(${st[0]},${st[1]},${st[2]})\" stroke-width=\"${\n          (this.width * lw_scale) / sc\n        }\"`;\n      }\n\n      let fil = ' fill=\"none\"';\n      if (this.fill != null) {\n        fil = ` fill=\"rgb(${this.fill[0]},${this.fill[1]},${this.fill[2]})\"`;\n      }\n\n      stream.push(`    <polygon points=\"${verts}\"${str}${fil}/>`);\n    }\n\n    stream.push(\"  </g>\");\n  }\n}\n\nconst hat_outline = [\n  hexPt(0, 0),\n  hexPt(-1, -1),\n  hexPt(0, -2),\n  hexPt(2, -2),\n  hexPt(2, -1),\n  hexPt(4, -2),\n  hexPt(5, -1),\n  hexPt(4, 0),\n  hexPt(3, 0),\n  hexPt(2, 2),\n  hexPt(0, 3),\n  hexPt(0, 2),\n  hexPt(-1, 2),\n];\n\nH1_hat = new Geom(hat_outline, h1_color, [0, 0, 0]);\nH_hat = new Geom(hat_outline, h_color, [0, 0, 0]);\nT_hat = new Geom(hat_outline, t_color, [0, 0, 0]);\nP_hat = new Geom(hat_outline, p_color, [0, 0, 0]);\nF_hat = new Geom(hat_outline, f_color, [0, 0, 0]);\n\nconst H_init = (function () {\n  const H_outline = [\n    pt(0, 0),\n    pt(4, 0),\n    pt(4.5, hr3),\n    pt(2.5, 5 * hr3),\n    pt(1.5, 5 * hr3),\n    pt(-0.5, hr3),\n  ];\n  geom = new Geom(H_outline, null, [0, 0, 0]);\n  geom.width = 2;\n\n  geom.addChild(\n    matchTwo(hat_outline[5], hat_outline[7], H_outline[5], H_outline[0]),\n    H_hat\n  );\n  geom.addChild(\n    matchTwo(hat_outline[9], hat_outline[11], H_outline[1], H_outline[2]),\n    H_hat\n  );\n  geom.addChild(\n    matchTwo(hat_outline[5], hat_outline[7], H_outline[3], H_outline[4]),\n    H_hat\n  );\n  geom.addChild(\n    mul(\n      ttrans(2.5, hr3),\n      mul([-0.5, -hr3, 0, hr3, -0.5, 0], [0.5, 0, 0, 0, -0.5, 0])\n    ),\n    H1_hat\n  );\n\n  return geom;\n})();\n\nconst T_init = (function () {\n  const T_outline = [pt(0, 0), pt(3, 0), pt(1.5, 3 * hr3)];\n  geom = new Geom(T_outline, null, [0, 0, 0]);\n  geom.width = 2;\n\n  geom.addChild([0.5, 0, 0.5, 0, 0.5, hr3], T_hat);\n\n  return geom;\n})();\n\nconst P_init = (function () {\n  const P_outline = [pt(0, 0), pt(4, 0), pt(3, 2 * hr3), pt(-1, 2 * hr3)];\n  geom = new Geom(P_outline, null, [0, 0, 0]);\n  geom.width = 2;\n\n  geom.addChild([0.5, 0, 1.5, 0, 0.5, hr3], P_hat);\n  geom.addChild(\n    mul(\n      ttrans(0, 2 * hr3),\n      mul([0.5, hr3, 0, -hr3, 0.5, 0], [0.5, 0.0, 0.0, 0.0, 0.5, 0.0])\n    ),\n    P_hat\n  );\n\n  return geom;\n})();\n\nconst F_init = (function () {\n  const F_outline = [\n    pt(0, 0),\n    pt(3, 0),\n    pt(3.5, hr3),\n    pt(3, 2 * hr3),\n    pt(-1, 2 * hr3),\n  ];\n  geom = new Geom(F_outline, null, [0, 0, 0]);\n  geom.width = 2;\n\n  geom.addChild([0.5, 0, 1.5, 0, 0.5, hr3], F_hat);\n  geom.addChild(\n    mul(\n      ttrans(0, 2 * hr3),\n      mul([0.5, hr3, 0, -hr3, 0.5, 0], [0.5, 0.0, 0.0, 0.0, 0.5, 0.0])\n    ),\n    F_hat\n  );\n\n  return geom;\n})();\n\nfunction constructPatch(H, T, P, F) {\n  const rules = [\n    [\"H\"],\n    [0, 0, \"P\", 2],\n    [1, 0, \"H\", 2],\n    [2, 0, \"P\", 2],\n    [3, 0, \"H\", 2],\n    [4, 4, \"P\", 2],\n    [0, 4, \"F\", 3],\n    [2, 4, \"F\", 3],\n    [4, 1, 3, 2, \"F\", 0],\n    [8, 3, \"H\", 0],\n    [9, 2, \"P\", 0],\n    [10, 2, \"H\", 0],\n    [11, 4, \"P\", 2],\n    [12, 0, \"H\", 2],\n    [13, 0, \"F\", 3],\n    [14, 2, \"F\", 1],\n    [15, 3, \"H\", 4],\n    [8, 2, \"F\", 1],\n    [17, 3, \"H\", 0],\n    [18, 2, \"P\", 0],\n    [19, 2, \"H\", 2],\n    [20, 4, \"F\", 3],\n    [20, 0, \"P\", 2],\n    [22, 0, \"H\", 2],\n    [23, 4, \"F\", 3],\n    [23, 0, \"F\", 3],\n    [16, 0, \"P\", 2],\n    [9, 4, 0, 2, \"T\", 2],\n    [4, 0, \"F\", 3],\n  ];\n\n  ret = new Geom([], null, null);\n  ret.width = H.width;\n  shapes = { H: H, T: T, P: P, F: F };\n\n  for (let r of rules) {\n    if (r.length == 1) {\n      ret.addChild(ident, shapes[r[0]]);\n    } else if (r.length == 4) {\n      const poly = ret.children[r[0]].geom.shape;\n      const T = ret.children[r[0]].T;\n      const P = transPt(T, poly[(r[1] + 1) % poly.length]);\n      const Q = transPt(T, poly[r[1]]);\n      const nshp = shapes[r[2]];\n      const npoly = nshp.shape;\n\n      ret.addChild(\n        matchTwo(npoly[r[3]], npoly[(r[3] + 1) % npoly.length], P, Q),\n        nshp\n      );\n    } else {\n      const chP = ret.children[r[0]];\n      const chQ = ret.children[r[2]];\n\n      const P = transPt(chQ.T, chQ.geom.shape[r[3]]);\n      const Q = transPt(chP.T, chP.geom.shape[r[1]]);\n      const nshp = shapes[r[4]];\n      const npoly = nshp.shape;\n\n      ret.addChild(\n        matchTwo(npoly[r[5]], npoly[(r[5] + 1) % npoly.length], P, Q),\n        nshp\n      );\n    }\n  }\n\n  return ret;\n}\n\nfunction constructMetatiles(patch) {\n  const bps1 = patch.evalChild(8, 2);\n  const bps2 = patch.evalChild(21, 2);\n  const rbps = transPt(rotAbout(bps1, (-2.0 * PI) / 3.0), bps2);\n\n  const p72 = patch.evalChild(7, 2);\n  const p252 = patch.evalChild(25, 2);\n\n  const llc = intersect(bps1, rbps, patch.evalChild(6, 2), p72);\n  let w = psub(patch.evalChild(6, 2), llc);\n\n  const new_H_outline = [llc, bps1];\n  w = transPt(trot(-PI / 3), w);\n  new_H_outline.push(padd(new_H_outline[1], w));\n  new_H_outline.push(patch.evalChild(14, 2));\n  w = transPt(trot(-PI / 3), w);\n  new_H_outline.push(psub(new_H_outline[3], w));\n  new_H_outline.push(patch.evalChild(6, 2));\n\n  const new_H = new Geom(new_H_outline, null, [0, 0, 0]);\n  new_H.width = patch.width * 2;\n  for (let ch of [0, 9, 16, 27, 26, 6, 1, 8, 10, 15]) {\n    new_H.addChild(patch.children[ch].T, patch.children[ch].geom);\n  }\n\n  const new_P_outline = [p72, padd(p72, psub(bps1, llc)), bps1, llc];\n  const new_P = new Geom(new_P_outline, null, [0, 0, 0]);\n  new_P.width = patch.width * 2;\n  for (let ch of [7, 2, 3, 4, 28]) {\n    new_P.addChild(patch.children[ch].T, patch.children[ch].geom);\n  }\n\n  const new_F_outline = [\n    bps2,\n    patch.evalChild(24, 2),\n    patch.evalChild(25, 0),\n    p252,\n    padd(p252, psub(llc, bps1)),\n  ];\n  const new_F = new Geom(new_F_outline, null, [0, 0, 0]);\n  new_F.width = patch.width * 2;\n  for (let ch of [21, 20, 22, 23, 24, 25]) {\n    new_F.addChild(patch.children[ch].T, patch.children[ch].geom);\n  }\n\n  const AAA = new_H_outline[2];\n  const BBB = padd(new_H_outline[1], psub(new_H_outline[4], new_H_outline[5]));\n  const CCC = transPt(rotAbout(BBB, -PI / 3), AAA);\n  const new_T_outline = [BBB, CCC, AAA];\n  const new_T = new Geom(new_T_outline, null, [0, 0, 0]);\n  new_T.width = patch.width * 2;\n  new_T.addChild(patch.children[11].T, patch.children[11].geom);\n\n  new_H.recentre();\n  new_P.recentre();\n  new_F.recentre();\n  new_T.recentre();\n\n  return [new_H, new_T, new_P, new_F];\n}\n\nfunction isButtonActive(but) {\n  return but.elt.style.border.length > 0;\n}\n\nfunction setButtonActive(but, b) {\n  but.elt.style.border = b ? \"3px solid black\" : \"\";\n}\n\nfunction setup() {\n  createCanvas(windowWidth, windowHeight);\n\n  tiles = [H_init, T_init, P_init, F_init];\n  level = 1;\n\n  reset_button = createButton(\"Reset\");\n  reset_button.position(10, box_height);\n  reset_button.size(125, 25);\n  reset_button.mousePressed(function () {\n    tiles = [H_init, T_init, P_init, F_init];\n    level = 1;\n    radio.selected(\"H\");\n    to_screen = [20, 0, 0, 0, -20, 0];\n    lw_scale = 1;\n    setButtonActive(draw_hats, true);\n    setButtonActive(draw_super, true);\n    loop();\n  });\n  box_height += 30;\n\n  subst_button = createButton(\"Build Supertiles\");\n  subst_button.position(10, box_height);\n  subst_button.size(125, 25);\n  subst_button.mousePressed(function () {\n    const patch = constructPatch(...tiles);\n    tiles = constructMetatiles(patch);\n    ++level;\n    loop();\n  });\n  box_height += 40;\n\n  radio = createRadio();\n  radio.mousePressed(function () {\n    loop();\n  });\n  radio.position(10, box_height);\n  for (let s of [\"H\", \"T\", \"P\", \"F\"]) {\n    let o = radio.option(s);\n    o.onclick = loop;\n  }\n  radio.selected(\"H\");\n  box_height += 40;\n\n  cp_h1 = createColorPicker(color(...h1_color));\n  cp_h1.mousePressed(function () {\n    loop();\n  });\n  cp_h1.input(set_h1_color);\n  cp_h1.position(10, box_height);\n  box_height += 40;\n\n  cp_h = createColorPicker(color(...h_color));\n  cp_h.mousePressed(function () {\n    loop();\n  });\n  cp_h.input(set_h_color);\n  cp_h.position(10, box_height);\n  box_height += 40;\n\n  cp_t = createColorPicker(color(...t_color));\n  cp_t.mousePressed(function () {\n    loop();\n  });\n  cp_t.input(set_t_color);\n  cp_t.position(10, box_height);\n  box_height += 40;\n\n  cp_p = createColorPicker(color(...p_color));\n  cp_p.mousePressed(function () {\n    loop();\n  });\n  cp_p.input(set_p_color);\n  cp_p.position(10, box_height);\n  box_height += 40;\n\n  cp_f = createColorPicker(color(...f_color));\n  cp_f.mousePressed(function () {\n    loop();\n  });\n  cp_f.input(set_f_color);\n  cp_f.position(10, box_height);\n  box_height += 40;\n\n  translate_button = createButton(\"Translate\");\n  setButtonActive(translate_button, true);\n  translate_button.position(10, box_height);\n  translate_button.size(125, 25);\n  translate_button.mousePressed(function () {\n    setButtonActive(translate_button, true);\n    setButtonActive(scale_button, false);\n    loop();\n  });\n  box_height += 30;\n\n  scale_button = createButton(\"Scale\");\n  scale_button.position(10, box_height);\n  scale_button.size(125, 25);\n  scale_button.mousePressed(function () {\n    setButtonActive(translate_button, false);\n    setButtonActive(scale_button, true);\n    loop();\n  });\n  box_height += 30;\n\n  draw_hats = createButton(\"Draw Hats\");\n  setButtonActive(draw_hats, true);\n  draw_hats.mousePressed(function () {\n    setButtonActive(draw_hats, !isButtonActive(draw_hats));\n    loop();\n  });\n  draw_hats.position(10, box_height);\n  draw_hats.size(125, 25);\n  box_height += 30;\n\n  draw_super = createButton(\"Draw Supertiles\");\n  setButtonActive(draw_super, true);\n  draw_super.mousePressed(function () {\n    setButtonActive(draw_super, !isButtonActive(draw_super));\n    loop();\n  });\n  draw_super.position(10, box_height);\n  draw_super.size(125, 25);\n  box_height += 40;\n\n  let save_button = createButton(\"Save PNG\");\n  save_button.position(10, box_height);\n  save_button.size(125, 25);\n  save_button.mousePressed(function () {\n    uibox = false;\n    draw();\n    save(\"output.png\");\n    uibox = true;\n    draw();\n  });\n  box_height += 30;\n\n  let svg_button = createButton(\"Save SVG\");\n  svg_button.position(10, box_height);\n  svg_button.size(125, 25);\n  svg_button.mousePressed(function () {\n    svg_serial = 0;\n    for (let t of tiles) {\n      t.resetSVG();\n    }\n\n    const stream = [];\n    stream.push(\n      `<svg viewBox=\"0 0 ${width} ${height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">`\n    );\n    stream.push(\"<defs>\");\n    for (let t of tiles) {\n      t.buildSVGDefs(stream, mag(to_screen[0], to_screen[1]));\n    }\n    stream.push(\"</defs>\");\n\n    const idx = { H: 0, T: 1, P: 2, F: 3 }[radio.value()];\n\n    if (isButtonActive(draw_hats)) {\n      stream.push(\n        `<use xlink:href=\"#${tiles[idx].svg_id}f\" transform=\"matrix(${\n          to_screen[0]\n        } ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${\n          to_screen[2] + width / 2\n        } ${to_screen[5] + height / 2})\"/>`\n      );\n    }\n    if (isButtonActive(draw_super)) {\n      stream.push(\n        `<use xlink:href=\"#${tiles[idx].svg_id}s\" transform=\"matrix(${\n          to_screen[0]\n        } ${to_screen[3]} ${to_screen[1]} ${to_screen[4]} ${\n          to_screen[2] + width / 2\n        } ${to_screen[5] + height / 2})\"/>`\n      );\n    }\n    stream.push(\"</svg>\");\n\n    saveStrings(stream, \"output\", \"svg\");\n  });\n  box_height += 30;\n  box_height -= 5; // remove half the padding\n}\n\nfunction draw() {\n  background(255);\n\n  push();\n  translate(width / 2, height / 2);\n  const idx = { H: 0, T: 1, P: 2, F: 3 }[radio.value()];\n\n  if (isButtonActive(draw_hats)) {\n    tiles[idx].draw(to_screen, level);\n  }\n\n  if (isButtonActive(draw_super)) {\n    for (let lev = level - 1; lev >= 0; --lev) {\n      tiles[idx].draw(to_screen, lev);\n    }\n  }\n  pop();\n\n  if (uibox) {\n    stroke(0);\n    strokeWeight(0.5);\n    fill(255, 220);\n    rect(5, 5, 135, box_height);\n  }\n  noLoop();\n}\n\nfunction windowResized() {\n  resizeCanvas(windowWidth, windowHeight);\n}\n\nfunction mousePressed() {\n  dragging = true;\n  if (isButtonActive(scale_button)) {\n    scale_centre = transPt(inv(to_screen), pt(width / 2, height / 2));\n    scale_start = pt(mouseX, mouseY);\n    scale_ts = [...to_screen];\n  }\n  loop();\n}\n\nfunction mouseDragged() {\n  if (dragging) {\n    if (isButtonActive(translate_button)) {\n      to_screen = mul(ttrans(mouseX - pmouseX, mouseY - pmouseY), to_screen);\n    } else if (isButtonActive(scale_button)) {\n      let sc =\n        dist(mouseX, mouseY, width / 2, height / 2) /\n        dist(scale_start.x, scale_start.y, width / 2, height / 2);\n      to_screen = mul(\n        mul(\n          ttrans(scale_centre.x, scale_centre.y),\n          mul([sc, 0, 0, 0, sc, 0], ttrans(-scale_centre.x, -scale_centre.y))\n        ),\n        scale_ts\n      );\n      lw_scale = mag(to_screen[0], to_screen[1]) / 20.0;\n    }\n    loop();\n    return false;\n  }\n}\n\nfunction mouseReleased() {\n  dragging = false;\n  loop();\n}\n\n// https://github.com/isohedral/hatviz/commit/c436eb6a2fde309895b67b7f643b4c85e51d3dac\n",
         "children": [],
         "fileType": "file",
         "_id": "642f34b75b11d919d026a646",
         "isSelectedFile": true,
-        "createdAt": "2023-04-06T21:26:53.342Z",
-        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "createdAt": "2023-04-09T01:41:50.719Z",
+        "updatedAt": "2023-04-09T01:41:50.719Z",
         "id": "642f34b75b11d919d026a646"
       },
       {
@@ -36,8 +36,8 @@
         "children": [],
         "fileType": "file",
         "_id": "642f34b75b11d919d026a647",
-        "createdAt": "2023-04-06T21:26:53.342Z",
-        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "createdAt": "2023-04-09T01:41:50.719Z",
+        "updatedAt": "2023-04-09T01:41:50.719Z",
         "isSelectedFile": false,
         "id": "642f34b75b11d919d026a647"
       },
@@ -47,8 +47,8 @@
         "children": [],
         "fileType": "file",
         "_id": "642f34b75b11d919d026a648",
-        "createdAt": "2023-04-06T21:26:53.342Z",
-        "updatedAt": "2023-04-06T21:26:53.342Z",
+        "createdAt": "2023-04-09T01:41:50.719Z",
+        "updatedAt": "2023-04-09T01:41:50.719Z",
         "isSelectedFile": false,
         "id": "642f34b75b11d919d026a648"
       }
@@ -65,25 +65,26 @@
         "content": "",
         "children": [
           "6415ea45af49fb07761c04fe",
+          "64591a5d9541ee0019abbaf8",
           "6415ea45af49fb07761c04ff",
           "6415ea45af49fb07761c0500"
         ],
         "fileType": "folder",
         "_id": "6415ea45af49fb07761c04fd",
-        "createdAt": "2023-03-18T16:45:24.243Z",
-        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "createdAt": "2023-05-08T16:14:22.193Z",
+        "updatedAt": "2023-05-08T16:14:22.193Z",
         "isSelectedFile": false,
         "id": "6415ea45af49fb07761c04fd"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/J7Zhes2Tc\n// 11.4: Brightness getpixel\n\np5.disableFriendlyErrors = true; // disables FES\n\nlet video;\n\nlet vScale = 16;\n\nfunction setup() {\n  createCanvas(640, 480);\n  pixelDensity(1);\n  video = createCapture(VIDEO);\n  video.size(width / vScale, height / vScale);\n  noStroke();\n  fill(255);\n  rectMode(CENTER);\n\n}\n\nfunction draw() {\n  background(51);\n\n  video.loadPixels();\n  for (var y = 0; y < video.height; y++) {\n    for (var x = 0; x < video.width; x++) {\n      var index = (video.width - x - 1 + y * video.width) * 4;\n      var r = video.pixels[index + 0];\n      var g = video.pixels[index + 1];\n      var b = video.pixels[index + 2];\n      var bright = (r + g + b) / 3;\n\n      // let col = video.get(x, y);\n      // let bright = (col[0] + col[1] + col[2]) / 3;\n      \n      let w = map(bright, 0, 255, 0, vScale);\n\n      rect(x * vScale, y * vScale, w, w);\n    }\n  }\n}\n\n// https://editor.p5js.org/jht1493/sketches/XFKWbV01m\n// 11.4: Brightness getpixel copy\n\n// 2020-10-25 jht: Correct index, remove unneeed loadPixels\n// https://github.com/CodingTrain/website/tree/master/Tutorials/P5JS/p5.js_video",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/J7Zhes2Tc\n// 11.4: Brightness getpixel\n\np5.disableFriendlyErrors = true; // disables FES\n\nlet video;\n\nlet vScale = 16;\n\nfunction setup() {\n  createCanvas(480, 640); // tall aspect ratio for phone\n  // createCanvas(640, 480); // long aspect ratio for desktop\n  pixelDensity(1);\n  video = createCapture(VIDEO);\n  video.size(width / vScale, height / vScale);\n  noStroke();\n  fill(255);\n  rectMode(CENTER);\n  let url = 'qrc-11.4-Brightness-getpixel.png'\n  let img = createImg(url,'getpixel');\n}\n\nfunction draw() {\n  background(51);\n\n  video.loadPixels();\n  for (var y = 0; y < video.height; y++) {\n    for (var x = 0; x < video.width; x++) {\n      var index = (video.width - x - 1 + y * video.width) * 4;\n      var r = video.pixels[index + 0];\n      var g = video.pixels[index + 1];\n      var b = video.pixels[index + 2];\n      var bright = (r + g + b) / 3;\n\n      // let col = video.get(x, y);\n      // let bright = (col[0] + col[1] + col[2]) / 3;\n      \n      let w = map(bright, 0, 255, 0, vScale);\n\n      rect(x * vScale, y * vScale, w, w);\n    }\n  }\n}\n\n// https://editor.p5js.org/jht1493/sketches/XFKWbV01m\n// 11.4: Brightness getpixel copy\n\n// 2020-10-25 jht: Correct index, remove unneeed loadPixels\n// https://github.com/CodingTrain/website/tree/master/Tutorials/P5JS/p5.js_video",
         "children": [],
         "fileType": "file",
         "_id": "6415ea45af49fb07761c04ff",
         "isSelectedFile": true,
-        "createdAt": "2023-03-18T16:45:24.243Z",
-        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "createdAt": "2023-05-08T16:14:22.193Z",
+        "updatedAt": "2023-05-08T16:14:22.193Z",
         "id": "6415ea45af49fb07761c04ff"
       },
       {
@@ -92,8 +93,8 @@
         "children": [],
         "fileType": "file",
         "_id": "6415ea45af49fb07761c04fe",
-        "createdAt": "2023-03-18T16:45:24.243Z",
-        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "createdAt": "2023-05-08T16:14:22.193Z",
+        "updatedAt": "2023-05-08T16:14:22.193Z",
         "isSelectedFile": false,
         "id": "6415ea45af49fb07761c04fe"
       },
@@ -103,15 +104,141 @@
         "children": [],
         "fileType": "file",
         "_id": "6415ea45af49fb07761c0500",
-        "createdAt": "2023-03-18T16:45:24.243Z",
-        "updatedAt": "2023-03-18T16:45:24.243Z",
+        "createdAt": "2023-05-08T16:14:22.193Z",
+        "updatedAt": "2023-05-08T16:14:22.193Z",
         "isSelectedFile": false,
         "id": "6415ea45af49fb07761c0500"
+      },
+      {
+        "name": "qrc-11.4-Brightness-getpixel.png",
+        "content": "",
+        "children": [],
+        "fileType": "file",
+        "_id": "64591a5d9541ee0019abbaf8",
+        "url": "https://assets.editor.p5js.org/60261b883e600f00240bd343/1abf2f21-6fb6-47b6-bba4-6c7660e67d1f.png",
+        "isSelectedFile": false,
+        "updatedAt": "2023-05-08T16:14:22.193Z",
+        "createdAt": "2023-05-08T16:14:22.193Z",
+        "id": "64591a5d9541ee0019abbaf8"
       }
     ],
     "createdAt": "2023-03-18T16:43:49.509Z",
-    "updatedAt": "2023-03-18T16:45:24.243Z",
+    "updatedAt": "2023-05-08T16:14:22.193Z",
     "id": "J7Zhes2Tc"
+  },
+  {
+    "name": "7.3 Arrays of objects 1 copy",
+    "_id": "IwaHqYnDn",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "644080d2291841ccd1952e0c",
+          "644080d2291841ccd1952e0d",
+          "644080d2291841ccd1952e0e"
+        ],
+        "fileType": "folder",
+        "_id": "644080d2291841ccd1952e0b",
+        "isSelectedFile": false,
+        "createdAt": "2023-04-20T00:02:54.126Z",
+        "updatedAt": "2023-04-20T00:02:54.126Z",
+        "id": "644080d2291841ccd1952e0b"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/IwaHqYnDn\n// 7.3 Arrays of objects 1 copy\n\n\n// Drag mouse to see multple circles added to array\nlet a_bubbles = [];\n\nfunction setup() {\n  createCanvas(600, 400);\n}\n\nfunction mouseDragged() {\n  let bub = {\n    x: mouseX,\n    y: mouseY,\n    r: 5\n  };\n  a_bubbles.push(bub);\n}\n\nfunction draw() {\n  background(0);\n\n  // for (let bubble of bubbles) {\n  //   move_bubble(bubble);\n  //   show_bubble(bubble);\n  // }\n  for (let i = 0; i < a_bubbles.length; i++) {\n    move_bubble(a_bubbles[i]);\n    show_bubble(a_bubbles[i]);\n  }\n}\n\nfunction move_bubble(bub) {\n  bub.x = bub.x ;\n  bub.y = bub.y;\n}\n\nfunction show_bubble(bub) {\n  stroke(255);\n  strokeWeight(4);\n  noFill();\n  circle(bub.x, bub.y, bub.r * 2);\n}\n\n// https://editor.p5js.org/jht1493/sketches/xq4zwDd2x\n// 7.3 Arrays of objects 1\n\n// 7.3 Array of Objects\n// jht: Converted to POJO from \n// https://editor.p5js.org/codingtrain/sketches/1y_xfueO\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "644080d2291841ccd1952e0d",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-20T00:02:54.126Z",
+        "updatedAt": "2023-04-20T00:02:54.126Z",
+        "id": "644080d2291841ccd1952e0d"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "644080d2291841ccd1952e0c",
+        "isSelectedFile": false,
+        "createdAt": "2023-04-20T00:02:54.126Z",
+        "updatedAt": "2023-04-20T00:02:54.126Z",
+        "id": "644080d2291841ccd1952e0c"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "644080d2291841ccd1952e0e",
+        "isSelectedFile": false,
+        "createdAt": "2023-04-20T00:02:54.126Z",
+        "updatedAt": "2023-04-20T00:02:54.126Z",
+        "id": "644080d2291841ccd1952e0e"
+      }
+    ],
+    "createdAt": "2023-04-20T00:01:22.579Z",
+    "updatedAt": "2023-04-20T00:02:54.126Z",
+    "id": "IwaHqYnDn"
+  },
+  {
+    "name": "Firebase-createImg-board copy",
+    "_id": "ncIe7u-WC",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "64412a0ca2bfa795c4873c0d",
+          "64412a0ca2bfa795c4873c0e",
+          "64412a0ca2bfa795c4873c0f"
+        ],
+        "fileType": "folder",
+        "_id": "64412a0ca2bfa795c4873c0c",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-08T13:27:04.765Z",
+        "updatedAt": "2023-05-08T13:27:04.765Z",
+        "id": "64412a0ca2bfa795c4873c0c"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n// Firebase-createImg-board\n// Display images from Firebase storage as a bill board\n\n// https://mobilelabclass-itp.github.io/98-MoGallery-p5js/p5js_demos/createImg-board/\n// https://mobilelabclass-itp.github.io/98-MoGallery-p5js/p5js_demos/createImg-board/?gallery=-ims\n\n// let galleryKey = '-';\nlet a_version = 'v8 ';\nlet galleryKey = 'mo-gallery-ims-web';\nlet nitems = 0;\nlet updateCount = 0;\nlet doScroll = false;\nlet rdata; // Firebase object results from server. key is id\nlet rarr; // Array of items from server\nlet rwidth = 1920; // dimensions for image element\nlet rheight = 1080;\nlet scrollLimit = 0;\nlet doSplat = 0;\nlet debug = 0;\n\nlet shuffleBtn;\nlet fullScreenBtn;\nlet toggleScrollBtn;\nlet splatBtn;\n\nfunction setup() {\n  noCanvas();\n  // console.log('app', fb_.app);\n  if (debug) {\n    rwidth = rwidth / 4;\n    rheight = rheight / 4;\n    scrollLimit = 2;\n    doScroll = 1;\n  }\n  check_url_param();\n\n  // Setup listner for changes to firebase db\n  let galleryRef = fb_.ref(fb_.database, galleryKey);\n  fb_.onValue(galleryRef, (snapshot) => {\n    const data = snapshot.val();\n    console.log('galleryRef data', data);\n    received_gallery(data);\n  });\n\n  shuffleBtn = createButton('Shuffle').mousePressed(() => {\n    //console.log('Shuffle');\n    received_gallery(rdata, { doShuffle: 1 });\n  });\n  shuffleBtn.style('font-size:42px');\n\n  fullScreenBtn = createButton('Full Screen').mousePressed(() => {\n    ui_toggleFullScreen();\n    ui_remove_all();\n  });\n  fullScreenBtn.style('font-size:42px');\n\n  toggleScrollBtn = createButton('Scroll').mousePressed(() => {\n    doScroll = !doScroll;\n    console.log('doScroll', doScroll);\n    if (doScroll) {\n      ui_toggleFullScreen();\n      ui_remove_all();\n    }\n    // window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });\n  });\n  toggleScrollBtn.style('font-size:42px');\n\n  splatBtn = createButton('Splat').mousePressed(() => {\n    console.log('splatBtn', doSplat);\n    doSplat = !doSplat;\n    received_gallery(rdata);\n  });\n  splatBtn.style('font-size:42px');\n\n  ui_update();\n}\n\nfunction draw() {\n  // console.log('draw');\n  if (doScroll) {\n    // window.scrollBy({ top: window.scrollY + 1, behavior: 'smooth' });\n    window.scrollBy(0, 1);\n    let nlimit = scrollLimit || rarr.length;\n    if (window.scrollY > (nlimit + 1) * rheight) {\n      window.scrollTo(0, 0);\n    }\n  }\n}\n\nfunction received_gallery(data, opts) {\n  window.scrollTo(0, 0);\n  let div = ui_div_empty('igallery');\n  if (!data) {\n    return;\n  }\n  rdata = data;\n  updateCount += 1;\n\n  // for (key in data) {\n  //   console.log('key', key);\n  //   let val = data[key];\n\n  // Display in reverse order to see new additions first\n  rarr = Object.values(data).reverse();\n  if (opts && opts.doShuffle) {\n    rarr = shuffle(rarr);\n  }\n  nitems = rarr.length;\n\n  for (val of rarr) {\n    // console.log('received_gallery val', val);\n    // let img = createImg( 'https://p5js.org/assets/img/asterisk-01.png', 'the p5 magenta asterisk' );\n    // select full resolution media if available\n    //\n    // let path = val.mediaPathFullRez ?? val.mediaPath;\n    let path = val.mediaPathFullRez || val.mediaPath;\n    let img = createImg(path, val.authorEmail);\n    div.child(img);\n\n    // avoid backquote for rasberry pi browser\n    // img.style(`width: ${rwidth}px;`);\n    let iwidth = rwidth;\n    if (doSplat) {\n      iwidth = random(100, 400);\n    }\n    img.style('width: ' + iwidth + 'px;');\n\n    ui_update();\n  }\n}\n\nfunction ui_remove_all() {\n  shuffleBtn.remove();\n  fullScreenBtn.remove();\n  toggleScrollBtn.remove();\n  splatBtn.remove();\n}\n\nfunction ui_update() {\n  ui_span('date', a_version + formatDate());\n  ui_span('updateCount', ' updateCount:' + updateCount);\n  ui_span('nitems', ' nitems:' + nitems);\n}\n\nfunction formatDate() {\n  // return '';\n  return new Date().toISOString();\n}\n\nfunction ui_div_empty(id) {\n  let div = select('#' + id);\n  // console.log('ui_device_selection div', div);\n  if (!div) {\n    div = createDiv().id(id);\n  } else {\n    let children = div.child();\n    for (let index = children.length - 1; index >= 0; index--) {\n      let elm = children[index];\n      elm.remove();\n    }\n  }\n  return div;\n}\n\nfunction ui_span(id, html) {\n  let span = select('#' + id);\n  if (document.fullscreenElement) {\n    if (span) {\n      span.remove();\n    }\n    return;\n  }\n  if (!span) {\n    span = createSpan().id(id);\n  }\n  span.html(html);\n}\n\nfunction ui_toggleFullScreen() {\n  if (!document.documentElement.requestFullscreen) {\n    console.log('NO document.documentElement.requestFullscreen');\n    return;\n  }\n  if (!document.fullscreenElement) {\n    document.documentElement.requestFullscreen();\n  } else {\n    if (document.exitFullscreen) {\n      document.exitFullscreen();\n    }\n  }\n}\n\nfunction check_url_param() {\n  let query = window.location.search;\n  console.log('query', query);\n  if (query.length < 1) return;\n  let params = params_query(query);\n  let ngallery = params['gallery'];\n  if (ngallery) {\n    // mo-gallery-web\n    // rasberry pie does not like back quote\n    // galleryKey = `mo-gallery-${ngallery}-web`;\n    // galleryKey = ngallery;\n    galleryKey = 'mo-gallery' + ngallery + '-web';\n  }\n  console.log('galleryKey', galleryKey);\n}\n\n// https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams\nfunction params_query(query) {\n  // eg. query='abc=foo&def=%5Basf%5D&xyz=5'\n  // params={abc: \"foo\", def: \"[asf]\", xyz: \"5\"}\n  const urlParams = new URLSearchParams(query);\n  const params = Object.fromEntries(urlParams);\n  return params;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64412a0ca2bfa795c4873c0e",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-08T13:27:04.765Z",
+        "updatedAt": "2023-05-08T13:27:04.765Z",
+        "id": "64412a0ca2bfa795c4873c0e"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.js\"></script>\n    <!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />\n    <meta charset=\"utf-8\" />\n  </head>\n  <body>\n    <!-- v2023-02-08 18:01:45 -->\n    <main></main>\n\n    <!-- Documentation reference -->\n    <!-- https://firebase.google.com/docs/web/alt-setup?authuser=0&hl=en -->\n\n    <!-- Insert this script at the bottom of the HTML, but before you use any Firebase services -->\n    <script type=\"module\">\n      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';\n\n      // If you enabled Analytics in your project, add the Firebase SDK for Google Analytics\n      // import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js'\n\n      // Add Firebase products that you want to use\n      import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';\n      // import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js'\n\n      import {\n        getDatabase,\n        ref,\n        child,\n        get,\n        onValue,\n      } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';\n\n      // Your web app's Firebase configuration\n      // For Firebase JS SDK v7.20.0 and later, measurementId is optional\n      const firebaseConfig = {\n        apiKey: 'AIzaSyDLxi_fvCG2kzD2eJ4MxEZbOJ_GFSpIVe0',\n        authDomain: 'molab-485f5.firebaseapp.com',\n        databaseURL: 'https://molab-485f5-default-rtdb.firebaseio.com',\n        projectId: 'molab-485f5',\n        storageBucket: 'molab-485f5.appspot.com',\n        messagingSenderId: '219508380677',\n        appId: '1:219508380677:web:b5d846a150e7d60368b86c',\n        measurementId: 'G-40F0BN8L7L',\n      };\n\n      // Initialize Firebase\n      const fb_ = {};\n      fb_.app = initializeApp(firebaseConfig);\n\n      const auth = getAuth();\n      const database = getDatabase();\n      // console.log('database', database);\n      const dbRef = ref(getDatabase());\n\n      signInAnonymously(auth)\n        .then(() => {\n          console.log('signInAnonymously OK 4');\n          // check_gallery();\n        })\n        .catch((error) => {\n          const errorCode = error.code;\n          const errorMessage = error.message;\n          console.log('errorCode', errorCode);\n          console.log('errorMessage', errorMessage);\n        });\n\n      function check_gallery() {\n        get(child(dbRef, `mo-gallery-web`))\n          .then((snapshot) => {\n            if (snapshot.exists()) {\n              console.log('check_gallery snapshot', snapshot.val());\n            } else {\n              console.log('No data available');\n            }\n          })\n          .catch((error) => {\n            console.error('error', error);\n          });\n      }\n\n      // https://firebase.google.com/docs/database/web/read-and-write?hl=en&authuser=0\n\n      // const galleryRef = ref(database, 'mo-gallery-1');\n      // fb_.galleryRef = galleryRef;\n      // onValue(galleryRef, (snapshot) => {\n      //   const data = snapshot.val();\n      //   console.log('galleryRef data', data);\n      // });\n\n      window.fb_ = fb_;\n      fb_.auth = auth;\n      fb_.database = database;\n      fb_.dbRef = dbRef;\n      fb_.ref = ref;\n      fb_.onValue = onValue;\n\n      // Callbacks are removed by calling the off() method on your Firebase database reference.\n    </script>\n\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64412a0ca2bfa795c4873c0d",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-08T13:27:04.765Z",
+        "updatedAt": "2023-05-08T13:27:04.765Z",
+        "id": "64412a0ca2bfa795c4873c0d"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64412a0ca2bfa795c4873c0f",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-08T13:27:04.765Z",
+        "updatedAt": "2023-05-08T13:27:04.765Z",
+        "id": "64412a0ca2bfa795c4873c0f"
+      }
+    ],
+    "createdAt": "2023-04-20T12:03:24.421Z",
+    "updatedAt": "2023-05-08T13:27:04.765Z",
+    "id": "ncIe7u-WC"
   },
   {
     "name": "IMS - Truchet Vamoss copy",
@@ -295,20 +422,20 @@
         ],
         "fileType": "folder",
         "_id": "6426d3dec7e8c117a504ea71",
-        "createdAt": "2023-04-02T22:12:35.970Z",
-        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "createdAt": "2023-04-13T14:07:09.470Z",
+        "updatedAt": "2023-04-13T14:07:09.470Z",
         "isSelectedFile": false,
         "id": "6426d3dec7e8c117a504ea71"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/ZGUqiovgG\n// ims03-jht scrolling color time\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\nlet startSecs;\nlet lapseSecs = 10;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(fullscreen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_len();\n\n  startSecs = millis() / 1000;\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  let nowSecs = millis() / 1000;\n  if (nowSecs - startSecs > lapseSecs) {\n    startSecs = nowSecs;\n  }\n\n  // xpos = (xpos + 1) % width;\n  xpos = (width * (nowSecs - startSecs)) / lapseSecs;\n  xpos = int(xpos);\n}\n\nfunction init_len() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction fullscreen_action() {\n  ui_remove_all();\n  // ui_toggleFullScreen();\n  fullscreen(1);\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_len();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\nfunction ui_toggleFullScreen() {\n  if (!document.documentElement.requestFullscreen) {\n    console.log(\"NO document.documentElement.requestFullscreen\");\n    return;\n  }\n  if (!document.fullscreenElement) {\n    document.documentElement.requestFullscreen();\n  } else {\n    if (document.exitFullscreen) {\n      document.exitFullscreen();\n    }\n  }\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/ZGUqiovgG\n// ims03-jht scrolling color time\n\nlet xpos = 0;\nlet xlen;\nlet ylen;\nlet debug = 1;\nlet dim = { width: 400, height: 400 };\nlet fullScreenBtn;\nlet startSecs;\nlet lapseSecs = 10;\n\nfunction setup() {\n  if (!debug) {\n    dim.width = windowWidth;\n    dim.height = windowHeight;\n  }\n  createCanvas(dim.width, dim.height);\n  noStroke();\n\n  fullScreenBtn = createButton(\"Full Screen\").mousePressed(fullscreen_action);\n  fullScreenBtn.style(\"font-size:42px\");\n\n  init_len();\n\n  startSecs = millis() / 1000;\n}\n\nfunction draw() {\n  // background(220);\n  fill(\"black\");\n  rect(0, 0, xpos, ylen);\n  fill(\"red\");\n  rect(xpos % width, 0, xlen, ylen);\n  fill(\"green\");\n  rect((xpos + xlen) % width, 0, xlen, ylen);\n  fill(\"yellow\");\n  rect((xpos + xlen + xlen) % width, 0, xlen, ylen);\n\n  let nowSecs = millis() / 1000;\n  if (nowSecs - startSecs > lapseSecs) {\n    startSecs = nowSecs;\n  }\n\n  // xpos = (xpos + 1) % width;\n  xpos = (width * (nowSecs - startSecs)) / lapseSecs;\n  xpos = int(xpos);\n}\n\nfunction init_len() {\n  xlen = width / 3;\n  ylen = height;\n}\n\n// From\n// https://editor.p5js.org/jht1493/sketches/5LgILr8RF\n\nfunction fullscreen_action() {\n  ui_remove_all();\n  // ui_toggleFullScreen();\n  fullscreen(1);\n  let delay = 3000;\n  setTimeout(ui_present_window, delay);\n}\n\nfunction ui_present_window() {\n  resizeCanvas(windowWidth, windowHeight);\n  init_len();\n}\n\nfunction ui_remove_all() {\n  fullScreenBtn.remove();\n}\n\n// Not used, replaced with fullscreen p5js function\nfunction ui_toggleFullScreen() {\n  if (!document.documentElement.requestFullscreen) {\n    console.log(\"NO document.documentElement.requestFullscreen\");\n    return;\n  }\n  if (!document.fullscreenElement) {\n    document.documentElement.requestFullscreen();\n  } else {\n    if (document.exitFullscreen) {\n      document.exitFullscreen();\n    }\n  }\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/3VKJ-q8ar\n// ims03-jht scrolling color bars\n",
         "children": [],
         "fileType": "file",
         "_id": "6426d3dec7e8c117a504ea73",
         "isSelectedFile": true,
-        "createdAt": "2023-04-02T22:12:35.970Z",
-        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "createdAt": "2023-04-13T14:07:09.470Z",
+        "updatedAt": "2023-04-13T14:07:09.470Z",
         "id": "6426d3dec7e8c117a504ea73"
       },
       {
@@ -317,8 +444,8 @@
         "children": [],
         "fileType": "file",
         "_id": "6426d3dec7e8c117a504ea72",
-        "createdAt": "2023-04-02T22:12:35.970Z",
-        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "createdAt": "2023-04-13T14:07:09.470Z",
+        "updatedAt": "2023-04-13T14:07:09.470Z",
         "isSelectedFile": false,
         "id": "6426d3dec7e8c117a504ea72"
       },
@@ -328,84 +455,72 @@
         "children": [],
         "fileType": "file",
         "_id": "6426d3dec7e8c117a504ea74",
-        "createdAt": "2023-04-02T22:12:35.970Z",
-        "updatedAt": "2023-04-02T22:12:35.970Z",
+        "createdAt": "2023-04-13T14:07:09.470Z",
+        "updatedAt": "2023-04-13T14:07:09.470Z",
         "isSelectedFile": false,
         "id": "6426d3dec7e8c117a504ea74"
       }
     ],
     "createdAt": "2023-03-31T12:36:46.682Z",
-    "updatedAt": "2023-04-02T22:12:35.970Z",
+    "updatedAt": "2023-04-13T14:07:09.470Z",
     "id": "ZGUqiovgG"
   },
   {
-    "name": "IMS14 - Olive copy",
-    "_id": "6FIYHI4Mk",
+    "name": "Necessary-forgery-timed-drawing",
+    "_id": "MbS5C3j-F",
+    "updatedAt": "2023-04-23T21:46:34.983Z",
     "files": [
       {
         "name": "root",
         "content": "",
         "children": [
-          "642cba1f922667712f2214c4",
-          "642cba1f922667712f2214c5",
-          "642cba1f922667712f2214c6",
-          "642cba1f922667712f2214c7"
+          "6444daba1557737460186279",
+          "6444daba1557737460186278",
+          "6444daba155773746018627a"
         ],
         "fileType": "folder",
-        "_id": "642cba1f922667712f2214c3",
-        "createdAt": "2023-04-05T00:01:20.329Z",
-        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "_id": "6444daba155773746018627b",
         "isSelectedFile": false,
-        "id": "642cba1f922667712f2214c3"
+        "createdAt": "2023-04-23T21:46:34.983Z",
+        "updatedAt": "2023-04-23T21:46:34.983Z",
+        "id": "6444daba155773746018627b"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/oy312/sketches/bwx18-eLe\n// Olive Yu\n// Heat map + Perlin Noise https://codepen.io/ysko909/pen/ExKLqYq \n// パーリンノイズ生成の準備\n\n//How can i track the colors on the camera to reflect heat more? \n\nconst NOISE_VALUE = 80;\nconst CELL_SIZE = 10;\nlet zSeed = 0;\n\n// Saturation（彩度）\nconst MAX_SATURATION = 100;\nconst MIN_SATURATION = 60;\nlet speedVal_sat = 0;\nlet addVal_sat = 1;\n\n\n// Brightness（明度）\nconst MAX_BRIGHTNESS = 100;\nconst MIN_BRIGHTNESS = 50;\nlet speedVal_bright = 0;\nlet addVal_bright = 1;\n\n//Camera\nlet capture;\n\nfunction setup() {\n  createCanvas(800, 600);\n  colorMode(HSB);\n  background(255);\n  noStroke();\n  capture = createCapture(VIDEO);\n \n  \n}\n\nfunction draw() {\n  \n  for (let y = 0; y*CELL_SIZE < height;y++) {\n    for (let x = 0; x*CELL_SIZE < width; x++){\n      \n      // 色相の設定\n      let hueVal = noise(x/NOISE_VALUE, y/NOISE_VALUE, zSeed) * 480;\n      \n      fill(hueVal, speedVal_sat, speedVal_bright, 1);\n      rect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);\n    }\n  }\n  zSeed += 0.01;\n  \n  // 彩度の設定 HUE\n  if(speedVal_sat <= MIN_SATURATION){\n    addVal_sat = (addVal_sat * addVal_sat);\n  }\n  else if (speedVal_sat >= MAX_SATURATION){\n    addVal_sat = -1 * (addVal_sat * addVal_sat);\n  }\n  \n  speedVal_sat += addVal_sat;\n  \n  // 明度の設定\n  if(speedVal_bright <= MIN_BRIGHTNESS){\n    addVal_bright = (addVal_bright * addVal_bright); \n  }\n  else if (speedVal_bright >= MAX_BRIGHTNESS){\n    addVal_bright = -1 * (addVal_bright * addVal_bright);\n  }\n  \n  speedVal_bright += addVal_bright;\n  // image(capture, 0, 0, 800, 600);\n  // blendMode(DIFFERENCE);\n  // filter(BLUR);\n\n\n}",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/MbS5C3j-F\n// Necessary-forgery-timed-drawing\n// drawings are save in local storage\n\nfunction my_init() {\n  my.lapse = 5; // seconds to re-draw points\n  my.xoffset = 300;\n  my.draw_specs = [\n    { color: 'red', strokeWeight: 12 },\n    { color: 'green', strokeWeight: 7 },\n    { color: 'yellow', strokeWeight: 2 },\n  ];\n  my.draw_color = 'white';\n  my.strokeWeight = 10;\n  my.run = 1;\n  // npoint_limit = 200; // limit number of points in drawing\n  my.npoint_limit = 0; // no limit\n\n  my.timedDrawing = 0;\n  // my.startTime;\n\n  my.drawings = [];\n  my.drawing_index = 0;\n  my.points = null;\n  my.npoints = 0;\n  // my.canvas;\n  my.output = createGraphics(my.width, my.height);\n  my.output.noFill();\n}\n\nlet my = { width: 640, height: 480 };\n\nfunction setup() {\n  my_init();\n  my.canvas = createCanvas(my.width, my.height);\n\n  let msg = [\n    'drag mouse on left side of canvas to create line drawing',\n    'press startTimedDraw to re-draw on right in ' + my.lapse + ' seconds',\n  ];\n  createDiv(msg.join('<br/>'));\n\n  let runCheckBox = createCheckbox('Run ', my.run).changed(function () {\n    my.run = this.checked();\n  });\n  runCheckBox.style('display:inline;');\n\n  createButton('startTimedDraw').mousePressed(startTimedDraw);\n  createButton('stopTimedDraw').mousePressed(stopTimedDraw);\n  createButton('clearDrawing').mousePressed(clearDrawing);\n\n  createElement('br');\n\n  // createSlider(min, max, oldVal, step)\n  let lapse_slider = createSlider(0, 30, my.lapse).input(function () {\n    my.lapse = this.value();\n    // console.log('create_slider aVal ', aVal, 'type', typeof aVal);\n    valSpan.html(formatNumber(my.lapse) + '');\n    startTimedDraw();\n  });\n  lapse_slider.style('width:50%');\n  let valSpan = createSpan(my.lapse + '');\n\n  my.canvas.mouseReleased(canvas_mouseReleased);\n\n  restore_drawing();\n}\n\nfunction draw() {\n  background(0);\n\n  prepareOutput();\n\n  image(my.output, 0, 0);\n}\n\nfunction prepareOutput() {\n  if (!my.run) return;\n\n  draw_points();\n\n  if (my.timedDrawing) {\n    draw_timed();\n  }\n}\n\nfunction draw_points() {\n  let args = {\n    color: my.draw_color,\n    strokeWeight: my.strokeWeight,\n    stopIndex: my.npoints,\n    xoffset: 0,\n  };\n  draw_to(args);\n}\n\n// let my.playback_colors = ['red', 'green', 'yellow'];\n\nfunction draw_timed() {\n  let ncolors = my.draw_specs.length;\n  let npoints = my.npoints;\n  let now = secsTime() - my.startTime;\n  // let progress = now / my.lapse; // take lapse seconds per single drawing\n  let progress = now / (my.lapse / ncolors); // take lapse seconds n drawings\n  let stopIndex = int(npoints * progress) % (npoints * ncolors);\n  let spec = my.draw_specs[0];\n  let args = {\n    color: spec.color,\n    strokeWeight: spec.strokeWeight,\n    stopIndex: stopIndex,\n    xoffset: my.xoffset,\n    stepper: stepper,\n    icycle: 0,\n  };\n  function stepper(ipoint) {\n    if (ipoint % npoints == 0) {\n      let icycle = args.icycle;\n      let spec = my.draw_specs[icycle];\n      // let str = formatNumber(progress);\n      // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;\n      // str += ' icycle ' + icycle + ' icolor ' + icolor;\n      // console.log(str);\n      my.output.stroke(spec.color);\n      my.output.strokeWeight(spec.strokeWeight);\n      args.icycle = (args.icycle + 1) % ncolors;\n    }\n  }\n  draw_to(args);\n}\n\nfunction draw_to(args) {\n  my.output.stroke(args.color);\n  my.output.strokeWeight(args.strokeWeight);\n  let stepper = args.stepper;\n  let stopIndex = args.stopIndex;\n  let xoffset = args.xoffset;\n  let ipoint = 0;\n  while (ipoint < stopIndex) {\n    // Draw all points up until stopIndex\n    for (let points of my.drawings) {\n      for (let i = 1; i < points.length; i++) {\n        if (ipoint > stopIndex) return;\n        if (stepper) stepper(ipoint);\n        let prev = points[i - 1];\n        let point = points[i];\n        lineFrom(point, prev, xoffset);\n        ipoint++;\n      }\n    }\n    // detect no change\n    if (!ipoint) {\n      console.log('stopIndex_draw No change ipoint', ipoint);\n      break;\n    }\n  }\n}\n\nfunction startTimedDraw() {\n  console.log('startTimedDraw');\n  my.timedDrawing = 1;\n  my.startTime = secsTime();\n  calc_npoints();\n  console.log('startTimedDraw my.npoints', my.npoints);\n}\n\nfunction calc_npoints() {\n  my.npoints = 0;\n  for (let points of my.drawings) {\n    my.npoints += points.length;\n  }\n}\n\nfunction stopTimedDraw() {\n  console.log('stopTimedDraw');\n  my.timedDrawing = 0;\n}\n\nfunction clearDrawing() {\n  console.log('clearDrawing');\n  my.drawings = [];\n  my.points = null;\n  my.npoints = 0;\n  my.timedDrawing = 0;\n\n  my.output.clear();\n\n  save_drawings();\n}\n\nfunction mouseDragged() {\n  console.log('mouseDragged');\n  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {\n    return;\n  }\n  if (my.npoint_limit && my.npoints >= my.npoint_limit) {\n    console.log('mouseDragged my.npoint_limit', my.npoint_limit, 'my.npoints', my.npoints);\n    return;\n  }\n  if (!my.points) {\n    my.points = [];\n    my.drawings.push(my.points);\n  }\n  my.points.push({ x: mouseX, y: mouseY });\n  my.npoints++;\n}\n\nfunction canvas_mouseReleased() {\n  console.log('canvas_mouseReleased');\n  my.points = null;\n  startTimedDraw();\n  save_drawings();\n}\n\nfunction lineFrom(point, prev, xoffset) {\n  my.output.line(prev.x + xoffset, prev.y, point.x + xoffset, point.y);\n}\n\n// return seconds since start of sketch\nfunction secsTime() {\n  return millis() / 1000;\n}\n\nfunction formatNumber(num) {\n  let prec = 1000;\n  return int(num * prec) / prec;\n}\n\nfunction restore_drawing() {\n  let str = localStorage.getItem('my.drawings');\n  if (!str) return;\n  console.log('restore_drawing str.length', str.length);\n  my.drawings = JSON.parse(str);\n  calc_npoints();\n  console.log('restore_drawing my.npoints', my.npoints);\n}\n\nfunction save_drawings() {\n  let str = JSON.stringify(my.drawings);\n  localStorage.setItem('my.drawings', str);\n  console.log('save_drawings str.length', str.length);\n}\n\n// https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-p5\n// timed-drawing\n\n// convert to my.\n// startTimedDraw as slider changes\n// added a_drawings\n// generalize draw_to\n// remove class Point, use object literal for point\n// added funtion lineFrom\n\n// project files created with p5.vscode \"Create p5.js Project\"\n// https://editor.p5js.org/jht9629-nyu/sketches/-t2O5JfBr\n// timed-drawing\n// !!@ p5.js/0.10.2\n\n// TRY: use storeItem / getItem to save drawing locally\n// https://p5js.org/reference/#/p5/storeItem\n// https://p5js.org/reference/#/p5/getItem\n\n// Code! Programming with p5.js\n// The Coding Train / Daniel Shiffman\n// https://thecodingtrain.com/beginners/p5js/7.3-array-of-objects.html\n// https://youtu.be/fBqaA7zRO58\n// https://editor.p5js.org/codingtrain/sketches/1y_xfueO\n",
         "children": [],
         "fileType": "file",
-        "_id": "642cba1f922667712f2214c6",
+        "_id": "6444daba1557737460186278",
         "isSelectedFile": true,
-        "createdAt": "2023-04-05T00:01:20.329Z",
-        "updatedAt": "2023-04-05T00:01:20.329Z",
-        "id": "642cba1f922667712f2214c6"
+        "createdAt": "2023-04-23T21:46:34.983Z",
+        "updatedAt": "2023-04-23T21:46:34.983Z",
+        "id": "6444daba1557737460186278"
       },
       {
         "name": "index.html",
         "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
         "children": [],
         "fileType": "file",
-        "_id": "642cba1f922667712f2214c5",
-        "createdAt": "2023-04-05T00:01:20.329Z",
-        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "_id": "6444daba1557737460186279",
         "isSelectedFile": false,
-        "id": "642cba1f922667712f2214c5"
+        "createdAt": "2023-04-23T21:46:34.983Z",
+        "updatedAt": "2023-04-23T21:46:34.983Z",
+        "id": "6444daba1557737460186279"
       },
       {
         "name": "style.css",
         "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
         "children": [],
         "fileType": "file",
-        "_id": "642cba1f922667712f2214c7",
-        "createdAt": "2023-04-05T00:01:20.329Z",
-        "updatedAt": "2023-04-05T00:01:20.329Z",
+        "_id": "6444daba155773746018627a",
         "isSelectedFile": false,
-        "id": "642cba1f922667712f2214c7"
-      },
-      {
-        "name": "balletdancer.mp4",
-        "content": "",
-        "children": [],
-        "fileType": "file",
-        "_id": "642cba1f922667712f2214c4",
-        "url": "https://assets.editor.p5js.org/60261b883e600f00240bd343/5fe5ada1-75ca-4c12-814e-400f047c6380.mp4",
-        "updatedAt": "2023-04-05T00:01:20.329Z",
-        "createdAt": "2023-04-05T00:01:20.329Z",
-        "id": "642cba1f922667712f2214c4"
+        "createdAt": "2023-04-23T21:46:34.983Z",
+        "updatedAt": "2023-04-23T21:46:34.983Z",
+        "id": "6444daba155773746018627a"
       }
     ],
-    "createdAt": "2023-04-05T00:00:32.797Z",
-    "updatedAt": "2023-04-05T00:01:20.329Z",
-    "id": "6FIYHI4Mk"
+    "createdAt": "2023-04-23T07:14:26.012Z",
+    "id": "MbS5C3j-F"
   },
   {
     "name": "Outstanding fortnight",
@@ -460,6 +575,187 @@
     ],
     "createdAt": "2023-03-18T16:11:04.212Z",
     "id": "4DETmJP-l"
+  },
+  {
+    "name": "Simple Draw",
+    "_id": "oVJEGvodF",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645920a1d34546001c32588d",
+          "64592005cd811d3aa46ea5f8",
+          "64592005cd811d3aa46ea5f9",
+          "64592005cd811d3aa46ea5fa"
+        ],
+        "fileType": "folder",
+        "_id": "64592005cd811d3aa46ea5f7",
+        "createdAt": "2023-05-09T01:55:56.824Z",
+        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "isSelectedFile": false,
+        "id": "64592005cd811d3aa46ea5f7"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/oVJEGvodF\n// Simple Draw\n// issue: on mobile device drags entire window\n//  ok on Google Pixel 3a XL\n//  fails iPhone Safari and Chrome\n// tried style: overflow-y: hidden;\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/Simple-Draw/?v=4\n//  ok on iPhone Safari and Chrome\n\nvar aCanv;\n\nlet my = {version: 10, width: 640, height: 480};\n\nfunction setup() {\n  // aCanv = createCanvas(displayWidth, displayHeight);\n  \n  // simple test for mobile phone\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = my.width;\n  }\n  aCanv = createCanvas(my.width, my.height);\n  \n  createDiv('Version:'+my.version)\n  // createDiv('JHT is here 9').elt.appendChild(aCanv.elt)\n  \n  strokeWeight(20);\n  stroke(0);\n    \n  let url = 'Simple-Draw.png'\n  createImg(url, 'Draw')\n  \n  aCanv.mouseReleased(canvas_mouseReleased);\n}\n\nfunction mouseDragged() {\n  // console.log('mouseDragged');\n  // drawPoints.mouseDragged();\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\nfunction canvas_mouseReleased() {\n  // console.log('canvas_mouseReleased');\n  // drawPoints.mouseReleased();\n}\n\nfunction draw() {\n  // background(255)\n  \n  fill('red')\n  textSize(64)\n  // text('Hello', 0, displayHeight/2)\n  text('Hello screen', 0, 64)\n}\n\n\nfunction touchStarted(event) {\n  // console.log('touchStarted event', event);\n  // prevent default\n  // return false; // stops buttons on google Pixel phone\n}\n\nfunction touchEnded() {\n  // console.log('touchEnded');\n  // drawPoints.mouseReleased();\n}\n\nfunction canvas_touchStarted() {\n  console.log('canvas_touchStarted');\n  // prevent default\n  return false;\n}\n\nfunction canvas_touchEnded() {\n  // console.log('canvas_touchEnded');\n  // drawPoints.mouseReleased();\n}\n\n\nfunction touchMoved() {\n  console.log('touchMoved');\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\n// https://editor.p5js.org/f3/sketches/B-_Nh-YX0\n// Simple Draw\n\n// https://p5js.org/examples/mobile-simple-draw.html\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64592005cd811d3aa46ea5f9",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T01:55:56.824Z",
+        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "id": "64592005cd811d3aa46ea5f9"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script>    \n    <!-- <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /> -->\n    <style>\n      html, body {\n        margin: 0;\n        padding: 0;\n      }\n\n      canvas {\n        display: block;\n      }\n\n/*       body {\n        overflow-y: hidden;\n      } */\n    </style>\n\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64592005cd811d3aa46ea5f8",
+        "createdAt": "2023-05-09T01:55:56.824Z",
+        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "isSelectedFile": false,
+        "id": "64592005cd811d3aa46ea5f8"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64592005cd811d3aa46ea5fa",
+        "createdAt": "2023-05-09T01:55:56.824Z",
+        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "isSelectedFile": false,
+        "id": "64592005cd811d3aa46ea5fa"
+      },
+      {
+        "name": "Simple-Draw.png",
+        "content": "",
+        "children": [],
+        "fileType": "file",
+        "_id": "645920a1d34546001c32588d",
+        "url": "https://assets.editor.p5js.org/60261b883e600f00240bd343/f26c923e-2c9b-43a5-9ce6-ff490a3236d0.png",
+        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "createdAt": "2023-05-09T01:55:56.824Z",
+        "isSelectedFile": false,
+        "id": "645920a1d34546001c32588d"
+      }
+    ],
+    "createdAt": "2023-05-08T16:15:01.233Z",
+    "updatedAt": "2023-05-09T01:55:56.824Z",
+    "id": "oVJEGvodF"
+  },
+  {
+    "name": "Slit Scan copy",
+    "_id": "hw8qkUuAw",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6434250b311f2304436511ab",
+          "6434250b311f2304436511ac",
+          "6434250b311f2304436511ad"
+        ],
+        "fileType": "folder",
+        "_id": "6434250b311f2304436511aa",
+        "createdAt": "2023-04-10T15:07:51.023Z",
+        "updatedAt": "2023-04-10T15:07:51.023Z",
+        "id": "6434250b311f2304436511aa"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/hw8qkUuAw\n// https://editor.p5js.org/codingtrain/sketches/B1L5j8uk4\n// Slit Scan\n// Daniel Shiffman\n// https://thecodingtrain.com\n// https://youtu.be/WCJM9WIoudI\n// https://youtu.be/YqVbuMPIRwY\nlet video;\n\nlet x = 0;\n\nfunction setup() {\n  createCanvas(400, 240);\n  pixelDensity(1);\n  video = createCapture(VIDEO);\n  video.size(320, 240);\n  background(51);\n}\n\nfunction draw() {\n  // ?? is this needed\n  // video.loadPixels();\n  let w = video.width;\n  let h = video.height;\n  copy(video, w/2, 0, 1, h, x, 0, 1, h);\n  x = x + 1;\n  if (x > width) {\n    x = 0;\n  }\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6434250b311f2304436511ac",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-10T15:07:51.023Z",
+        "updatedAt": "2023-04-10T15:07:51.023Z",
+        "id": "6434250b311f2304436511ac"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html>\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6434250b311f2304436511ab",
+        "createdAt": "2023-04-10T15:07:51.023Z",
+        "updatedAt": "2023-04-10T15:07:51.023Z",
+        "id": "6434250b311f2304436511ab"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6434250b311f2304436511ad",
+        "createdAt": "2023-04-10T15:07:51.023Z",
+        "updatedAt": "2023-04-10T15:07:51.023Z",
+        "id": "6434250b311f2304436511ad"
+      }
+    ],
+    "createdAt": "2023-04-10T15:02:35.094Z",
+    "updatedAt": "2023-04-10T15:07:51.023Z",
+    "id": "hw8qkUuAw"
+  },
+  {
+    "name": "timed-drawing",
+    "_id": "-t2O5JfBr",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6440813fc32bcc73f2798f8a",
+          "6440813fc32bcc73f2798f8b",
+          "6440813fc32bcc73f2798f8c"
+        ],
+        "fileType": "folder",
+        "_id": "6440813fc32bcc73f2798f89",
+        "createdAt": "2023-04-20T21:02:17.029Z",
+        "updatedAt": "2023-04-20T21:02:17.029Z",
+        "isSelectedFile": false,
+        "id": "6440813fc32bcc73f2798f89"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/-t2O5JfBr\n// timed-drawing\n\nlet a_points = [];\nlet a_index = 0;\nlet a_startTime;\nlet a_lapse = 5; // seconds to re-draw points\nlet a_xoffset = 300;\nlet a_timedDrawing = 0;\n\nfunction setup() {\n  createCanvas(600, 400);\n  strokeWeight(4);\n  noFill();\n\n  let msg = [\n    \"drag mouse on left side of canvas to create line drawing\",\n    \"press startTimedDraw to re-draw on right in \" + a_lapse + \" seconds\",\n  ];\n  createDiv(msg.join(\"<br/>\"));\n  \n  createButton(\"startTimedDrawing\").mousePressed(startTimedDrawing);\n  createButton(\"stopTimedDrawing\").mousePressed(stopTimedDrawing);\n  createButton(\"clearDrawing\").mousePressed(clearDrawing);\n}\n\nfunction draw() {\n  background(0);\n\n  draw_points();\n\n  if (a_timedDrawing) {\n    draw_timed();\n  }\n}\n\nfunction startTimedDrawing() {\n  console.log(\"startTimedDrawing\");\n  a_timedDrawing = 1;\n  a_startTime = secsTime();\n}\n\nfunction stopTimedDrawing() {\n  console.log(\"stopTimedDrawing\");\n  a_timedDrawing = 0;\n}\n\nfunction clearDrawing() {\n  console.log(\"clearDrawing\");\n  a_points = [];\n  a_timedDrawing = 0;\n}\n\nfunction mouseDragged() {\n  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {\n    return;\n  }\n  // let r = random(10, 50);\n  let r = 5;\n  let b = new Point(mouseX, mouseY, r);\n  a_points.push(b);\n}\n\nfunction draw_timed() {\n  let n = a_points.length;\n  let now = secsTime() - a_startTime;\n  let progress = now / a_lapse;\n  let stopIndex = int(n * progress);\n  if (stopIndex > n) stopIndex = n;\n\n  draw_to(stopIndex);\n\n  if (now > a_lapse) {\n    // a_timedDrawing = 0\n  }\n}\n\nfunction draw_to(stopIndex) {\n  // console.log('stopIndex_draw stopIndex', stopIndex)\n  stroke(\"yellow\");\n\n  for (let i = 1; i < stopIndex; i++) {\n    let previous = a_points[i - 1];\n    let point = a_points[i];\n    if (!point) {\n      console.log(\"i\", i, \"point\", point);\n    }\n    point.lineFrom(previous, a_xoffset);\n  }\n}\n\nfunction draw_points() {\n  stroke(255);\n\n  for (let i = 1; i < a_points.length; i++) {\n    // a_points[i].move();\n    // a_points[i].show();\n    let previous = a_points[i - 1];\n    let point = a_points[i];\n    // console.log('bub', bub)\n    point.lineFrom(previous, 0);\n  }\n}\n\nclass Point {\n  constructor(x, y, r) {\n    this.x = x;\n    this.y = y;\n    this.r = r;\n  }\n\n  lineFrom(previous, xoffset) {\n    line(previous.x + xoffset, previous.y, this.x + xoffset, this.y);\n  }\n\n  move() {\n    this.x = this.x + random(-5, 5);\n    this.y = this.y + random(-5, 5);\n  }\n\n  show() {\n    // stroke(255);\n    // strokeWeight(4);\n    // noFill();\n    ellipse(this.x, this.y, this.r * 2);\n  }\n}\n\n// return seconds since start of sketch\nfunction secsTime() {\n  return millis() / 1000;\n}\n\n\n// TRY: use storeItem / getItem to save drawing locally\n// https://p5js.org/reference/#/p5/storeItem\n// https://p5js.org/reference/#/p5/getItem\n\n// Code! Programming with p5.js\n// The Coding Train / Daniel Shiffman\n// https://thecodingtrain.com/beginners/p5js/7.3-array-of-objects.html\n// https://youtu.be/fBqaA7zRO58\n// https://editor.p5js.org/codingtrain/sketches/1y_xfueO\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6440813fc32bcc73f2798f8b",
+        "isSelectedFile": true,
+        "createdAt": "2023-04-20T21:02:17.029Z",
+        "updatedAt": "2023-04-20T21:02:17.029Z",
+        "id": "6440813fc32bcc73f2798f8b"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6440813fc32bcc73f2798f8a",
+        "createdAt": "2023-04-20T21:02:17.029Z",
+        "updatedAt": "2023-04-20T21:02:17.029Z",
+        "isSelectedFile": false,
+        "id": "6440813fc32bcc73f2798f8a"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6440813fc32bcc73f2798f8c",
+        "createdAt": "2023-04-20T21:02:17.029Z",
+        "updatedAt": "2023-04-20T21:02:17.029Z",
+        "isSelectedFile": false,
+        "id": "6440813fc32bcc73f2798f8c"
+      }
+    ],
+    "createdAt": "2023-04-20T00:03:11.337Z",
+    "updatedAt": "2023-04-20T21:02:17.029Z",
+    "id": "-t2O5JfBr"
   },
   {
     "name": "truchet tiles copy",
@@ -586,20 +882,20 @@
         ],
         "fileType": "folder",
         "_id": "6425af5f2a6c137ec6dc896a",
-        "createdAt": "2023-03-30T15:49:18.149Z",
-        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "createdAt": "2023-04-15T21:16:16.684Z",
+        "updatedAt": "2023-04-15T21:16:16.684Z",
         "isSelectedFile": false,
         "id": "6425af5f2a6c137ec6dc896a"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/fWSv5uzke\n// truchet tiles pause cpoy\n// https://editor.p5js.org/jht9629-gmail/sketches/LnPplI2CR\n// truchet tiles pause\n\nlet len = 40;\nlet a_angle = 0;\nlet a_arr = [];\n// {count: seconds,...}\nlet a_pause_dict = {0: 2.0, 90: 2.0, 180: 2.0, 270: 2.0}\nlet a_pause_start = -1;\nlet a_pause_lapse;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noFill();\n  strokeWeight(4);\n  // Fill array a_arr with random true/false values\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = random() > 0.5\n      a_arr.push(odd)\n    }\n  }\n}\n\nfunction draw() {\n  let half = len / 2;\n  background(220);\n  let index = 0\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = a_arr[index]\n      if (odd) {\n        drawLeft(x, y, half);\n      } else {\n        drawRight(x, y, half);\n      }\n      index++;\n    }\n  }\n  if (check_cycle()) {\n    a_angle = (a_angle + 1) % 360;\n  }\n}\n\n// return true to advance cycle\n// use a_angle to find seconds to pause in a_pause_dict\nfunction check_cycle() {\n  if (a_pause_start > 0) {\n    let now = millis(); \n    if (now - a_pause_start > a_pause_lapse) {\n      a_pause_start = 0;\n      return true;\n    }\n    else {\n      return false\n    }\n  }\n  let lapse = a_pause_dict[a_angle];\n  if (lapse) {\n    a_pause_start = millis();\n    a_pause_lapse = lapse * 1000;\n    return false\n  }\n  else {  \n    return true; \n  }\n}\n\nfunction drawLeft(x, y, half) {\n  push();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + 0, -half + 0, len, len, 0, 90);\n  arc(-half + len, -half + len, len, len, 180, 270);\n  pop();\n}\n\nfunction drawRight(x, y, half) {\n  push();\n  noFill();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + len, -half + 0, len, len, 90, 180);\n  arc(-half + 0, -half + len, len, len, 270, 360);\n  pop();\n}\n\n// https://editor.p5js.org/jht9629-gmail/sketches/EfQDCJ5aR\n// truchet tiles array\n\n// https://editor.p5js.org/jht9629-nyu/sketches/5TSs5XB6o\n// truchet tiles rotate\n\n// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles re-factored\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/fWSv5uzke\n// truchet tiles pause copy\n// https://editor.p5js.org/jht9629-gmail/sketches/LnPplI2CR\n// truchet tiles pause\n\nlet len = 40;\nlet a_angle = 0;\nlet a_arr = [];\n// {count: seconds,...}\nlet a_pause_dict = {0: 2.0, 90: 2.0, 180: 2.0, 270: 2.0}\nlet a_pause_start = -1;\nlet a_pause_lapse;\n\nfunction setup() {\n  createCanvas(400, 400);\n  angleMode(DEGREES);\n  noFill();\n  strokeWeight(4);\n  // Fill array a_arr with random true/false values\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = random() > 0.5\n      a_arr.push(odd)\n    }\n  }\n}\n\nfunction draw() {\n  let half = len / 2;\n  background(220);\n  let index = 0\n  for (let x = 0; x < width; x += len) {\n    for (let y = 0; y < height; y += len) {\n      let odd = a_arr[index]\n      if (odd) {\n        drawLeft(x, y, half);\n      } else {\n        drawRight(x, y, half);\n      }\n      index++;\n    }\n  }\n  if (check_cycle()) {\n    a_angle = (a_angle + 1) % 360;\n  }\n}\n\n// return true to advance cycle\n// use a_angle to find seconds to pause in a_pause_dict\nfunction check_cycle() {\n  if (a_pause_start > 0) {\n    let now = millis(); \n    if (now - a_pause_start > a_pause_lapse) {\n      a_pause_start = 0;\n      return true;\n    }\n    else {\n      return false\n    }\n  }\n  let lapse = a_pause_dict[a_angle];\n  if (lapse) {\n    a_pause_start = millis();\n    a_pause_lapse = lapse * 1000;\n    return false\n  }\n  else {  \n    return true; \n  }\n}\n\nfunction drawLeft(x, y, half) {\n  push();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + 0, -half + 0, len, len, 0, 90);\n  arc(-half + len, -half + len, len, len, 180, 270);\n  pop();\n}\n\nfunction drawRight(x, y, half) {\n  push();\n  noFill();\n  translate(x + half, y + half);\n  rotate(a_angle);\n  arc(-half + len, -half + 0, len, len, 90, 180);\n  arc(-half + 0, -half + len, len, len, 270, 360);\n  pop();\n}\n\n// https://editor.p5js.org/jht9629-gmail/sketches/EfQDCJ5aR\n// truchet tiles array\n\n// https://editor.p5js.org/jht9629-nyu/sketches/5TSs5XB6o\n// truchet tiles rotate\n\n// https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d\n// truchet tiles re-factored\n\n// https://editor.p5js.org/jht9629-nyu/sketches/lBrb1cBQ7\n// truchet tiles copy\n\n// https://editor.p5js.org/ambikajo/sketches/cKu3Gn0Po\n// truchet tiles by ambikajo\n",
         "children": [],
         "fileType": "file",
         "_id": "6425af5f2a6c137ec6dc896c",
         "isSelectedFile": true,
-        "createdAt": "2023-03-30T15:49:18.149Z",
-        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "createdAt": "2023-04-15T21:16:16.684Z",
+        "updatedAt": "2023-04-15T21:16:16.684Z",
         "id": "6425af5f2a6c137ec6dc896c"
       },
       {
@@ -608,8 +904,8 @@
         "children": [],
         "fileType": "file",
         "_id": "6425af5f2a6c137ec6dc896b",
-        "createdAt": "2023-03-30T15:49:18.149Z",
-        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "createdAt": "2023-04-15T21:16:16.684Z",
+        "updatedAt": "2023-04-15T21:16:16.684Z",
         "isSelectedFile": false,
         "id": "6425af5f2a6c137ec6dc896b"
       },
@@ -619,14 +915,14 @@
         "children": [],
         "fileType": "file",
         "_id": "6425af5f2a6c137ec6dc896d",
-        "createdAt": "2023-03-30T15:49:18.149Z",
-        "updatedAt": "2023-03-30T15:49:18.149Z",
+        "createdAt": "2023-04-15T21:16:16.684Z",
+        "updatedAt": "2023-04-15T21:16:16.684Z",
         "isSelectedFile": false,
         "id": "6425af5f2a6c137ec6dc896d"
       }
     ],
     "createdAt": "2023-03-30T15:48:47.661Z",
-    "updatedAt": "2023-03-30T15:49:18.149Z",
+    "updatedAt": "2023-04-15T21:16:16.684Z",
     "id": "fWSv5uzke"
   },
   {
@@ -682,5 +978,509 @@
     "createdAt": "2023-03-18T18:11:10.048Z",
     "updatedAt": "2023-03-19T20:00:56.425Z",
     "id": "1CpIVSqp_d"
+  },
+  {
+    "name": "video meter rgb long",
+    "_id": "aJkcqKahg",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645ab88bb06c7598995a57af",
+          "645ab88bb06c7598995a57b0",
+          "645ab88bb06c7598995a57b1"
+        ],
+        "fileType": "folder",
+        "_id": "645ab88bb06c7598995a57ae",
+        "createdAt": "2023-05-09T23:50:31.282Z",
+        "updatedAt": "2023-05-09T23:50:31.282Z",
+        "isSelectedFile": false,
+        "id": "645ab88bb06c7598995a57ae"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\nlet my = { width: 640, height: 480, vscale: 4, crossBar: 2 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log(\"vwidth\", vwidth, \"vheight\", vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  background(255);\n  noStroke();\n}\n\nfunction draw() {\n  // Get pixel from center of video\n  let cx = my.video.width / 2;\n  let cy = my.video.height / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right corner\n  let vx = width - my.video.width;\n  let vy = height - my.video.height;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let len = my.crossBar;\n  rect(vx + cx, vy, len, my.video.height);\n  rect(vx, vy + cy, my.video.width, len);\n\n  // backdrop to bars\n  fill(255)\n  rect(0,vy,vx,my.video.height)\n\n  // draw red bar\n  let btall = cy / 2;\n  let bwide = vx;\n  let r = color[0]\n  fill(r,0,0)\n  rect(0, vy, bwide * (r/255), btall)\n  \n  // green bar\n  vy += btall;\n  let g = color[1]\n  fill(0,g,0)\n  rect(0, vy, bwide * (g/255), btall)\n\n  // blue bar\n  vy += btall;\n  let b = color[2]\n  fill(0,0,b)\n  rect(0, vy, bwide * (b/255), btall)\n  \n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ab88bb06c7598995a57b0",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T23:50:31.282Z",
+        "updatedAt": "2023-05-09T23:50:31.282Z",
+        "id": "645ab88bb06c7598995a57b0"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ab88bb06c7598995a57af",
+        "createdAt": "2023-05-09T23:50:31.282Z",
+        "updatedAt": "2023-05-09T23:50:31.282Z",
+        "isSelectedFile": false,
+        "id": "645ab88bb06c7598995a57af"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ab88bb06c7598995a57b1",
+        "createdAt": "2023-05-09T23:50:31.282Z",
+        "updatedAt": "2023-05-09T23:50:31.282Z",
+        "isSelectedFile": false,
+        "id": "645ab88bb06c7598995a57b1"
+      }
+    ],
+    "createdAt": "2023-05-09T21:18:03.563Z",
+    "updatedAt": "2023-05-09T23:50:31.282Z",
+    "id": "aJkcqKahg"
+  },
+  {
+    "name": "video meter rgb tall",
+    "_id": "_0fWGg7ni",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645ae8bbb6598320fecb83d7",
+          "645ae8bbb6598320fecb83d8",
+          "645ae8bbb6598320fecb83d9"
+        ],
+        "fileType": "folder",
+        "_id": "645ae8bbb6598320fecb83d6",
+        "createdAt": "2023-05-10T17:53:42.405Z",
+        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "isSelectedFile": false,
+        "id": "645ae8bbb6598320fecb83d6"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni\n// video meter rgb tall\n\nlet my = { width: 640, height: 480, vscale: 4, cscale: 64 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log(\"vwidth\", vwidth, \"vheight\", vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  my.crossLen = vwidth / my.cscale;\n  \n  background(255);\n  noStroke();\n}\n\nfunction draw() {\n  let vwidth = my.video.width;\n  let vheight = my.video.height;\n\n  // Get pixel from center of video\n  let cx = vwidth / 2;\n  let cy = vheight / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right middle\n  let vx = width / 2 - vwidth / 2;\n  let vy = height - vheight * 2.5;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let clen = my.crossLen;\n  rect(vx + cx, vy, clen, vheight);\n  rect(vx, vy + cy, vwidth, clen);\n\n  // white backdrop to bars\n  let x0 = vx;\n  let y0 = vy + vheight + clen;\n  let wwidth = vwidth\n  let wheight = vheight\n  fill(255)\n  rect(x0,y0,wwidth,wheight)\n\n  x0 += clen;\n  y0 += clen;\n  let y2 = y0 + wheight - clen*2\n  let btall = wheight * 0.8;\n  let y1 = y0 + btall;\n\n  // red bar\n  let bwide = ( wwidth - clen*2) / 3;\n  let r = color[0]\n  let rh = btall * (r/255)\n  fill(r,0,0)\n  rect(x0, y1 - rh, bwide, rh)\n  fill(255,0,0)\n  text('r='+r, x0, y2);\n  \n  // green bar\n  x0 += bwide;\n  let g = color[1]\n  let gh = btall * (g/255)\n  fill(0,g,0)\n  rect(x0, y1 - gh, bwide, gh)\n  fill(0,255,0)\n  text('g='+g, x0, y2);\n\n  // blue bar\n  x0 += bwide;\n  let b = color[2]\n  let bh = btall * (b/255)\n  fill(0,0,b)\n  rect(x0, y1 - bh, bwide, bh)\n  fill(0,0,255)\n  text('b='+b, x0, y2);\n\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ae8bbb6598320fecb83d8",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-10T17:53:42.405Z",
+        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "id": "645ae8bbb6598320fecb83d8"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ae8bbb6598320fecb83d7",
+        "createdAt": "2023-05-10T17:53:42.405Z",
+        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "isSelectedFile": false,
+        "id": "645ae8bbb6598320fecb83d7"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645ae8bbb6598320fecb83d9",
+        "createdAt": "2023-05-10T17:53:42.405Z",
+        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "isSelectedFile": false,
+        "id": "645ae8bbb6598320fecb83d9"
+      }
+    ],
+    "createdAt": "2023-05-10T00:43:39.535Z",
+    "updatedAt": "2023-05-10T17:53:42.405Z",
+    "id": "_0fWGg7ni"
+  },
+  {
+    "name": "video pixel",
+    "_id": "sJM2AMf5T",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6459c0f3b06c7598995a57a7",
+          "6459c0f3b06c7598995a57a8",
+          "6459c0f3b06c7598995a57a9"
+        ],
+        "fileType": "folder",
+        "_id": "6459c0f3b06c7598995a57a6",
+        "createdAt": "2023-05-10T00:20:57.826Z",
+        "updatedAt": "2023-05-10T00:20:57.826Z",
+        "isSelectedFile": false,
+        "id": "6459c0f3b06c7598995a57a6"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\nlet my = { width: 640, height: 480, ncell: 40, vscale: 64 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n  \n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log('vwidth', vwidth, 'vheight', vheight)\n  \n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  // my.video.hide();\n  \n  my.x = 0;\n  my.y = 0;\n  my.cell = vwidth / my.ncell\n  background(255)\n  noStroke();\n}\n\nfunction draw() {\n  // drawing with video appear to more pixel detail not limited to video size\n  // image(my.video,0,0,width,height)\n  let img = my.video.get();\n  image(img,0,0,width,height)\n}\n\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c0f3b06c7598995a57a8",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-10T00:20:57.826Z",
+        "updatedAt": "2023-05-10T00:20:57.826Z",
+        "id": "6459c0f3b06c7598995a57a8"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c0f3b06c7598995a57a7",
+        "createdAt": "2023-05-10T00:20:57.826Z",
+        "updatedAt": "2023-05-10T00:20:57.826Z",
+        "isSelectedFile": false,
+        "id": "6459c0f3b06c7598995a57a7"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c0f3b06c7598995a57a9",
+        "createdAt": "2023-05-10T00:20:57.826Z",
+        "updatedAt": "2023-05-10T00:20:57.826Z",
+        "isSelectedFile": false,
+        "id": "6459c0f3b06c7598995a57a9"
+      }
+    ],
+    "createdAt": "2023-05-09T03:41:39.363Z",
+    "updatedAt": "2023-05-10T00:20:57.826Z",
+    "id": "sJM2AMf5T"
+  },
+  {
+    "name": "video pixel meter",
+    "_id": "p0ato8vra",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6459c399b06c7598995a57ab",
+          "6459c399b06c7598995a57ac",
+          "6459c399b06c7598995a57ad"
+        ],
+        "fileType": "folder",
+        "_id": "6459c399b06c7598995a57aa",
+        "createdAt": "2023-05-09T15:45:14.893Z",
+        "updatedAt": "2023-05-09T15:45:14.893Z",
+        "isSelectedFile": false,
+        "id": "6459c399b06c7598995a57aa"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\nlet my = { width: 640, height: 480, vscale: 4, crossBar: 2 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log(\"vwidth\", vwidth, \"vheight\", vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  background(255);\n  noStroke();\n}\n\nfunction draw() {\n  // Get pixel from center of video\n  let cx = my.video.width / 2;\n  let cy = my.video.height / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right corner\n  let vx = width - my.video.width;\n  let vy = height - my.video.height;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let len = my.crossBar;\n  rect(vx + cx, vy, len, my.video.height);\n  rect(vx, vy + cy, my.video.width, len);\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c399b06c7598995a57ac",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T15:45:14.893Z",
+        "updatedAt": "2023-05-09T15:45:14.893Z",
+        "id": "6459c399b06c7598995a57ac"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c399b06c7598995a57ab",
+        "createdAt": "2023-05-09T15:45:14.893Z",
+        "updatedAt": "2023-05-09T15:45:14.893Z",
+        "isSelectedFile": false,
+        "id": "6459c399b06c7598995a57ab"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459c399b06c7598995a57ad",
+        "createdAt": "2023-05-09T15:45:14.893Z",
+        "updatedAt": "2023-05-09T15:45:14.893Z",
+        "isSelectedFile": false,
+        "id": "6459c399b06c7598995a57ad"
+      }
+    ],
+    "createdAt": "2023-05-09T03:52:57.864Z",
+    "updatedAt": "2023-05-09T15:45:14.893Z",
+    "id": "p0ato8vra"
+  },
+  {
+    "name": "video pixel scan",
+    "_id": "HRjZBETUA",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6459ac8bb06c7598995a57a3",
+          "6459ac8bb06c7598995a57a4",
+          "6459ac8bb06c7598995a57a5"
+        ],
+        "fileType": "folder",
+        "_id": "6459ac8bb06c7598995a57a2",
+        "createdAt": "2023-05-09T16:00:12.100Z",
+        "updatedAt": "2023-05-09T16:00:12.100Z",
+        "isSelectedFile": false,
+        "id": "6459ac8bb06c7598995a57a2"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\nlet my = { width: 640, height: 480, ncell: 40, vscale: 2 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n  \n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  \n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  // my.video.hide();\n  \n  my.x = 0;\n  my.y = 0;\n  my.cell = vwidth / my.ncell\n  background(255)\n  noStroke();\n}\n\nfunction draw() {\n  let vcolor = my.video.get(my.x, my.y );\n  fill(vcolor)\n  let x = my.x * my.vscale;\n  let y = my.y * my.vscale;\n  let cell = my.cell * my.vscale;\n  rect(x, y, cell, cell)\n  my.x += my.cell;\n  if (my.x > my.video.width) {\n    my.x = 0;\n    my.y += my.cell;\n    if (my.y > my.video.height) {\n      my.y = 0;\n    }\n  }\n}\n\n// https://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints\n// wooh! deep in the specs\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459ac8bb06c7598995a57a4",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T16:00:12.100Z",
+        "updatedAt": "2023-05-09T16:00:12.100Z",
+        "id": "6459ac8bb06c7598995a57a4"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459ac8bb06c7598995a57a3",
+        "createdAt": "2023-05-09T16:00:12.100Z",
+        "updatedAt": "2023-05-09T16:00:12.100Z",
+        "isSelectedFile": false,
+        "id": "6459ac8bb06c7598995a57a3"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459ac8bb06c7598995a57a5",
+        "createdAt": "2023-05-09T16:00:12.100Z",
+        "updatedAt": "2023-05-09T16:00:12.100Z",
+        "isSelectedFile": false,
+        "id": "6459ac8bb06c7598995a57a5"
+      }
+    ],
+    "createdAt": "2023-05-09T02:14:35.237Z",
+    "updatedAt": "2023-05-09T16:00:12.100Z",
+    "id": "HRjZBETUA"
+  },
+  {
+    "name": "video pixel scan random",
+    "_id": "3ZwzK2buW",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645a6edd925fe8d9c512eae7",
+          "645a6edd925fe8d9c512eae8",
+          "645a6edd925fe8d9c512eae9"
+        ],
+        "fileType": "folder",
+        "_id": "645a6edd925fe8d9c512eae6",
+        "createdAt": "2023-05-09T23:54:56.678Z",
+        "updatedAt": "2023-05-09T23:54:56.678Z",
+        "isSelectedFile": false,
+        "id": "645a6edd925fe8d9c512eae6"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/3ZwzK2buW\n// video pixel scan random\n\nlet my = { width: 640, height: 480, ncell: 32, vscale: 2 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(255);\n  noStroke();\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  \n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  // my.video.hide();\n  \n  my.x = 0;\n  my.y = 0;\n  my.cell = vwidth / my.ncell\n}\n\nfunction draw() {\n  let vcolor = my.video.get(my.x, my.y );\n  fill(vcolor)\n  let x = my.x * my.vscale;\n  let y = my.y * my.vscale;\n  let cell = my.cell * my.vscale * random([0.5,1.0]);\n  if (random([0,1])) {\n    circle(x, y, cell)    \n  }\n  else {\n    rect(x, y, cell, cell)    \n  }\n  my.x += my.cell;\n  if (my.x > my.video.width) {\n    my.x = 0;\n    my.y += my.cell;\n    if (my.y > my.video.height) {\n      my.y = 0;\n    }\n  }\n}\n\n// https://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints\n// wooh! deep in the specs\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645a6edd925fe8d9c512eae8",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T23:54:56.678Z",
+        "updatedAt": "2023-05-09T23:54:56.678Z",
+        "id": "645a6edd925fe8d9c512eae8"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645a6edd925fe8d9c512eae7",
+        "createdAt": "2023-05-09T23:54:56.678Z",
+        "updatedAt": "2023-05-09T23:54:56.678Z",
+        "isSelectedFile": false,
+        "id": "645a6edd925fe8d9c512eae7"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645a6edd925fe8d9c512eae9",
+        "createdAt": "2023-05-09T23:54:56.678Z",
+        "updatedAt": "2023-05-09T23:54:56.678Z",
+        "isSelectedFile": false,
+        "id": "645a6edd925fe8d9c512eae9"
+      }
+    ],
+    "createdAt": "2023-05-09T16:03:41.385Z",
+    "updatedAt": "2023-05-09T23:54:56.678Z",
+    "id": "3ZwzK2buW"
+  },
+  {
+    "name": "video tint 2x2 mobile",
+    "_id": "ZQKpaeJm0",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6459abeab06c7598995a579f",
+          "6459abeab06c7598995a57a0",
+          "6459abeab06c7598995a57a1"
+        ],
+        "fileType": "folder",
+        "_id": "6459abeab06c7598995a579e",
+        "createdAt": "2023-05-09T02:13:06.544Z",
+        "updatedAt": "2023-05-09T02:13:06.544Z",
+        "id": "6459abeab06c7598995a579e"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/ZQKpaeJm0\n// video tint 2x2 mobile\n\nlet a_video;\nlet a_scale = 2;\nlet a_alpha = 10;\nlet a_w = 240;\nlet a_h = 320;\n\nfunction setup() {\n  createCanvas(a_w * a_scale, a_h * a_scale);\n  background(51);\n  a_video = createCapture(VIDEO);\n  a_video.size(a_w, a_h);\n  a_video.hide();\n}\n\nfunction draw() {\n\n  // Copy the entire source image\n  // image(img, x, y, [width], [height])\n\n  // Red - top left\n  tint(255, 0, 0, a_alpha);  \n  image(a_video, 0, 0, a_w, a_h);\n\n  // Green - top right\n  tint(0, 255, 0, a_alpha);  \n  image(a_video, a_w, 0, a_w, a_h);\n\n  // Blue - bottom left\n  // tint(125, 125, 125, a_alpha);  \n  tint(0, 0, 255, a_alpha);  \n  image(a_video, 0, a_h, a_w, a_h);\n\n  // Red+Green=Yellow - bottom right\n  tint(255, 255, 0, a_alpha);  \n  image(a_video, a_w, a_h, a_w, a_h);\n\n  // No tint - center\n  tint(255, 255, 255, 255)  \n  image(a_video, a_w-a_w/2, a_h-a_h/2, a_w, a_h);\n\n}\n\n// TRY: Try extreme values for a_alpha\n// TRY: try background call in draw func\n// TRY: comment out center image and have 4 images\n//     show the corresponding portion of the video\n\n// https://editor.p5js.org/jht1493/sketches/QYlq2DxmM\n// video tint 2x2 mobile\n\n// https://editor.p5js.org/jht1493/sketches/Zx8JnxZfw\n// video tint 2x2\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight, \n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459abeab06c7598995a57a0",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-09T02:13:06.544Z",
+        "updatedAt": "2023-05-09T02:13:06.544Z",
+        "id": "6459abeab06c7598995a57a0"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459abeab06c7598995a579f",
+        "createdAt": "2023-05-09T02:13:06.544Z",
+        "updatedAt": "2023-05-09T02:13:06.544Z",
+        "id": "6459abeab06c7598995a579f"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6459abeab06c7598995a57a1",
+        "createdAt": "2023-05-09T02:13:06.544Z",
+        "updatedAt": "2023-05-09T02:13:06.544Z",
+        "id": "6459abeab06c7598995a57a1"
+      }
+    ],
+    "createdAt": "2023-05-09T02:11:54.422Z",
+    "updatedAt": "2023-05-09T02:13:06.544Z",
+    "id": "ZQKpaeJm0"
+  },
+  {
+    "name": "video tint 2x2 mobile",
+    "_id": "UL4f15T8w",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "64591b930b0a4f2dbfec13ba",
+          "64591b930b0a4f2dbfec13bb",
+          "64591b930b0a4f2dbfec13bc"
+        ],
+        "fileType": "folder",
+        "_id": "64591b930b0a4f2dbfec13b9",
+        "createdAt": "2023-05-08T15:56:19.800Z",
+        "updatedAt": "2023-05-08T15:56:19.800Z",
+        "id": "64591b930b0a4f2dbfec13b9"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/UL4f15T8w\n// https://editor.p5js.org/jht1493/sketches/QYlq2DxmM\n// video tint 2x2 mobile\n\nlet a_video;\nlet a_scale = 2;\nlet a_alpha = 10;\nlet a_w = 240;\nlet a_h = 320;\n\nfunction setup() {\n  createCanvas(a_w * a_scale, a_h * a_scale);\n  background(51);\n  a_video = createCapture(VIDEO);\n  a_video.size(a_w, a_h);\n  a_video.hide();\n}\n\nfunction draw() {\n\n  // Copy the entire source image\n  // image(img, x, y, [width], [height])\n\n  // Red - top left\n  tint(255, 0, 0, a_alpha);  \n  image(a_video, 0, 0, a_w, a_h);\n\n  // Green - top right\n  tint(0, 255, 0, a_alpha);  \n  image(a_video, a_w, 0, a_w, a_h);\n\n  // Blue - bottom left\n  // tint(125, 125, 125, a_alpha);  \n  tint(0, 0, 255, a_alpha);  \n  image(a_video, 0, a_h, a_w, a_h);\n\n  // Red+Green=Yellow - bottom right\n  tint(255, 255, 0, a_alpha);  \n  image(a_video, a_w, a_h, a_w, a_h);\n\n  // No tint - center\n  tint(255, 255, 255, 255)  \n  image(a_video, a_w-a_w/2, a_h-a_h/2, a_w, a_h);\n\n}\n\n// TRY: Try extreme values for a_alpha\n// TRY: try background call in draw func\n// TRY: comment out center image and have 4 images\n//     show the corresponding portion of the video\n\n// https://editor.p5js.org/jht1493/sketches/Zx8JnxZfw\n// video tint 2x2\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight, \n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64591b930b0a4f2dbfec13bb",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-08T15:56:19.800Z",
+        "updatedAt": "2023-05-08T15:56:19.800Z",
+        "id": "64591b930b0a4f2dbfec13bb"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64591b930b0a4f2dbfec13ba",
+        "createdAt": "2023-05-08T15:56:19.800Z",
+        "updatedAt": "2023-05-08T15:56:19.800Z",
+        "id": "64591b930b0a4f2dbfec13ba"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "64591b930b0a4f2dbfec13bc",
+        "createdAt": "2023-05-08T15:56:19.800Z",
+        "updatedAt": "2023-05-08T15:56:19.800Z",
+        "id": "64591b930b0a4f2dbfec13bc"
+      }
+    ],
+    "createdAt": "2023-05-08T15:56:03.857Z",
+    "updatedAt": "2023-05-08T15:56:19.800Z",
+    "id": "UL4f15T8w"
+  },
+  {
+    "name": "WK2 move a circle with random size copy",
+    "_id": "xYjreHHtl",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "6431f75462a3322e5d70c034",
+          "6431f75462a3322e5d70c035",
+          "6431f75462a3322e5d70c036"
+        ],
+        "fileType": "folder",
+        "_id": "6431f75462a3322e5d70c033",
+        "createdAt": "2021-03-07T01:22:51.990Z",
+        "updatedAt": "2021-03-07T01:22:51.990Z",
+        "id": "6431f75462a3322e5d70c033"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// global variables\n// these variables can be used anywhere in your program\n// JHT convention: our functions and variables use _\n//\nlet x_position = 200;\nlet y_position = 200;\nlet a_size;\n\nfunction setup() {\n  createCanvas(400, 400);\n\n  // function variable\n  // if declared here, \n  // y_position can only be used in setup()\n  // let y_position = 150\n  \n  // return a num between 10 and 300\n  a_size = random(10, 50)\n  \n  // return a num between 0 and 50\n  // a_size = random(50);\n  \n  // return a num between 0 1\n  // a_size = random();\n}\n\nfunction draw() {\n  background(220);\n  \n  circle(x_position, y_position, a_size);\n  \n  // x_position = x_position - 1;\n  // x_position--;\n  x_position += 1;\n  y_position = y_position - 1;\n  \n  console.log(y_position);\n  // text('y_position = '+y_position, 0,15);\n  // text('a_size = '+a_size, 0,30);\n  report_msg('y_position = '+y_position);\n}\n\n// Display msg in html paragraph element id_line\nfunction report_msg(a_msg) {\n  let id_line = select('#id_line');\n  if (!id_line) id_line = createP().id('id_line');\n  id_line.elt.innerHTML = '[' + frameCount + '] ' + a_msg;\n}\n\n// https://editor.p5js.org/enickles/sketches/6u7lNqTfa\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6431f75462a3322e5d70c035",
+        "isSelectedFile": true,
+        "createdAt": "2021-03-07T01:22:51.990Z",
+        "updatedAt": "2021-03-07T01:22:51.990Z",
+        "id": "6431f75462a3322e5d70c035"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6431f75462a3322e5d70c034",
+        "createdAt": "2021-03-07T01:22:51.990Z",
+        "updatedAt": "2021-03-07T01:22:51.990Z",
+        "id": "6431f75462a3322e5d70c034"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "6431f75462a3322e5d70c036",
+        "createdAt": "2021-03-07T01:22:51.990Z",
+        "updatedAt": "2021-03-07T01:22:51.990Z",
+        "id": "6431f75462a3322e5d70c036"
+      }
+    ],
+    "createdAt": "2023-04-08T23:23:01.022Z",
+    "updatedAt": "2023-04-08T23:23:01.022Z",
+    "id": "xYjreHHtl"
   }
 ]
