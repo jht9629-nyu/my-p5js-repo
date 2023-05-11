@@ -36,7 +36,10 @@ async function run() {
   sks = fs.readJsonSync(json_path);
 
   // sort by name
-  sks.sort((item1, item2) => item1.name.localeCompare(item2.name, 'en', { sensitivity: 'case' }));
+  // let options =  { sensitivity: 'case', caseFirst: 'lower' };
+  // attempts at case-sensitive fail
+  let options = { sensitivity: 'case' };
+  sks.sort((item1, item2) => item1.name.localeCompare(item2.name, 'en', options));
 
   list_sketches(sks, list_path, download_sh_path);
   // updatedAt
@@ -91,3 +94,5 @@ run();
 // [Ex_05_99 Robot03_Response](https://editor.p5js.org/jht1493/sketches/sWEVGT4bm)
 
 // https://github.com/jprichardson/node-fs-extra
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
