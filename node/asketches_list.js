@@ -34,14 +34,18 @@ async function run() {
     await read_href(sketch_href, json_path);
   }
   sks = fs.readJsonSync(json_path);
-  list_sketches(sks, list_path);
+
+  // sort by name
+  sks.sort((item1, item2) => item1.name.localeCompare(item2.name, 'en', { sensitivity: 'case' }));
+
+  list_sketches(sks, list_path, download_sh_path);
   // updatedAt
   sks.sort((item1, item2) => item1.updatedAt.localeCompare(item2.updatedAt));
   sks.reverse();
   list_sketches(sks, list_recent_path);
 }
 
-function list_sketches(sks, list_path) {
+function list_sketches(sks, list_path, download_sh_path) {
   // console.log('sks', sks);
   // console.log('sks.length', sks.length);
   let lines = [];
@@ -60,7 +64,9 @@ function list_sketches(sks, list_path) {
     );
   });
   fs.writeFileSync(list_path, lines.join('\n'));
-  fs.writeFileSync(download_sh_path, download_lines.join('\n'));
+  if (download_sh_path) {
+    fs.writeFileSync(download_sh_path, download_lines.join('\n'));
+  }
 }
 
 async function read_href(sketch_href, json_path) {
