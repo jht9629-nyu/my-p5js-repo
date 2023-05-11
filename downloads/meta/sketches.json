@@ -184,6 +184,120 @@
     "id": "IwaHqYnDn"
   },
   {
+    "name": "Acceleration Ball Bounce",
+    "_id": "wOBMJbldS",
+    "updatedAt": "2023-05-10T22:36:01.209Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c17f7d653a57fcb3082db",
+          "645c17f7d653a57fcb3082da",
+          "645c17f7d653a57fcb3082dc"
+        ],
+        "fileType": "folder",
+        "_id": "645c17f7d653a57fcb3082dd",
+        "createdAt": "2023-05-10T22:36:01.209Z",
+        "updatedAt": "2023-05-10T22:36:01.209Z",
+        "isSelectedFile": false,
+        "id": "645c17f7d653a57fcb3082dd"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/wOBMJbldS\n// Acceleration Ball Bounce\n\n// https://p5js.org/examples/mobile-acceleration-ball-bounce.html\n// Acceleration Ball Bounce\n\n// Position Variables\nlet x = 0;\nlet y = 0;\n\n// Speed - Velocity\nlet vx = 0;\nlet vy = 0;\n\n// Acceleration\nlet ax = 0;\nlet ay = 0;\n\nlet vMultiplier = 0.007;\nlet bMultiplier = 0.6;\n\nfunction setup() {\n  createCanvas(displayWidth, displayHeight);\n  fill(0);\n}\n\nfunction draw() {\n  background(220);\n  ballMove();\n  ellipse(x, y, 30, 30);\n}\n\nfunction ballMove() {\n  ax = accelerationX;\n  ay = accelerationY;\n\n  vx = vx + ay;\n  vy = vy + ax;\n  y = y + vy * vMultiplier;\n  x = x + vx * vMultiplier;\n\n  // Bounce when touch the edge of the canvas\n  if (x < 0) {\n    x = 0;\n    vx = -vx * bMultiplier;\n  }\n  if (y < 0) {\n    y = 0;\n    vy = -vy * bMultiplier;\n  }\n  if (x > width - 20) {\n    x = width - 20;\n    vx = -vx * bMultiplier;\n  }\n  if (y > height - 20) {\n    y = height - 20;\n    vy = -vy * bMultiplier;\n  }\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c17f7d653a57fcb3082da",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-10T22:36:01.209Z",
+        "updatedAt": "2023-05-10T22:36:01.209Z",
+        "id": "645c17f7d653a57fcb3082da"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c17f7d653a57fcb3082db",
+        "createdAt": "2023-05-10T22:36:01.209Z",
+        "updatedAt": "2023-05-10T22:36:01.209Z",
+        "isSelectedFile": false,
+        "id": "645c17f7d653a57fcb3082db"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c17f7d653a57fcb3082dc",
+        "createdAt": "2023-05-10T22:36:01.209Z",
+        "updatedAt": "2023-05-10T22:36:01.209Z",
+        "isSelectedFile": false,
+        "id": "645c17f7d653a57fcb3082dc"
+      }
+    ],
+    "createdAt": "2023-05-10T22:19:04.922Z",
+    "id": "wOBMJbldS"
+  },
+  {
+    "name": "acceleration-scope",
+    "_id": "Rdb_xgkkW",
+    "updatedAt": "2023-05-11T03:19:39.323Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c4827cc1426678ad1f8ea",
+          "645c4827cc1426678ad1f8e9",
+          "645c4827cc1426678ad1f8eb"
+        ],
+        "fileType": "folder",
+        "_id": "645c4827cc1426678ad1f8ec",
+        "createdAt": "2023-05-11T03:19:39.323Z",
+        "updatedAt": "2023-05-11T03:19:39.323Z",
+        "isSelectedFile": false,
+        "id": "645c4827cc1426678ad1f8ec"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/Rdb_xgkkW\n// acceleration-scope\n\nlet my = { version: 6, width: 200, height: 200 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n\n  // angleMode(DEGREES)\n  // angleMode(RADIANS)\n\n  let msg = \"Version:\" + my.version;\n  msg += \" angleMode:\" + angleMode();\n  my.log = createDiv(msg);\n\n  my.permBtn = createButton(\"permission\").mousePressed(permissionAction);\n\n  createElement(\"br\");\n  my.rotX = createDiv(\"\");\n  my.rotY = createDiv(\"\");\n  my.rotZ = createDiv(\"\");\n  createElement(\"br\");\n  my.accelX = createDiv(\"\");\n  my.accelY = createDiv(\"\");\n  my.accelZ = createDiv(\"\");\n}\n\nfunction draw() {\n  background(220);\n  my.rotX.html(\" rotX:\" + rotationX);\n  my.rotY.html(\" rotY:\" + rotationY);\n  my.rotZ.html(\" rotZ:\" + rotationZ);\n  my.accelX.html(\" accelX:\" + accelerationX);\n  my.accelY.html(\" accelY:\" + accelerationY);\n  my.accelZ.html(\" accelZ:\" + accelerationZ);\n}\n\n// !!@ rotationX/Y/Z appears to be in DEGREES always\n\n// https://stackoverflow.com/questions/56514116/how-do-i-get-deviceorientationevent-and-devicemotionevent-to-work-on-safari\n\nfunction permissionAction() {\n  if (\n    typeof DeviceMotionEvent !== \"undefined\" &&\n    typeof DeviceMotionEvent.requestPermission === \"function\"\n  ) {\n    // (optional) Do something before API request prompt.\n    DeviceMotionEvent.requestPermission()\n      .then((response) => {\n        console.log('requestPermission response', response)\n        // (optional) Do something after API prompt dismissed.\n        if (response == \"granted\") {\n          window.addEventListener(\"devicemotion\", (e) => {\n            // console.log('devicemotion e', e)\n            // console.log('devicemotion e.beta', e.beta)\n          });\n        }\n      })\n      .catch(console.error);\n  } else {\n    alert(\"DeviceMotionEvent is not defined\");\n  }\n}\n// const btn = document.getElementById( \"request\" );\n// btn.addEventListener( \"click\", permission );\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c4827cc1426678ad1f8e9",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-11T03:19:39.323Z",
+        "updatedAt": "2023-05-11T03:19:39.323Z",
+        "id": "645c4827cc1426678ad1f8e9"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c4827cc1426678ad1f8ea",
+        "createdAt": "2023-05-11T03:19:39.323Z",
+        "updatedAt": "2023-05-11T03:19:39.323Z",
+        "isSelectedFile": false,
+        "id": "645c4827cc1426678ad1f8ea"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c4827cc1426678ad1f8eb",
+        "createdAt": "2023-05-11T03:19:39.323Z",
+        "updatedAt": "2023-05-11T03:19:39.323Z",
+        "isSelectedFile": false,
+        "id": "645c4827cc1426678ad1f8eb"
+      }
+    ],
+    "createdAt": "2023-05-11T01:43:07.228Z",
+    "id": "Rdb_xgkkW"
+  },
+  {
     "name": "Firebase-createImg-board copy",
     "_id": "ncIe7u-WC",
     "files": [
@@ -577,6 +691,174 @@
     "id": "4DETmJP-l"
   },
   {
+    "name": "Rainbow Canvas",
+    "_id": "lNRQmapgz",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c13cac7a3f9619edfdadb",
+          "645c13cac7a3f9619edfdadc",
+          "645c13cac7a3f9619edfdadd"
+        ],
+        "fileType": "folder",
+        "_id": "645c13cac7a3f9619edfdada",
+        "createdAt": "2023-05-10T22:02:50.800Z",
+        "updatedAt": "2023-05-10T22:02:50.800Z",
+        "id": "645c13cac7a3f9619edfdada"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/lNRQmapgz\n// Rainbow Canvas\n// https://editor.p5js.org/kellylougheed/sketches/ryPlD16wX\n// Rainbow Canvas\n// https://kellylougheed.medium.com/rainbow-paintbrush-in-p5-js-e452d5540b25\n\nvar hue;\nvar rainbow = true;\nvar rate = 1;\n\nfunction setup() {\n  createCanvas(windowWidth, windowHeight);\n  background(0);\n  hue = 0;\n}\n\nfunction draw() {\n  // background(220);\n}\n\nfunction mouseDragged() {\n  if (rainbow) {\n    if (hue > 360) {\n      hue = 0;\n    } else {\n      hue += rate;\n    }\n  }\n  colorMode(HSL, 360);\n  noStroke();\n  fill(hue, 200, 200);\n  ellipse(mouseX, mouseY, 25, 25);\n}\n\nfunction keyPressed() {\n  if (keyCode == 82) {\n    hue = 0;\n    rainbow = false;\n  }\n  if (keyCode == 71) {\n    hue = 125;\n    rainbow = false;\n  }\n  if (keyCode == 66) {\n    hue = 200;\n    rainbow = false;\n  }\n  if (keyCode == 32) {\n    rainbow = true;\n    rate *= 2;\n  }\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c13cac7a3f9619edfdadc",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-10T22:02:50.800Z",
+        "updatedAt": "2023-05-10T22:02:50.800Z",
+        "id": "645c13cac7a3f9619edfdadc"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html>\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.dom.min.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c13cac7a3f9619edfdadb",
+        "createdAt": "2023-05-10T22:02:50.800Z",
+        "updatedAt": "2023-05-10T22:02:50.800Z",
+        "id": "645c13cac7a3f9619edfdadb"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c13cac7a3f9619edfdadd",
+        "createdAt": "2023-05-10T22:02:50.800Z",
+        "updatedAt": "2023-05-10T22:02:50.800Z",
+        "id": "645c13cac7a3f9619edfdadd"
+      }
+    ],
+    "createdAt": "2023-05-10T21:59:38.282Z",
+    "updatedAt": "2023-05-10T22:02:50.800Z",
+    "id": "lNRQmapgz"
+  },
+  {
+    "name": "rotationX",
+    "_id": "G6Zr5SBuq",
+    "updatedAt": "2023-05-11T04:07:26.445Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c5f93cc1426678ad1f8ee",
+          "645c5f93cc1426678ad1f8ed",
+          "645c5f93cc1426678ad1f8ef"
+        ],
+        "fileType": "folder",
+        "_id": "645c5f93cc1426678ad1f8f0",
+        "createdAt": "2023-05-11T04:07:26.445Z",
+        "updatedAt": "2023-05-11T04:07:26.445Z",
+        "isSelectedFile": false,
+        "id": "645c5f93cc1426678ad1f8f0"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/G6Zr5SBuq\n// rotationX\n\n// https://p5js.org/reference/#/p5/rotationX\n\nlet my = { width: 400, height: 400 };\n\nfunction setup() {\n  createCanvas(my.width, my.height, WEBGL);\n\n  normalMaterial();\n\n  my.permBtn = createButton(\"permission\");\n  my.permBtn.mousePressed(permissionAction);\n}\n\nfunction draw() {\n  background(200);\n  // rotateZ(radians(rotationZ));\n  // rotateX(radians(rotationX));\n  rotateY(radians(rotationY));\n  box(200, 200, 200);\n}\n\n// Need for iOS mobile device to get motion events\nfunction permissionAction() {\n  if (\n    typeof DeviceMotionEvent !== \"undefined\" &&\n    typeof DeviceMotionEvent.requestPermission === \"function\"\n  ) {\n    // (optional) Do something before API request prompt.\n    DeviceMotionEvent.requestPermission()\n      .then((response) => {\n        console.log(\"requestPermission response\", response);\n        // (optional) Do something after API prompt dismissed.\n        if (response == \"granted\") {\n          window.addEventListener(\"devicemotion\", (e) => {\n            // console.log('devicemotion e', e)\n            // console.log('devicemotion e.beta', e.beta)\n          });\n        }\n      })\n      .catch(console.error);\n  } else {\n    alert(\"DeviceMotionEvent is not defined\");\n  }\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c5f93cc1426678ad1f8ed",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-11T04:07:26.445Z",
+        "updatedAt": "2023-05-11T04:07:26.445Z",
+        "id": "645c5f93cc1426678ad1f8ed"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c5f93cc1426678ad1f8ee",
+        "createdAt": "2023-05-11T04:07:26.445Z",
+        "updatedAt": "2023-05-11T04:07:26.445Z",
+        "isSelectedFile": false,
+        "id": "645c5f93cc1426678ad1f8ee"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c5f93cc1426678ad1f8ef",
+        "createdAt": "2023-05-11T04:07:26.445Z",
+        "updatedAt": "2023-05-11T04:07:26.445Z",
+        "isSelectedFile": false,
+        "id": "645c5f93cc1426678ad1f8ef"
+      }
+    ],
+    "createdAt": "2023-05-11T03:23:39.738Z",
+    "id": "G6Zr5SBuq"
+  },
+  {
+    "name": "rotationXYZ",
+    "_id": "TXvXSJY6L",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c6e0acc1426678ad1f8f2",
+          "645c6e0acc1426678ad1f8f3",
+          "645c6e0acc1426678ad1f8f4"
+        ],
+        "fileType": "folder",
+        "_id": "645c6e0acc1426678ad1f8f1",
+        "createdAt": "2023-05-11T04:46:36.871Z",
+        "updatedAt": "2023-05-11T04:46:36.871Z",
+        "isSelectedFile": false,
+        "id": "645c6e0acc1426678ad1f8f1"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L\n// rotationXYZ\n\nlet my = { width: 400, height: 400, rotateX: 1, rotateY: 0, rotateZ: 0 };\n\nfunction setup() {\n  createCanvas(my.width, my.height, WEBGL);\n\n  normalMaterial();\n\n  create_ui();\n}\n\nfunction draw() {\n  background(200);\n  if (my.rotateZ) rotateZ(radians(rotationZ));\n  if (my.rotateX) rotateX(radians(rotationX));\n  if (my.rotateY) rotateY(radians(rotationY));\n  box(200, 200, 200);\n}\n\nfunction create_ui() {\n  my.permBtn = createButton(\"permission\");\n  my.permBtn.mousePressed(permissionAction);\n\n  create_checkBox(\"rotateX\");\n  create_checkBox(\"rotateY\");\n  create_checkBox(\"rotateZ\");\n}\n\nfunction create_checkBox(prop) {\n  let chk = createCheckbox(prop, my[prop]);\n  // chk.style('display:inline');\n  chk.changed(function () {\n    my[prop] = this.checked();\n  });\n}\n\n// Need for iOS mobile device to get motion events\nfunction permissionAction() {\n  if (\n    typeof DeviceMotionEvent !== \"undefined\" &&\n    typeof DeviceMotionEvent.requestPermission === \"function\"\n  ) {\n    // (optional) Do something before API request prompt.\n    DeviceMotionEvent.requestPermission()\n      .then((response) => {\n        console.log(\"requestPermission response\", response);\n        // (optional) Do something after API prompt dismissed.\n        if (response == \"granted\") {\n          window.addEventListener(\"devicemotion\", (e) => {\n            // console.log('devicemotion e', e)\n            // console.log('devicemotion e.beta', e.beta)\n          });\n        }\n      })\n      .catch(console.error);\n  } else {\n    alert(\"DeviceMotionEvent is not defined\");\n  }\n}\n\n// https://p5js.org/reference/#/p5/rotationX\n\n// https://editor.p5js.org/jht9629-nyu/sketches/G6Zr5SBuq\n// rotationX\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c6e0acc1426678ad1f8f3",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-11T04:46:36.871Z",
+        "updatedAt": "2023-05-11T04:46:36.871Z",
+        "id": "645c6e0acc1426678ad1f8f3"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    \n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n    <!-- <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /> -->\n    <style>\n      @media only screen and (max-width: 600px) {\n        body,\n        button,\n        select,\n        input {\n          font-size: 8vw;\n        }\n      }\n      html,\n      body {\n        margin: 0;\n        padding: 0;\n      }\n      canvas {\n        display: block;\n      }\n    </style>\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c6e0acc1426678ad1f8f2",
+        "createdAt": "2023-05-11T04:46:36.871Z",
+        "updatedAt": "2023-05-11T04:46:36.871Z",
+        "isSelectedFile": true,
+        "id": "645c6e0acc1426678ad1f8f2"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c6e0acc1426678ad1f8f4",
+        "createdAt": "2023-05-11T04:46:36.871Z",
+        "updatedAt": "2023-05-11T04:46:36.871Z",
+        "isSelectedFile": false,
+        "id": "645c6e0acc1426678ad1f8f4"
+      }
+    ],
+    "createdAt": "2023-05-11T04:24:42.149Z",
+    "updatedAt": "2023-05-11T04:46:36.871Z",
+    "id": "TXvXSJY6L"
+  },
+  {
     "name": "Simple Draw",
     "_id": "oVJEGvodF",
     "files": [
@@ -591,20 +873,20 @@
         ],
         "fileType": "folder",
         "_id": "64592005cd811d3aa46ea5f7",
-        "createdAt": "2023-05-09T01:55:56.824Z",
-        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "createdAt": "2023-05-11T13:22:30.602Z",
+        "updatedAt": "2023-05-11T13:22:30.602Z",
         "isSelectedFile": false,
         "id": "64592005cd811d3aa46ea5f7"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/oVJEGvodF\n// Simple Draw\n// issue: on mobile device drags entire window\n//  ok on Google Pixel 3a XL\n//  fails iPhone Safari and Chrome\n// tried style: overflow-y: hidden;\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/Simple-Draw/?v=4\n//  ok on iPhone Safari and Chrome\n\nvar aCanv;\n\nlet my = {version: 10, width: 640, height: 480};\n\nfunction setup() {\n  // aCanv = createCanvas(displayWidth, displayHeight);\n  \n  // simple test for mobile phone\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = my.width;\n  }\n  aCanv = createCanvas(my.width, my.height);\n  \n  createDiv('Version:'+my.version)\n  // createDiv('JHT is here 9').elt.appendChild(aCanv.elt)\n  \n  strokeWeight(20);\n  stroke(0);\n    \n  let url = 'Simple-Draw.png'\n  createImg(url, 'Draw')\n  \n  aCanv.mouseReleased(canvas_mouseReleased);\n}\n\nfunction mouseDragged() {\n  // console.log('mouseDragged');\n  // drawPoints.mouseDragged();\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\nfunction canvas_mouseReleased() {\n  // console.log('canvas_mouseReleased');\n  // drawPoints.mouseReleased();\n}\n\nfunction draw() {\n  // background(255)\n  \n  fill('red')\n  textSize(64)\n  // text('Hello', 0, displayHeight/2)\n  text('Hello screen', 0, 64)\n}\n\n\nfunction touchStarted(event) {\n  // console.log('touchStarted event', event);\n  // prevent default\n  // return false; // stops buttons on google Pixel phone\n}\n\nfunction touchEnded() {\n  // console.log('touchEnded');\n  // drawPoints.mouseReleased();\n}\n\nfunction canvas_touchStarted() {\n  console.log('canvas_touchStarted');\n  // prevent default\n  return false;\n}\n\nfunction canvas_touchEnded() {\n  // console.log('canvas_touchEnded');\n  // drawPoints.mouseReleased();\n}\n\n\nfunction touchMoved() {\n  console.log('touchMoved');\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\n// https://editor.p5js.org/f3/sketches/B-_Nh-YX0\n// Simple Draw\n\n// https://p5js.org/examples/mobile-simple-draw.html\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/oVJEGvodF\n// Simple Draw\n// issue: on mobile device drags entire window\n//  ok on Google Pixel 3a XL\n//  fails iPhone Safari and Chrome\n// tried style: overflow-y: hidden;\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/Simple-Draw/?v=4\n//  ok on iPhone Safari and Chrome\n\nvar aCanv;\n\nlet my = {version: 10, width: 640, height: 480};\n\nfunction setup() {\n  // aCanv = createCanvas(displayWidth, displayHeight);\n  \n  // simple test for mobile phone\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = my.width;\n  }\n  aCanv = createCanvas(my.width, my.height);\n  \n  createDiv('Version:'+my.version)\n  // createDiv('JHT is here 9').elt.appendChild(aCanv.elt)\n  \n  strokeWeight(20);\n  stroke(0);\n  \n  // QRCode not helpful\n  // let url = 'Simple-Draw.png'\n  // createImg(url, 'Draw')\n  \n  aCanv.mouseReleased(canvas_mouseReleased);\n}\n\nfunction mouseDragged() {\n  // console.log('mouseDragged');\n  // drawPoints.mouseDragged();\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\nfunction canvas_mouseReleased() {\n  // console.log('canvas_mouseReleased');\n  // drawPoints.mouseReleased();\n}\n\nfunction draw() {\n  // background(255)\n  \n  fill('red')\n  textSize(64)\n  // text('Hello', 0, displayHeight/2)\n  text('Hello screen', 0, 64)\n}\n\n\nfunction touchStarted(event) {\n  // console.log('touchStarted event', event);\n  // prevent default\n  // return false; // stops buttons on google Pixel phone\n}\n\nfunction touchEnded() {\n  // console.log('touchEnded');\n  // drawPoints.mouseReleased();\n}\n\nfunction canvas_touchStarted() {\n  console.log('canvas_touchStarted');\n  // prevent default\n  return false;\n}\n\nfunction canvas_touchEnded() {\n  // console.log('canvas_touchEnded');\n  // drawPoints.mouseReleased();\n}\n\n\nfunction touchMoved() {\n  console.log('touchMoved');\n  line(mouseX, mouseY, pmouseX, pmouseY);\n  return false;\n}\n\n// https://editor.p5js.org/f3/sketches/B-_Nh-YX0\n// Simple Draw\n\n// https://p5js.org/examples/mobile-simple-draw.html\n",
         "children": [],
         "fileType": "file",
         "_id": "64592005cd811d3aa46ea5f9",
         "isSelectedFile": true,
-        "createdAt": "2023-05-09T01:55:56.824Z",
-        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "createdAt": "2023-05-11T13:22:30.602Z",
+        "updatedAt": "2023-05-11T13:22:30.602Z",
         "id": "64592005cd811d3aa46ea5f9"
       },
       {
@@ -613,8 +895,8 @@
         "children": [],
         "fileType": "file",
         "_id": "64592005cd811d3aa46ea5f8",
-        "createdAt": "2023-05-09T01:55:56.824Z",
-        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "createdAt": "2023-05-11T13:22:30.602Z",
+        "updatedAt": "2023-05-11T13:22:30.602Z",
         "isSelectedFile": false,
         "id": "64592005cd811d3aa46ea5f8"
       },
@@ -624,8 +906,8 @@
         "children": [],
         "fileType": "file",
         "_id": "64592005cd811d3aa46ea5fa",
-        "createdAt": "2023-05-09T01:55:56.824Z",
-        "updatedAt": "2023-05-09T01:55:56.824Z",
+        "createdAt": "2023-05-11T13:22:30.602Z",
+        "updatedAt": "2023-05-11T13:22:30.602Z",
         "isSelectedFile": false,
         "id": "64592005cd811d3aa46ea5fa"
       },
@@ -636,14 +918,14 @@
         "fileType": "file",
         "_id": "645920a1d34546001c32588d",
         "url": "https://assets.editor.p5js.org/60261b883e600f00240bd343/f26c923e-2c9b-43a5-9ce6-ff490a3236d0.png",
-        "updatedAt": "2023-05-09T01:55:56.824Z",
-        "createdAt": "2023-05-09T01:55:56.824Z",
+        "updatedAt": "2023-05-11T13:22:30.602Z",
+        "createdAt": "2023-05-11T13:22:30.602Z",
         "isSelectedFile": false,
         "id": "645920a1d34546001c32588d"
       }
     ],
     "createdAt": "2023-05-08T16:15:01.233Z",
-    "updatedAt": "2023-05-09T01:55:56.824Z",
+    "updatedAt": "2023-05-11T13:22:30.602Z",
     "id": "oVJEGvodF"
   },
   {
@@ -756,6 +1038,75 @@
     "createdAt": "2023-04-20T00:03:11.337Z",
     "updatedAt": "2023-04-20T21:02:17.029Z",
     "id": "-t2O5JfBr"
+  },
+  {
+    "name": "timed-drawing-class",
+    "_id": "yEhwOiog5",
+    "updatedAt": "2023-05-11T14:43:59.175Z",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645c75f4cc1426678ad1f8f9",
+          "645c7587cc1426678ad1f8f6",
+          "645c7587cc1426678ad1f8f5",
+          "645c7587cc1426678ad1f8f7"
+        ],
+        "fileType": "folder",
+        "_id": "645c7587cc1426678ad1f8f8",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-11T14:43:59.175Z",
+        "updatedAt": "2023-05-11T14:43:59.175Z",
+        "id": "645c7587cc1426678ad1f8f8"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/yEhwOiog5\n// timed-drawing-class\n\nlet my = { version: 21, width: 640, height: 480 };\n// let my = { width: 640 / 2, height: 480 / 2 };\nlet drawPoints;\n\nfunction my_init() {\n  my.save_label = 'plea';\n  my.lapse = 5; // seconds to re-draw points\n  my.xoffset = my.width / 2;\n  my.draw_specs = [\n    { color: 'red', strokeWeight: 12 },\n    { color: 'green', strokeWeight: 7 },\n    { color: 'yellow', strokeWeight: 2 },\n  ];\n  my.draw_color = 'white';\n  my.strokeWeight = 10;\n  my.run = 1;\n  // npoint_limit = 200; // limit number of points in drawing\n  my.npoint_limit = 0; // no limit\n  my.timedDrawing = 0;\n  my.staticDrawing = 1;\n\n  // simple test for mobile phone\n  // ?? use deviceOrientation?\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = my.width;\n    my.xoffset = 0;\n  }\n}\n\nfunction setup() {\n  my_init();\n\n  my.canvas = createCanvas(my.width, my.height);\n\n  drawPoints = new DrawPoints(my);\n\n  let urlParams = get_url_params();\n  drawPoints.restore_drawing(urlParams);\n\n  ui_init();\n\n  my.canvas.mouseReleased(canvas_mouseReleased);\n  my.canvas.touchEnded(canvas_touchEnded);\n  // my.canvas.touchStarted(canvas_touchStarted); // my.version = 14;\n}\n\nfunction mouseDragged() {\n  // console.log('mouseDragged');\n  drawPoints.mouseDragged();\n  return false; // required to prevent touch drag moving canvas on mobile\n}\n\nfunction canvas_mouseReleased() {\n  // console.log('canvas_mouseReleased');\n  drawPoints.mouseReleased();\n}\n\nfunction canvas_touchEnded() {\n  // console.log('canvas_touchEnded');\n  drawPoints.mouseReleased();\n}\n\n// function touchEnded() {\n//   // console.log('touchEnded');\n//   drawPoints.mouseReleased();\n// }\n\nfunction draw() {\n  background(0);\n\n  drawPoints.prepareOutput();\n\n  image(drawPoints.output, 0, 0);\n}\n\nfunction ui_init() {\n  let msg = [\n    '(' + my.version + ') drag mouse on left side of canvas to create line drawing',\n    'press startTimedDraw to re-draw on right in ' + drawPoints.lapse + ' seconds',\n  ];\n  createDiv(msg.join('<br/>'));\n\n  let runCheckBox = createCheckbox('Run ', drawPoints.run).changed(function () {\n    drawPoints.run = this.checked();\n  });\n  runCheckBox.style('display:inline;');\n\n  createButton('startTimedDraw').mousePressed(function () {\n    drawPoints.startTimedDraw();\n  });\n  createButton('stopTimedDraw').mousePressed(function () {\n    drawPoints.stopTimedDraw();\n  });\n  createButton('clearDrawing').mousePressed(function () {\n    drawPoints.clearDrawing();\n  });\n\n  createElement('br');\n\n  // createSlider(min, max, oldVal, step)\n  let lapse_slider = createSlider(0, 30, drawPoints.lapse).input(function () {\n    drawPoints.lapse = this.value();\n    // console.log('create_slider aVal ', aVal, 'type', typeof aVal);\n    valSpan.html(formatNumber(drawPoints.lapse) + '');\n    drawPoints.startTimedDraw();\n  });\n  lapse_slider.style('width:50%');\n  let valSpan = createSpan(drawPoints.lapse + '');\n\n  createElement('br');\n  createSpan('save_label: ');\n\n  createInput(drawPoints.save_label).input(function () {\n    drawPoints.save_label = this.value();\n    // save_drawing(); // too many saves\n  });\n\n  createButton('restore').mousePressed(function () {\n    drawPoints.restore_drawing();\n  });\n  createButton('save').mousePressed(function () {\n    drawPoints.save_drawing();\n  });\n  createButton('save_url').mousePressed(function () {\n    drawPoints.save_drawing({ url: 1 });\n  });\n  createButton('clear_url').mousePressed(function () {\n    drawPoints.clear_url();\n  });\n}\n\n// function touchStarted(event) {\n//   // console.log('touchStarted event', event);\n//   // prevent default\n//   // return false; // stops buttons on google Pixel phone\n// }\n\n// function canvas_touchStarted() {\n//   console.log('canvas_touchStarted');\n//   // prevent default\n//   return false;\n// }\n\n// return seconds since start of sketch\nfunction secsTime() {\n  return millis() / 1000;\n}\n\nfunction formatNumber(num) {\n  let prec = 1000;\n  return int(num * prec) / prec;\n}\n\n//\nfunction get_url_params() {\n  let query = window.location.search;\n  // console.log('query |' + query + '|');\n  console.log('query.length', query.length);\n  if (query.length < 1) return null;\n  let params = params_query(query);\n  return params;\n  // let store = params['store'];\n  // console.log('nstore', store);\n  // return store;\n}\n\n// https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams\nfunction params_query(query) {\n  // eg. query='abc=foo&def=%5Basf%5D&xyz=5'\n  // params={abc: \"foo\", def: \"[asf]\", xyz: \"5\"}\n  const urlParams = new URLSearchParams(query);\n  const params = Object.fromEntries(urlParams);\n  return params;\n}\n\n// prevent_scrolling(); !!@ Not used\n// https://alvarotrigo.com/blog/prevent-scroll-on-scrollable-element-js/\nfunction prevent_scrolling() {\n  document.querySelector('body').addEventListener('wheel', preventScroll, { passive: false });\n  function preventScroll(e) {\n    console.log('preventScroll');\n    e.preventDefault();\n    e.stopPropagation();\n    return false;\n  }\n}\n\n// >> alternative to simple test for mobile phone\n// >> not as expected\n// deviceOrientation == 'portrait'\n\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/timed-drawing-class\n// https://github.com/jht9629-nyu/my-p5js-repo-2023/tree/main/p5-projects/timed-drawing-class\n// timed-drawing\n\n// localStorage.clear()\n\n// https://www.buildingh.org\n\n// https://editor.p5js.org/jht9629-nyu/sketches/MbS5C3j-F\n// Necessary-forgery-timed-drawing\n\n// convert to my.\n// startTimedDraw as slider changes\n// added a_drawings\n// generalize draw_to\n// remove class Point, use object literal for point\n// added funtion lineFrom\n\n// project files created with p5.vscode \"Create p5.js Project\"\n// https://editor.p5js.org/jht9629-nyu/sketches/-t2O5JfBr\n// timed-drawing\n// !!@ p5.js/0.10.2\n\n// TRY: use storeItem / getItem to save drawing locally\n// https://p5js.org/reference/#/p5/storeItem\n// https://p5js.org/reference/#/p5/getItem\n\n// Code! Programming with p5.js\n// The Coding Train / Daniel Shiffman\n// https://thecodingtrain.com/beginners/p5js/7.3-array-of-objects.html\n// https://youtu.be/fBqaA7zRO58\n// https://editor.p5js.org/codingtrain/sketches/1y_xfueO\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c7587cc1426678ad1f8f5",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-11T14:43:59.175Z",
+        "updatedAt": "2023-05-11T14:43:59.175Z",
+        "id": "645c7587cc1426678ad1f8f5"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!--     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Drawing Points</title>\n\n    <!-- <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /> -->\n    <style>\n      html,\n      body {\n        margin: 0;\n        padding: 0;\n      }\n\n      canvas {\n        display: block;\n      }\n    </style>\n\n  </head>\n  <body>\n    <main>\n    </main>\n    <script src=\"DrawPoints.js\"></script>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c7587cc1426678ad1f8f6",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-11T14:43:59.175Z",
+        "updatedAt": "2023-05-11T14:43:59.175Z",
+        "id": "645c7587cc1426678ad1f8f6"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c7587cc1426678ad1f8f7",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-11T14:43:59.175Z",
+        "updatedAt": "2023-05-11T14:43:59.175Z",
+        "id": "645c7587cc1426678ad1f8f7"
+      },
+      {
+        "name": "DrawPoints.js",
+        "content": "// Draw points store in array drawings\nclass DrawPoints {\n  constructor(props) {\n    console.log('DrawPoints props', props);\n    Object.assign(this, props);\n\n    this.drawings = [];\n    this.drawing_index = 0;\n    this.points = null;\n    this.npoints = 0;\n    this.output = createGraphics(this.width, this.height);\n    this.output.noFill();\n  }\n\n  prepareOutput() {\n    if (!this.run) {\n      return;\n    }\n    if (this.staticDrawing) {\n      this.draw_points();\n    }\n    if (this.timedDrawing) {\n      this.draw_timed();\n    }\n  }\n\n  draw_points() {\n    let args = {\n      color: this.draw_color,\n      strokeWeight: this.strokeWeight,\n      stopIndex: this.npoints,\n      xoffset: 0,\n    };\n    this.draw_to(args);\n  }\n\n  draw_timed() {\n    let ncolors = this.draw_specs.length;\n    let npoints = this.npoints;\n    let now = secsTime() - this.startTime;\n    // let progress = now / this.lapse; // take lapse seconds per single drawing\n    let progress = now / (this.lapse / ncolors); // take lapse seconds n drawings\n    let stopIndex = int(npoints * progress) % (npoints * ncolors);\n    let spec = this.draw_specs[0];\n    let stepper = (ipoint) => {\n      if (ipoint % npoints == 0) {\n        let icycle = args.icycle;\n        let spec = this.draw_specs[icycle];\n        // let str = formatNumber(progress);\n        // str = str + ' ipoint ' + ipoint + ' stopIndex ' + stopIndex + ' strokeWeight ' + istrokeWeight;\n        // str += ' icycle ' + icycle + ' icolor ' + icolor;\n        // console.log(str);\n        this.output.stroke(spec.color);\n        this.output.strokeWeight(spec.strokeWeight);\n        args.icycle = (args.icycle + 1) % ncolors;\n      }\n    };\n    let args = {\n      color: spec.color,\n      strokeWeight: spec.strokeWeight,\n      stopIndex: stopIndex,\n      xoffset: this.xoffset,\n      stepper: stepper,\n      icycle: 0,\n    };\n    this.draw_to(args);\n  }\n\n  draw_to(args) {\n    this.output.stroke(args.color);\n    this.output.strokeWeight(args.strokeWeight);\n    let stepper = args.stepper;\n    let stopIndex = args.stopIndex;\n    let xoffset = args.xoffset;\n    let ipoint = 0;\n    while (ipoint < stopIndex) {\n      // Draw all points up until stopIndex\n      for (let points of this.drawings) {\n        for (let i = 1; i < points.length; i++) {\n          if (ipoint > stopIndex) return;\n          if (stepper) stepper(ipoint);\n          let prev = points[i - 1];\n          let point = points[i];\n          this.lineFrom(point, prev, xoffset);\n          ipoint++;\n        }\n      }\n      // detect no change\n      if (!ipoint) {\n        console.log('stopIndex_draw No change ipoint', ipoint);\n        break;\n      }\n    }\n  }\n\n  lineFrom(point, prev, xoffset) {\n    this.output.line(prev.x + xoffset, prev.y, point.x + xoffset, point.y);\n  }\n\n  startTimedDraw() {\n    // console.log('startTimedDraw');\n    this.timedDrawing = 1;\n    this.startTime = secsTime();\n    this.calc_npoints();\n    console.log('startTimedDraw this.npoints', this.npoints);\n  }\n\n  calc_npoints() {\n    this.npoints = 0;\n    for (let points of this.drawings) {\n      this.npoints += points.length;\n    }\n  }\n\n  stopTimedDraw() {\n    console.log('stopTimedDraw');\n    this.timedDrawing = 0;\n  }\n\n  clearDrawing() {\n    console.log('clearDrawing');\n\n    this.drawings = [];\n    this.points = null;\n    this.npoints = 0;\n    this.timedDrawing = 0;\n\n    this.output.clear();\n\n    // this.save_drawing();\n  }\n\n  restore_drawing(urlParams) {\n    // console.log('restore_drawing nstore |' + nstore + '|');\n    let store;\n    if (urlParams) {\n      store = this.restore_urlParams(urlParams);\n    } else {\n      store = this.restore_localStorage();\n      if (! store) {\n        store = { drawings: [] };\n      }\n    }\n    this.expand_drawings(store);\n    this.drawings = store.drawings;\n    this.calc_npoints();\n    this.output.clear();\n    console.log('restore_drawing this.npoints', this.npoints);\n\n    if (urlParams) {\n      this.xoffset = 0;\n      this.staticDrawing = 0;\n      this.startTimedDraw();\n    }\n  }\n\n  restore_urlParams(urlParams) {\n    let store = { drawings: [] };\n    if (urlParams.drawings) {\n      let str = expand_decode(urlParams.drawings);\n      try {\n        store.drawings = JSON.parse(str);\n      } catch (err) {\n        console.log('restore_drawing drawings parse err', err);\n        return;\n      }\n    }\n    if (urlParams.save_label) {\n      this.save_label = urlParams.save_label;\n    }\n    return store;\n  }\n\n  restore_localStorage() {\n    let store;\n    let str = localStorage.getItem(this.save_label);\n    if (!str) return null;\n    console.log('restore_drawing str.length', str.length);\n    // this.drawings = JSON.parse(str);\n    try {\n      store = JSON.parse(str);\n    } catch (err) {\n      console.log('restore_drawing parse err', err);\n      return;\n    }\n    return store;\n  }\n\n  save_drawing(url) {\n    let store = {\n      version: 3,\n      // label: this.save_label,\n      width: this.width,\n      height: this.height,\n      drawings: this.drawings,\n    };\n\n    this.shrink_drawings(store);\n\n    let str = JSON.stringify(store);\n    localStorage.setItem(this.save_label, str);\n    console.log('save_drawing str.length', str.length);\n\n    if (url) {\n      let url = new URL(window.location.href);\n      // url.search = '?store=' + encodeURIComponent(str);\n      let str = '?label=' + encodeURIComponent(this.save_label);\n      str += '&version=' + encodeURIComponent(store.version + '');\n      str += '&width=' + encodeURIComponent(store.width + '');\n      str += '&height=' + encodeURIComponent(store.height + '');\n      let dstr = JSON.stringify(store.drawings);\n      str += '&drawings=' + shrink_encode(dstr);\n      url.search = str;\n      console.log(url.href);\n      window.location = url.href;\n    }\n    // Report full string size. Typically %50 more\n    // let full = JSON.stringify(this.drawings);\n    // console.log('save_drawing full.length', full.length);\n  }\n\n  clear_url() {\n    let index = window.location.href.indexOf('?');\n    if (index < 0) return;\n    let nhref = window.location.href.substring(0, index);\n    location.replace(nhref);\n  }\n\n  // Transform drawings to delta array to save on stringify length\n  // [{x: x0, y: y0}, {x: x1, y: y1}, {x: x2, y: y2} ...]\n  //  --> [x0, y0, x1-x0, y1-y0, x2-x0, y2-y0 ...]\n  shrink_drawings(store) {\n    let x0;\n    let y0;\n    let d = store.drawings.map((arr) => {\n      return arr.flatMap((item, index) => {\n        if (index == 0) {\n          x0 = item.x;\n          y0 = item.y;\n          return [x0, y0];\n        }\n        return [item.x - x0, item.y - y0];\n      });\n    });\n    store.drawings = d;\n  }\n\n  expand_drawings(store) {\n    // if (!store.version) return;\n    let x0;\n    let y0;\n    let d = store.drawings.map((arr) => {\n      let narr = [];\n      for (let index = 0; index < arr.length; index += 2) {\n        if (index == 0) {\n          x0 = arr[0];\n          y0 = arr[1];\n          narr.push({ x: x0, y: y0 });\n        } else {\n          narr.push({ x: arr[index] + x0, y: arr[index + 1] + y0 });\n        }\n      }\n      return narr;\n    });\n    store.drawings = d;\n  }\n\n  mouseDragged() {\n    this.staticDrawing = 1;\n\n    if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {\n      return;\n    }\n    if (this.npoint_limit && this.npoints >= this.npoint_limit) {\n      console.log('mouseDragged this.npoint_limit', this.npoint_limit, 'this.npoints', this.npoints);\n      return;\n    }\n    if (!this.points) {\n      this.points = [];\n      this.drawings.push(this.points);\n    }\n    let x = int(mouseX);\n    let y = int(mouseY);\n    this.points.push({ x, y });\n    this.npoints++;\n  }\n\n  // Save current drawing and prepare for next group of points\n  mouseReleased() {\n    console.log('DrawPoints mouseReleased');\n    // null points will start fresh point array\n    this.points = null;\n    this.startTimedDraw();\n    this.save_drawing();\n  }\n}\n\n// ABCDEFGHILKMNOPQRTSTUVWXYZ\n// {}[]:,\"+\n\nlet char0_index = 'A'.charCodeAt(0);\n// let encode_chars = '{}[]:,\"+';\nlet encode_chars = '[],:\"+{}';\nlet encode_dict = {};\nlet decode_dict = {};\nfor (let index = 0; index < encode_chars.length; index++) {\n  let ch1 = encode_chars[index];\n  let ch2 = String.fromCharCode(index + char0_index);\n  encode_dict[ch1] = ch2;\n  decode_dict[ch2] = ch1;\n}\n\nfunction shrink_encode(str) {\n  let nstr = '';\n  let nch;\n  for (let ch of str) {\n    nch = encode_dict[ch];\n    if (!nch) nch = ch;\n    nstr += nch;\n  }\n  // console.log('shrink_encode nstr', nstr);\n  return nstr;\n}\n\nfunction expand_decode(str) {\n  let nstr = '';\n  let nch;\n  for (let ch of str) {\n    nch = decode_dict[ch];\n    if (!nch) nch = ch;\n    nstr += nch;\n  }\n  // console.log('expand_decode nstr', nstr);\n  return nstr;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645c75f4cc1426678ad1f8f9",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-11T14:43:59.175Z",
+        "updatedAt": "2023-05-11T14:43:59.175Z",
+        "id": "645c75f4cc1426678ad1f8f9"
+      }
+    ],
+    "createdAt": "2023-05-11T04:58:35.821Z",
+    "id": "yEhwOiog5"
   },
   {
     "name": "truchet tiles copy",
@@ -1050,31 +1401,31 @@
         ],
         "fileType": "folder",
         "_id": "645ae8bbb6598320fecb83d6",
-        "createdAt": "2023-05-10T17:53:42.405Z",
-        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "createdAt": "2023-05-10T21:44:14.089Z",
+        "updatedAt": "2023-05-10T21:44:14.089Z",
         "isSelectedFile": false,
         "id": "645ae8bbb6598320fecb83d6"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni\n// video meter rgb tall\n\nlet my = { width: 640, height: 480, vscale: 4, cscale: 64 };\n\nfunction setup() {\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log(\"vwidth\", vwidth, \"vheight\", vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  my.crossLen = vwidth / my.cscale;\n  \n  background(255);\n  noStroke();\n}\n\nfunction draw() {\n  let vwidth = my.video.width;\n  let vheight = my.video.height;\n\n  // Get pixel from center of video\n  let cx = vwidth / 2;\n  let cy = vheight / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right middle\n  let vx = width / 2 - vwidth / 2;\n  let vy = height - vheight * 2.5;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let clen = my.crossLen;\n  rect(vx + cx, vy, clen, vheight);\n  rect(vx, vy + cy, vwidth, clen);\n\n  // white backdrop to bars\n  let x0 = vx;\n  let y0 = vy + vheight + clen;\n  let wwidth = vwidth\n  let wheight = vheight\n  fill(255)\n  rect(x0,y0,wwidth,wheight)\n\n  x0 += clen;\n  y0 += clen;\n  let y2 = y0 + wheight - clen*2\n  let btall = wheight * 0.8;\n  let y1 = y0 + btall;\n\n  // red bar\n  let bwide = ( wwidth - clen*2) / 3;\n  let r = color[0]\n  let rh = btall * (r/255)\n  fill(r,0,0)\n  rect(x0, y1 - rh, bwide, rh)\n  fill(255,0,0)\n  text('r='+r, x0, y2);\n  \n  // green bar\n  x0 += bwide;\n  let g = color[1]\n  let gh = btall * (g/255)\n  fill(0,g,0)\n  rect(x0, y1 - gh, bwide, gh)\n  fill(0,255,0)\n  text('g='+g, x0, y2);\n\n  // blue bar\n  x0 += bwide;\n  let b = color[2]\n  let bh = btall * (b/255)\n  fill(0,0,b)\n  rect(x0, y1 - bh, bwide, bh)\n  fill(0,0,255)\n  text('b='+b, x0, y2);\n\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni\n// video meter rgb tall\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall\n\nlet my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };\n\nfunction setup() {\n  // simple test for mobile phone\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = window.screen.height;\n  }\n\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log('vwidth', vwidth, 'vheight', vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  my.crossLen = vwidth / my.cscale;\n\n  background(255);\n  noStroke();\n\n  createDiv('Version:' + my.version);\n}\n\nfunction videoIsReady() {\n  return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;\n}\n\nfunction draw() {\n  if (!videoIsReady()) return;\n\n  let vwidth = my.video.width;\n  let vheight = my.video.height;\n\n  // Get pixel from center of video\n  let cx = vwidth / 2;\n  let cy = vheight / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right middle\n  let vx = width / 2 - vwidth / 2;\n  let vy = height - vheight * 2.5;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let clen = my.crossLen;\n  rect(vx + cx, vy, clen, vheight);\n  rect(vx, vy + cy, vwidth, clen);\n\n  // white backdrop to bars\n  let x0 = vx;\n  let y0 = vy + vheight + clen;\n  let wwidth = vwidth;\n  let wheight = vheight;\n  fill(255);\n  rect(x0, y0, wwidth, wheight);\n\n  x0 += clen;\n  y0 += clen;\n  let y2 = y0 + wheight - clen * 2;\n  let btall = wheight * 0.8;\n  let y1 = y0 + btall;\n\n  // red bar\n  let bwide = (wwidth - clen * 2) / 3;\n  let r = color[0];\n  let rh = btall * (r / 255);\n  fill(r, 0, 0);\n  rect(x0, y1 - rh, bwide, rh);\n  fill(255, 0, 0);\n  text('r=' + r, x0, y2);\n\n  // green bar\n  x0 += bwide;\n  let g = color[1];\n  let gh = btall * (g / 255);\n  fill(0, g, 0);\n  rect(x0, y1 - gh, bwide, gh);\n  fill(0, 255, 0);\n  text('g=' + g, x0, y2);\n\n  // blue bar\n  x0 += bwide;\n  let b = color[2];\n  let bh = btall * (b / 255);\n  fill(0, 0, b);\n  rect(x0, y1 - bh, bwide, bh);\n  fill(0, 0, 255);\n  text('b=' + b, x0, y2);\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n\n",
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d8",
-        "isSelectedFile": true,
-        "createdAt": "2023-05-10T17:53:42.405Z",
-        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "isSelectedFile": false,
+        "createdAt": "2023-05-10T21:44:14.089Z",
+        "updatedAt": "2023-05-10T21:44:14.089Z",
         "id": "645ae8bbb6598320fecb83d8"
       },
       {
         "name": "index.html",
-        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js\"></script>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js\"></script>\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d7",
-        "createdAt": "2023-05-10T17:53:42.405Z",
-        "updatedAt": "2023-05-10T17:53:42.405Z",
-        "isSelectedFile": false,
+        "createdAt": "2023-05-10T21:44:14.089Z",
+        "updatedAt": "2023-05-10T21:44:14.089Z",
+        "isSelectedFile": true,
         "id": "645ae8bbb6598320fecb83d7"
       },
       {
@@ -1083,14 +1434,14 @@
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d9",
-        "createdAt": "2023-05-10T17:53:42.405Z",
-        "updatedAt": "2023-05-10T17:53:42.405Z",
+        "createdAt": "2023-05-10T21:44:14.089Z",
+        "updatedAt": "2023-05-10T21:44:14.089Z",
         "isSelectedFile": false,
         "id": "645ae8bbb6598320fecb83d9"
       }
     ],
     "createdAt": "2023-05-10T00:43:39.535Z",
-    "updatedAt": "2023-05-10T17:53:42.405Z",
+    "updatedAt": "2023-05-10T21:44:14.089Z",
     "id": "_0fWGg7ni"
   },
   {
@@ -1428,6 +1779,63 @@
     "createdAt": "2023-05-08T15:56:03.857Z",
     "updatedAt": "2023-05-08T15:56:19.800Z",
     "id": "UL4f15T8w"
+  },
+  {
+    "name": "video-tint-2x2-mobile",
+    "_id": "erHP1oZMO",
+    "files": [
+      {
+        "name": "root",
+        "content": "",
+        "children": [
+          "645cd84136856f1f46c87a7e",
+          "645cd84136856f1f46c87a7f",
+          "645cd84136856f1f46c87a80"
+        ],
+        "fileType": "folder",
+        "_id": "645cd84136856f1f46c87a7d",
+        "createdAt": "2023-05-11T15:43:25.137Z",
+        "updatedAt": "2023-05-11T15:43:25.137Z",
+        "isSelectedFile": false,
+        "id": "645cd84136856f1f46c87a7d"
+      },
+      {
+        "name": "sketch.js",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/erHP1oZMO\n// video-tint-2x2-mobile\n\nlet a_video;\nlet a_scale = 2;\nlet a_alpha = 10;\nlet a_w = 240;\nlet a_h = 320;\n\nfunction setup() {\n  createCanvas(a_w * a_scale, a_h * a_scale);\n  background(51);\n  a_video = createCapture(VIDEO);\n  a_video.size(a_w, a_h);\n  a_video.hide();\n  createDiv('v1')\n}\n\nfunction draw() {\n\n  // Copy the entire source image\n  // image(img, x, y, [width], [height])\n\n  // Red - top left\n  tint(255, 0, 0, a_alpha);  \n  image(a_video, 0, 0, a_w, a_h);\n\n  // Green - top right\n  tint(0, 255, 0, a_alpha);  \n  image(a_video, a_w, 0, a_w, a_h);\n\n  // Blue - bottom left\n  // tint(125, 125, 125, a_alpha);  \n  tint(0, 0, 255, a_alpha);  \n  image(a_video, 0, a_h, a_w, a_h);\n\n  // Red+Green=Yellow - bottom right\n  tint(255, 255, 0, a_alpha);  \n  image(a_video, a_w, a_h, a_w, a_h);\n\n  // No tint - center\n  tint(255, 255, 255, 255)  \n  image(a_video, a_w-a_w/2, a_h-a_h/2, a_w, a_h);\n\n}\n\n// TRY: Try extreme values for a_alpha\n// TRY: try background call in draw func\n// TRY: comment out center image and have 4 images\n//     show the corresponding portion of the video\n\n// https://editor.p5js.org/jht1493/sketches/QYlq2DxmM\n// video tint 2x2 mobile\n\n// https://editor.p5js.org/jht1493/sketches/Zx8JnxZfw\n// video tint 2x2\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight, \n//    sx, sy, [sWidth], [sHeight])\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645cd84136856f1f46c87a7f",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-11T15:43:25.137Z",
+        "updatedAt": "2023-05-11T15:43:25.137Z",
+        "id": "645cd84136856f1f46c87a7f"
+      },
+      {
+        "name": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n<!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645cd84136856f1f46c87a7e",
+        "createdAt": "2023-05-11T15:43:25.137Z",
+        "updatedAt": "2023-05-11T15:43:25.137Z",
+        "isSelectedFile": false,
+        "id": "645cd84136856f1f46c87a7e"
+      },
+      {
+        "name": "style.css",
+        "content": "html, body {\n  margin: 0;\n  padding: 0;\n}\ncanvas {\n  display: block;\n}\n",
+        "children": [],
+        "fileType": "file",
+        "_id": "645cd84136856f1f46c87a80",
+        "createdAt": "2023-05-11T15:43:25.137Z",
+        "updatedAt": "2023-05-11T15:43:25.137Z",
+        "isSelectedFile": false,
+        "id": "645cd84136856f1f46c87a80"
+      }
+    ],
+    "createdAt": "2023-05-11T11:57:53.896Z",
+    "updatedAt": "2023-05-11T15:43:25.137Z",
+    "id": "erHP1oZMO"
   },
   {
     "name": "WK2 move a circle with random size copy",
