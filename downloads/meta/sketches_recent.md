@@ -1,5 +1,5 @@
 # Sketches for jht9629-nyu
-33 sketches  
+31 sketches  
 [video-tint-2x2-mobile](https://editor.p5js.org/jht9629-nyu/sketches/erHP1oZMO)<!-- 2023-05-11T15:43:25.137Z -->  
 [timed-drawing-class](https://editor.p5js.org/jht9629-nyu/sketches/yEhwOiog5)<!-- 2023-05-11T14:43:59.175Z -->  
 [Simple Draw](https://editor.p5js.org/jht9629-nyu/sketches/oVJEGvodF)<!-- 2023-05-11T13:22:30.602Z -->  
@@ -14,9 +14,7 @@
 [video meter rgb long](https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg)<!-- 2023-05-09T23:50:31.282Z -->  
 [video pixel scan](https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA)<!-- 2023-05-09T16:00:12.100Z -->  
 [video pixel meter](https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra)<!-- 2023-05-09T15:45:14.893Z -->  
-[video tint 2x2 mobile](https://editor.p5js.org/jht9629-nyu/sketches/ZQKpaeJm0)<!-- 2023-05-09T02:13:06.544Z -->  
 [11.4: Brightness getpixel](https://editor.p5js.org/jht9629-nyu/sketches/J7Zhes2Tc)<!-- 2023-05-08T16:14:22.193Z -->  
-[video tint 2x2 mobile](https://editor.p5js.org/jht9629-nyu/sketches/UL4f15T8w)<!-- 2023-05-08T15:56:19.800Z -->  
 [Firebase-createImg-board copy](https://editor.p5js.org/jht9629-nyu/sketches/ncIe7u-WC)<!-- 2023-05-08T13:27:04.765Z -->  
 [Necessary-forgery-timed-drawing](https://editor.p5js.org/jht9629-nyu/sketches/MbS5C3j-F)<!-- 2023-04-23T21:46:34.983Z -->  
 [timed-drawing](https://editor.p5js.org/jht9629-nyu/sketches/-t2O5JfBr)<!-- 2023-04-20T21:02:17.029Z -->  

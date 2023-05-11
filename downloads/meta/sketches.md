@@ -1,5 +1,5 @@
 # Sketches for jht9629-nyu
-33 sketches  
+31 sketches  
 [03-jht-hatviz](https://editor.p5js.org/jht9629-nyu/sketches/7hzeHDSIl)<!-- 2023-04-09T01:41:50.719Z -->  
 [11.4: Brightness getpixel](https://editor.p5js.org/jht9629-nyu/sketches/J7Zhes2Tc)<!-- 2023-05-08T16:14:22.193Z -->  
 [7.3 Arrays of objects 1 copy](https://editor.p5js.org/jht9629-nyu/sketches/IwaHqYnDn)<!-- 2023-04-20T00:02:54.126Z -->  
@@ -29,7 +29,5 @@
 [video pixel meter](https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra)<!-- 2023-05-09T15:45:14.893Z -->  
 [video pixel scan](https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA)<!-- 2023-05-09T16:00:12.100Z -->  
 [video pixel scan random](https://editor.p5js.org/jht9629-nyu/sketches/3ZwzK2buW)<!-- 2023-05-09T23:54:56.678Z -->  
-[video tint 2x2 mobile](https://editor.p5js.org/jht9629-nyu/sketches/ZQKpaeJm0)<!-- 2023-05-09T02:13:06.544Z -->  
-[video tint 2x2 mobile](https://editor.p5js.org/jht9629-nyu/sketches/UL4f15T8w)<!-- 2023-05-08T15:56:19.800Z -->  
 [video-tint-2x2-mobile](https://editor.p5js.org/jht9629-nyu/sketches/erHP1oZMO)<!-- 2023-05-11T15:43:25.137Z -->  
 [WK2 move a circle with random size copy](https://editor.p5js.org/jht9629-nyu/sketches/xYjreHHtl)<!-- 2023-04-08T23:23:01.022Z -->  

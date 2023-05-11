@@ -27,7 +27,5 @@ curl https://editor.p5js.org/editor/projects/sJM2AMf5T/zip -o "downloads/zips/vi
 curl https://editor.p5js.org/editor/projects/p0ato8vra/zip -o "downloads/zips/video pixel meter.zip"
 curl https://editor.p5js.org/editor/projects/HRjZBETUA/zip -o "downloads/zips/video pixel scan.zip"
 curl https://editor.p5js.org/editor/projects/3ZwzK2buW/zip -o "downloads/zips/video pixel scan random.zip"
-curl https://editor.p5js.org/editor/projects/ZQKpaeJm0/zip -o "downloads/zips/video tint 2x2 mobile.zip"
-curl https://editor.p5js.org/editor/projects/UL4f15T8w/zip -o "downloads/zips/video tint 2x2 mobile.zip"
 curl https://editor.p5js.org/editor/projects/erHP1oZMO/zip -o "downloads/zips/video-tint-2x2-mobile.zip"
 curl https://editor.p5js.org/editor/projects/xYjreHHtl/zip -o "downloads/zips/WK2 move a circle with random size copy.zip"
