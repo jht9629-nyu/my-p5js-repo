@@ -2,7 +2,7 @@
 // video-meter-rgb-tall
 
 let my = {
-  version: 22, // Version number, update to verify version change on mobile
+  version: 23, // Version number, update to verify version change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -28,7 +28,7 @@ function setup() {
 
   createDiv('Version:' + my.version);
 
-  my.saveBtn = createButton('Save').mousePressed(saveAction);
+  my.saveBtn = createButton('Save Pixel').mousePressed(saveAction);
 
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
 
