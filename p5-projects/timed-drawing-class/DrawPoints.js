@@ -137,6 +137,9 @@ class DrawPoints {
       store = this.restore_urlParams(urlParams);
     } else {
       store = this.restore_localStorage();
+      if (!store) {
+        store = { drawings: [] };
+      }
     }
     this.expand_drawings(store);
     this.drawings = store.drawings;
@@ -171,7 +174,7 @@ class DrawPoints {
   restore_localStorage() {
     let store;
     let str = localStorage.getItem(this.save_label);
-    if (!str) return;
+    if (!str) return null;
     console.log('restore_drawing str.length', str.length);
     // this.drawings = JSON.parse(str);
     try {
