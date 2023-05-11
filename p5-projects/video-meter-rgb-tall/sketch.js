@@ -3,27 +3,30 @@
 
 // https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
 
-let my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };
+// let my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };
+let my = { version: 20, vwidth: 120, vheight: 160, vscale: 4, cscale: 64 };
 
 function setup() {
   // simple test for mobile phone
-  if (window.screen.width < window.screen.height) {
-    my.width = window.screen.width;
-    my.height = window.screen.height;
-  }
+  // if (window.screen.width < window.screen.height) {
+  //   my.width = window.screen.width;
+  //   my.height = window.screen.height;
+  // }
+  my.width = my.vwidth * my.vscale;
+  my.height = my.vheight * my.vscale;
 
   createCanvas(my.width, my.height);
   background(200);
 
-  let vwidth = my.width / my.vscale;
-  let vheight = my.height / my.vscale;
-  console.log('vwidth', vwidth, 'vheight', vheight);
+  // let vwidth = my.width / my.vscale;
+  // let vheight = my.height / my.vscale;
+  // console.log('vwidth', vwidth, 'vheight', vheight);
 
   my.video = createCapture(VIDEO);
-  my.video.size(vwidth, vheight);
+  my.video.size(my.vwidth, my.vheight);
   my.video.hide();
 
-  my.crossLen = vwidth / my.cscale;
+  my.crossLen = my.vwidth / my.cscale;
 
   background(255);
   noStroke();
@@ -38,8 +41,8 @@ function videoIsReady() {
 function draw() {
   if (!videoIsReady()) return;
 
-  let vwidth = my.video.width;
-  let vheight = my.video.height;
+  let vwidth = my.vwidth;
+  let vheight = my.vheight;
 
   // Get pixel from center of video
   let cx = vwidth / 2;
