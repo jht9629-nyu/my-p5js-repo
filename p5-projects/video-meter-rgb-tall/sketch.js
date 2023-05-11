@@ -7,6 +7,7 @@ let my = {
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
   cscale: 64, // scale down from video size to cross hair length
+  colorClipLen: 50, // size of each saved color chip
 };
 
 function setup() {
@@ -113,9 +114,13 @@ function saveAction() {
   let g = color[1];
   let b = color[2];
 
+  let px = my.colorClipLen;
+  let spec = 'background-color:rgb(' + r + ',' + g + ',' + b + ');';
+  spec += 'width:' + px + 'px;height:' + px + 'px;';
+  spec += 'display:inline-block';
+  // console.log('spec', spec);
   let colorElm = createSpan('');
-  let colorSpec = 'background-color:rgb(' + r + ',' + g + ',' + b + ');';
-  colorElm.style('width:40px;height:40px;display:inline-block;' + colorSpec);
+  colorElm.style(spec);
   colorElm.mousePressed(colorMouseAction);
 
   let rgbSpan = createSpan('r=' + r + ' g=' + g + ' b=' + b + ' ');
