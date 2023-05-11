@@ -1,26 +1,20 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni
-// video meter rgb tall
+// video-meter-rgb-tall
 
-// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall
-
-// let my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };
-let my = { version: 20, vwidth: 120, vheight: 160, vscale: 4, cscale: 64 };
+let my = {
+  version: 22, // Version number, update to verify version change on mobile
+  vwidth: 120, // Aspect ratio of video capture
+  vheight: 160,
+  vscale: 4, // scale up factor to canvas size
+  cscale: 64, // scale down from video size to cross hair length
+};
 
 function setup() {
-  // simple test for mobile phone
-  // if (window.screen.width < window.screen.height) {
-  //   my.width = window.screen.width;
-  //   my.height = window.screen.height;
-  // }
   my.width = my.vwidth * my.vscale;
   my.height = my.vheight * my.vscale;
 
   createCanvas(my.width, my.height);
   background(200);
-
-  // let vwidth = my.width / my.vscale;
-  // let vheight = my.height / my.vscale;
-  // console.log('vwidth', vwidth, 'vheight', vheight);
 
   my.video = createCapture(VIDEO);
   my.video.size(my.vwidth, my.vheight);
@@ -32,6 +26,12 @@ function setup() {
   noStroke();
 
   createDiv('Version:' + my.version);
+
+  my.saveBtn = createButton('Save').mousePressed(saveAction);
+
+  my.removeBtn = createButton('Remove').mousePressed(removeAction);
+
+  my.listDiv = createDiv('');
 }
 
 function videoIsReady() {
@@ -48,6 +48,7 @@ function draw() {
   let cx = vwidth / 2;
   let cy = vheight / 2;
   let color = my.video.get(cx, cy);
+  my.color = color;
 
   // fill the canvas with the center video pixel
   fill(color);
@@ -103,6 +104,49 @@ function draw() {
   rect(x0, y1 - bh, bwide, bh);
   fill(0, 0, 255);
   text('b=' + b, x0, y2);
+}
+
+function saveAction() {
+  console.log('saveAction');
+  let color = my.color;
+  let r = color[0];
+  let g = color[1];
+  let b = color[2];
+
+  let colorElm = createSpan('');
+  let colorSpec = 'background-color:rgb(' + r + ',' + g + ',' + b + ');';
+  colorElm.style('width:40px;height:40px;display:inline-block;' + colorSpec);
+  colorElm.mousePressed(colorMouseAction);
+
+  let rgbSpan = createSpan('r=' + r + ' g=' + g + ' b=' + b + ' ');
+  rgbSpan.style('display:none');
+
+  let box = createSpan('');
+  box.child(colorElm);
+  box.child(rgbSpan);
+
+  // firstChild could be null
+  let firstChild = my.listDiv.elt.firstChild;
+  my.listDiv.elt.insertBefore(box.elt, firstChild);
+  // my.listDiv.child(element);
+}
+
+function colorMouseAction(e) {
+  // console.log('colorMouseAction e', e);
+  // console.log('colorMouseAction this', this);
+  let sib = this.elt.nextSibling;
+  // console.log('sib', sib);
+  if (sib.style.display === 'none') {
+    sib.style.display = 'inline';
+  } else {
+    sib.style.display = 'none';
+  }
+}
+
+function removeAction() {
+  let firstChild = my.listDiv.elt.firstChild;
+  if (!firstChild) return;
+  firstChild.remove();
 }
 
 // https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg
