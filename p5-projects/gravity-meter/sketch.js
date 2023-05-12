@@ -1,5 +1,5 @@
-// https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L
-// rotationXYZ
+// https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
+// xyzlola
 
 let my = { width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
@@ -81,6 +81,9 @@ function permissionAction() {
     alert('DeviceMotionEvent is not defined');
   }
 }
+
+// https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L
+// rotationXYZ
 
 // https://p5js.org/reference/#/p5/rotationX
 
