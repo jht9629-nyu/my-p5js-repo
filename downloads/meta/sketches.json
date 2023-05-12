@@ -1401,31 +1401,31 @@
         ],
         "fileType": "folder",
         "_id": "645ae8bbb6598320fecb83d6",
-        "createdAt": "2023-05-10T21:44:14.089Z",
-        "updatedAt": "2023-05-10T21:44:14.089Z",
+        "createdAt": "2023-05-12T17:43:16.152Z",
+        "updatedAt": "2023-05-12T17:43:16.152Z",
         "isSelectedFile": false,
         "id": "645ae8bbb6598320fecb83d6"
       },
       {
         "name": "sketch.js",
-        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni\n// video meter rgb tall\n\n// https://jht9629-nyu.github.io/my-p5js-repo-2023/p5-projects/video-meter-rgb-tall\n\nlet my = { version: 19, width: 640, height: 480, vscale: 4, cscale: 64 };\n\nfunction setup() {\n  // simple test for mobile phone\n  if (window.screen.width < window.screen.height) {\n    my.width = window.screen.width;\n    my.height = window.screen.height;\n  }\n\n  createCanvas(my.width, my.height);\n  background(200);\n\n  let vwidth = my.width / my.vscale;\n  let vheight = my.height / my.vscale;\n  console.log('vwidth', vwidth, 'vheight', vheight);\n\n  my.video = createCapture(VIDEO);\n  my.video.size(vwidth, vheight);\n  my.video.hide();\n\n  my.crossLen = vwidth / my.cscale;\n\n  background(255);\n  noStroke();\n\n  createDiv('Version:' + my.version);\n}\n\nfunction videoIsReady() {\n  return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;\n}\n\nfunction draw() {\n  if (!videoIsReady()) return;\n\n  let vwidth = my.video.width;\n  let vheight = my.video.height;\n\n  // Get pixel from center of video\n  let cx = vwidth / 2;\n  let cy = vheight / 2;\n  let color = my.video.get(cx, cy);\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right middle\n  let vx = width / 2 - vwidth / 2;\n  let vy = height - vheight * 2.5;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let clen = my.crossLen;\n  rect(vx + cx, vy, clen, vheight);\n  rect(vx, vy + cy, vwidth, clen);\n\n  // white backdrop to bars\n  let x0 = vx;\n  let y0 = vy + vheight + clen;\n  let wwidth = vwidth;\n  let wheight = vheight;\n  fill(255);\n  rect(x0, y0, wwidth, wheight);\n\n  x0 += clen;\n  y0 += clen;\n  let y2 = y0 + wheight - clen * 2;\n  let btall = wheight * 0.8;\n  let y1 = y0 + btall;\n\n  // red bar\n  let bwide = (wwidth - clen * 2) / 3;\n  let r = color[0];\n  let rh = btall * (r / 255);\n  fill(r, 0, 0);\n  rect(x0, y1 - rh, bwide, rh);\n  fill(255, 0, 0);\n  text('r=' + r, x0, y2);\n\n  // green bar\n  x0 += bwide;\n  let g = color[1];\n  let gh = btall * (g / 255);\n  fill(0, g, 0);\n  rect(x0, y1 - gh, bwide, gh);\n  fill(0, 255, 0);\n  text('g=' + g, x0, y2);\n\n  // blue bar\n  x0 += bwide;\n  let b = color[2];\n  let bh = btall * (b / 255);\n  fill(0, 0, b);\n  rect(x0, y1 - bh, bwide, bh);\n  fill(0, 0, 255);\n  text('b=' + b, x0, y2);\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n\n",
+        "content": "// https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni\n// video-meter-rgb-tall\n\nlet my = {\n  version: 2, // update to verify change on mobile\n  vwidth: 120, // Aspect ratio of video capture\n  vheight: 160,\n  vscale: 4, // scale up factor to canvas size\n  cscale: 64, // scale down from video size to cross hair length\n  colorClipLen: 50, // size of each saved color chip\n  facingMode: 'environment', // user environment\n};\n\nfunction setup() {\n  my.width = my.vwidth * my.vscale;\n  my.height = my.vheight * my.vscale;\n\n  createCanvas(my.width, my.height);\n  background(200);\n\n  createMyVideo();\n\n  my.crossLen = my.vwidth / my.cscale;\n\n  background(255);\n  noStroke();\n\n  createSpan('v' + my.version);\n\n  my.addBtn = createButton('Add').mousePressed(addAction);\n\n  my.removeBtn = createButton('Remove').mousePressed(removeAction);\n\n  my.faceBtn = createButton('Face').mousePressed(faceAction);\n\n  my.listDiv = createDiv('');\n}\n\nfunction createMyVideo() {\n  let options = { video: { facingMode: my.facingMode } };\n  my.video = createCapture(options);\n  my.video.size(my.vwidth, my.vheight);\n  my.video.hide();\n}\n\nfunction faceAction() {\n  let isEnv = my.facingMode == 'environment';\n  my.facingMode = isEnv ? 'user' : 'environment';\n  console.log('my.facingMode', my.facingMode);\n\n  my.video.remove();\n  createMyVideo();\n}\n\nfunction videoIsReady() {\n  return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;\n}\n\nfunction draw() {\n  if (!videoIsReady()) return;\n\n  let vwidth = my.vwidth;\n  let vheight = my.vheight;\n\n  // Get pixel from center of video\n  let cx = vwidth / 2;\n  let cy = vheight / 2;\n  let color = my.video.get(cx, cy);\n  my.color = color;\n\n  // fill the canvas with the center video pixel\n  fill(color);\n  rect(0, 0, width, height);\n\n  // place video in lower right middle\n  let vx = width / 2 - vwidth / 2;\n  let vy = height - vheight * 2.5;\n  image(my.video, vx, vy);\n\n  // draw cross hairs\n  let clen = my.crossLen;\n  rect(vx + cx, vy, clen, vheight);\n  rect(vx, vy + cy, vwidth, clen);\n\n  // white backdrop to bars\n  let x0 = vx;\n  let y0 = vy + vheight + clen;\n  let wwidth = vwidth;\n  let wheight = vheight;\n  fill(255);\n  rect(x0, y0, wwidth, wheight);\n\n  x0 += clen;\n  y0 += clen;\n  let y2 = y0 + wheight - clen * 2;\n  let btall = wheight * 0.8;\n  let y1 = y0 + btall;\n\n  // red bar\n  let bwide = (wwidth - clen * 2) / 3;\n  let r = color[0];\n  let rh = btall * (r / 255);\n  fill(r, 0, 0);\n  rect(x0, y1 - rh, bwide, rh);\n  fill(255, 0, 0);\n  text('r=' + r, x0, y2);\n\n  // green bar\n  x0 += bwide;\n  let g = color[1];\n  let gh = btall * (g / 255);\n  fill(0, g, 0);\n  rect(x0, y1 - gh, bwide, gh);\n  fill(0, 255, 0);\n  text('g=' + g, x0, y2);\n\n  // blue bar\n  x0 += bwide;\n  let b = color[2];\n  let bh = btall * (b / 255);\n  fill(0, 0, b);\n  rect(x0, y1 - bh, bwide, bh);\n  fill(0, 0, 255);\n  text('b=' + b, x0, y2);\n}\n\nfunction addAction() {\n  console.log('addAction');\n  let color = my.color;\n  let r = color[0];\n  let g = color[1];\n  let b = color[2];\n\n  let px = my.colorClipLen;\n  let spec = 'background-color:rgb(' + r + ',' + g + ',' + b + ');';\n  spec += 'width:' + px + 'px;height:' + px + 'px;';\n  spec += 'display:inline-block';\n  // console.log('spec', spec);\n  let colorElm = createSpan('');\n  colorElm.style(spec);\n  colorElm.mousePressed(colorMouseAction);\n\n  let rgbSpan = createSpan('r=' + r + ' g=' + g + ' b=' + b + ' ');\n  rgbSpan.style('display:none');\n\n  let box = createSpan('');\n  box.child(colorElm);\n  box.child(rgbSpan);\n\n  // firstChild could be null\n  let firstChild = my.listDiv.elt.firstChild;\n  my.listDiv.elt.insertBefore(box.elt, firstChild);\n\n  let rt = colorElm.elt.getBoundingClientRect();\n  console.log('rt', rt);\n  console.log('rt.y', rt.y);\n  window.scrollTo(0, rt.y);\n  // my.listDiv.child(element);\n}\n\nfunction colorMouseAction(e) {\n  // console.log('colorMouseAction e', e);\n  // console.log('colorMouseAction this', this);\n  let sib = this.elt.nextSibling;\n  // console.log('sib', sib);\n  if (sib.style.display === 'none') {\n    sib.style.display = 'inline';\n  } else {\n    sib.style.display = 'none';\n  }\n}\n\nfunction removeAction() {\n  let firstChild = my.listDiv.elt.firstChild;\n  if (!firstChild) return;\n  firstChild.remove();\n}\n\n// https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg\n// video meter rgb long\n\n// https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra\n// video pixel meter\n\n// https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T\n// video pixel\n// extreme pixel distortion at vscale: 32 and beyond\n\n// https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA\n// video pixel scan\n\n// https://editor.p5js.org/jht1493/sketches/MtdR3vBcj\n// https://github.com/CodingTrain/website/blob/master\n//   /Tutorials/P5JS/p5.js_video/11.1_p5.js_createCapture\n\n// https://p5js.org/reference/#/p5/image\n// -- draw entire image, optionally scaled to new size\n// image(img, x, y, [width], [height])\n// -- draw into subsection of an image,\n//      optional subsection of source image\n// image(img, dx, dy, dWidth, dHeight,\n//    sx, sy, [sWidth], [sHeight])\n",
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d8",
-        "isSelectedFile": false,
-        "createdAt": "2023-05-10T21:44:14.089Z",
-        "updatedAt": "2023-05-10T21:44:14.089Z",
+        "isSelectedFile": true,
+        "createdAt": "2023-05-12T17:43:16.152Z",
+        "updatedAt": "2023-05-12T17:43:16.152Z",
         "id": "645ae8bbb6598320fecb83d8"
       },
       {
         "name": "index.html",
-        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js\"></script>\n    <!-- <script src=\"https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js\"></script> -->\n    <!-- <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /> -->\n    <!-- <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /> -->\n    <style>\n      @media only screen and (max-width: 600px) {\n        body,\n        button,\n        select,\n        input {\n          font-size: 6vw;\n        }\n      }\n      html,\n      body {\n        margin: 0;\n        padding: 0;\n      }\n      canvas {\n        display: block;\n      }\n    </style>\n  </head>\n  <body>\n    <script src=\"sketch.js\"></script>\n  </body>\n</html>\n",
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d7",
-        "createdAt": "2023-05-10T21:44:14.089Z",
-        "updatedAt": "2023-05-10T21:44:14.089Z",
-        "isSelectedFile": true,
+        "createdAt": "2023-05-12T17:43:16.152Z",
+        "updatedAt": "2023-05-12T17:43:16.152Z",
+        "isSelectedFile": false,
         "id": "645ae8bbb6598320fecb83d7"
       },
       {
@@ -1434,14 +1434,14 @@
         "children": [],
         "fileType": "file",
         "_id": "645ae8bbb6598320fecb83d9",
-        "createdAt": "2023-05-10T21:44:14.089Z",
-        "updatedAt": "2023-05-10T21:44:14.089Z",
+        "createdAt": "2023-05-12T17:43:16.152Z",
+        "updatedAt": "2023-05-12T17:43:16.152Z",
         "isSelectedFile": false,
         "id": "645ae8bbb6598320fecb83d9"
       }
     ],
     "createdAt": "2023-05-10T00:43:39.535Z",
-    "updatedAt": "2023-05-10T21:44:14.089Z",
+    "updatedAt": "2023-05-12T17:43:16.152Z",
     "id": "_0fWGg7ni"
   },
   {

@@ -2,12 +2,13 @@
 // video-meter-rgb-tall
 
 let my = {
-  version: 23, // Version number, update to verify version change on mobile
+  version: 2, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
   cscale: 64, // scale down from video size to cross hair length
   colorClipLen: 50, // size of each saved color chip
+  facingMode: 'environment', // user environment
 };
 
 function setup() {
@@ -17,22 +18,38 @@ function setup() {
   createCanvas(my.width, my.height);
   background(200);
 
-  my.video = createCapture(VIDEO);
-  my.video.size(my.vwidth, my.vheight);
-  my.video.hide();
+  createMyVideo();
 
   my.crossLen = my.vwidth / my.cscale;
 
   background(255);
   noStroke();
 
-  createDiv('Version:' + my.version);
+  createSpan('v' + my.version);
 
-  my.saveBtn = createButton('Save Pixel').mousePressed(saveAction);
+  my.addBtn = createButton('Add').mousePressed(addAction);
 
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
 
+  my.faceBtn = createButton('Face').mousePressed(faceAction);
+
   my.listDiv = createDiv('');
+}
+
+function createMyVideo() {
+  let options = { video: { facingMode: my.facingMode } };
+  my.video = createCapture(options);
+  my.video.size(my.vwidth, my.vheight);
+  my.video.hide();
+}
+
+function faceAction() {
+  let isEnv = my.facingMode == 'environment';
+  my.facingMode = isEnv ? 'user' : 'environment';
+  console.log('my.facingMode', my.facingMode);
+
+  my.video.remove();
+  createMyVideo();
 }
 
 function videoIsReady() {
@@ -107,8 +124,8 @@ function draw() {
   text('b=' + b, x0, y2);
 }
 
-function saveAction() {
-  console.log('saveAction');
+function addAction() {
+  console.log('addAction');
   let color = my.color;
   let r = color[0];
   let g = color[1];
@@ -133,6 +150,11 @@ function saveAction() {
   // firstChild could be null
   let firstChild = my.listDiv.elt.firstChild;
   my.listDiv.elt.insertBefore(box.elt, firstChild);
+
+  let rt = colorElm.elt.getBoundingClientRect();
+  console.log('rt', rt);
+  console.log('rt.y', rt.y);
+  window.scrollTo(0, rt.y);
   // my.listDiv.child(element);
 }
 

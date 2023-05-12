@@ -24,7 +24,7 @@
 [truchet tiles pause copy](https://editor.p5js.org/jht9629-nyu/sketches/fWSv5uzke)<!-- 2023-04-15T21:16:16.684Z -->  
 [truchet tiles tweeked](https://editor.p5js.org/jht9629-nyu/sketches/1CpIVSqp_d)<!-- 2023-03-19T20:00:56.425Z -->  
 [video meter rgb long](https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg)<!-- 2023-05-09T23:50:31.282Z -->  
-[video meter rgb tall](https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni)<!-- 2023-05-10T21:44:14.089Z -->  
+[video meter rgb tall](https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni)<!-- 2023-05-12T17:43:16.152Z -->  
 [video pixel](https://editor.p5js.org/jht9629-nyu/sketches/sJM2AMf5T)<!-- 2023-05-10T00:20:57.826Z -->  
 [video pixel meter](https://editor.p5js.org/jht9629-nyu/sketches/p0ato8vra)<!-- 2023-05-09T15:45:14.893Z -->  
 [video pixel scan](https://editor.p5js.org/jht9629-nyu/sketches/HRjZBETUA)<!-- 2023-05-09T16:00:12.100Z -->  
