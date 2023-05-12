@@ -58,7 +58,7 @@ function update_checkBox(prop) {
   let isChecked = ref.checked();
   let str = 'rot' + prop;
   if (isChecked) str += ' ' + val.toFixed(3);
-  ref.elt.firstChild.childNodes[1].innerHTML = str;
+  ref.elt.firstChild.lastChild.innerHTML = str;
 }
 
 // Need for iOS mobile device to get motion events

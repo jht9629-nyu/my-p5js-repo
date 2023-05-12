@@ -2,7 +2,7 @@
 // video-meter-rgb-tall
 
 let my = {
-  version: 2, // update to verify change on mobile
+  version: 3, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -34,6 +34,7 @@ function setup() {
   my.faceBtn = createButton('Face').mousePressed(faceAction);
 
   my.listDiv = createDiv('');
+  my.listDiv.style('line-height:0;');
 }
 
 function createMyVideo() {
@@ -147,9 +148,9 @@ function addAction() {
   box.child(colorElm);
   box.child(rgbSpan);
 
-  // firstChild could be null
-  let firstChild = my.listDiv.elt.firstChild;
-  my.listDiv.elt.insertBefore(box.elt, firstChild);
+  // child could be null
+  let child = my.listDiv.elt.firstChild;
+  my.listDiv.elt.insertBefore(box.elt, child);
 
   let rt = colorElm.elt.getBoundingClientRect();
   console.log('rt', rt);
@@ -171,9 +172,9 @@ function colorMouseAction(e) {
 }
 
 function removeAction() {
-  let firstChild = my.listDiv.elt.firstChild;
-  if (!firstChild) return;
-  firstChild.remove();
+  let child = my.listDiv.elt.firstChild;
+  if (!child) return;
+  child.remove();
 }
 
 // https://editor.p5js.org/jht9629-nyu/sketches/aJkcqKahg
