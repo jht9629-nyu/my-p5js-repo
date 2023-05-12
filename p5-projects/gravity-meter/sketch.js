@@ -1,7 +1,13 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // gravity-meter
 
-let my = { width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = {
+  width: 400,
+  height: 400,
+  rotX: 1,
+  rotY: 0,
+  rotZ: 0,
+};
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -18,9 +24,6 @@ function draw() {
   update_checkBox('chkX', 'rotationX', 'rotX');
   update_checkBox('chkY', 'rotationY', 'rotY');
   update_checkBox('chkZ', 'rotationZ', 'rotZ');
-  update_checkBox('chkAccelX', 'accelerationX', 'accelX');
-  update_checkBox('chkAccelY', 'accelerationY', 'accelY');
-  update_checkBox('chkAccelZ', 'accelerationZ', 'accelZ');
 }
 
 function create_ui() {
@@ -30,9 +33,7 @@ function create_ui() {
   my.chkY = create_checkBox('rotY');
   my.chkZ = create_checkBox('rotZ');
   createElement('br');
-  my.chkAccelX = create_checkBox('accelX');
-  my.chkAccelY = create_checkBox('accelY');
-  my.chkAccelZ = create_checkBox('accelZ');
+  geoCreate_ui();
 }
 
 function create_checkBox(prop) {
@@ -44,7 +45,6 @@ function create_checkBox(prop) {
 }
 
 function update_checkBox(chkProp, valProp, label) {
-  //
   let ref = my[chkProp];
   let val = window[valProp];
   let isChecked = ref.checked();
@@ -59,15 +59,35 @@ function update_checkBox(chkProp, valProp, label) {
 //     <span>rotY</span>
 //   </label>
 // </div>
-// cthis.elt.firstChild.childNodes[1].innerHTML
 
-function update_checkBox1(prop) {
-  let ref = my['chk' + prop];
-  let val = window['rotation' + prop];
-  let isChecked = ref.checked();
-  let str = 'rot' + prop;
-  if (isChecked) str += ' ' + val.toFixed(3);
-  ref.elt.firstChild.lastChild.innerHTML = str;
+function geoCreate_ui() {
+  createButton('Get Location').mousePressed(geoFindAction);
+  my.status = createP();
+  my.mapLink = createA('https://www.google.com/', 'test link', '_blank');
+}
+
+function geoFindAction() {
+  console.log('geoFindAction');
+  let mapLink = my.mapLink.elt;
+  let status = my.status.elt;
+  mapLink.href = '';
+  mapLink.textContent = '';
+  function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    status.textContent = '';
+    mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    mapLink.textContent = `La: ${latitude} ° Lo: ${longitude} °`;
+  }
+  function error() {
+    status.textContent = 'Unable to retrieve your location';
+  }
+  if (!navigator.geolocation) {
+    status.textContent = 'Geolocation is not supported by your browser';
+  } else {
+    status.textContent = 'Locating…';
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
 }
 
 // Need for iOS mobile device to get motion events
@@ -90,6 +110,8 @@ function permissionAction() {
     alert('DeviceMotionEvent is not defined');
   }
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
 
 // https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L
 // rotationXYZ
