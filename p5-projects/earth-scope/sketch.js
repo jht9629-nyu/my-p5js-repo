@@ -1,5 +1,5 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
-// gravity-meter
+// earth-scope
 
 let my = { width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
