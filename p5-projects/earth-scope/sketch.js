@@ -23,6 +23,9 @@ function draw() {
 function create_ui() {
   my.permBtn = createButton('permission');
   my.permBtn.mousePressed(permissionAction);
+
+  createA('https://en.m.wikipedia.org/wiki/Eratosthenes', 'Eratosthenes', '_blank');
+
   my.chkX = create_checkBox('rotX');
   my.chkY = create_checkBox('rotY');
   my.chkZ = create_checkBox('rotZ');
