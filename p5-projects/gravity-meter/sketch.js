@@ -1,13 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // gravity-meter
 
-let my = {
-  width: 400,
-  height: 400,
-  rotX: 1,
-  rotY: 0,
-  rotZ: 0,
-};
+let my = { width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -32,7 +26,7 @@ function create_ui() {
   my.chkX = create_checkBox('rotX');
   my.chkY = create_checkBox('rotY');
   my.chkZ = create_checkBox('rotZ');
-  createElement('br');
+  // createElement('br');
   geoCreate_ui();
 }
 
@@ -62,30 +56,37 @@ function update_checkBox(chkProp, valProp, label) {
 
 function geoCreate_ui() {
   createButton('Get Location').mousePressed(geoFindAction);
-  my.status = createP();
-  my.mapLink = createA('https://www.google.com/', 'test link', '_blank');
+  createElement('br');
+  // my.status = createP();
+  // my.mapLink = createA('https://www.google.com/', 'test link', '_blank');
+  my.mapLink = createA('', '', '_blank');
 }
 
 function geoFindAction() {
   console.log('geoFindAction');
   let mapLink = my.mapLink.elt;
-  let status = my.status.elt;
+  // let status = my.status.elt;
   mapLink.href = '';
-  mapLink.textContent = '';
+  // mapLink.textContent = '';
   function success(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    status.textContent = '';
+    const latitude = position.coords.latitude.toFixed(6);
+    const longitude = position.coords.longitude.toFixed(6);
+    // let accuracy = position.coords.accuracy;
+    // status.textContent = '';
     mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    mapLink.textContent = `La: ${latitude} ° Lo: ${longitude} °`;
+    // mapLink.innerHTML = `La: ${latitude} °<br/> Lo: ${longitude} °`;
+    // mapLink.innerHTML = `${latitude} ${longitude} ${accuracy}<br/>` + mapLink.innerHTML;
+    mapLink.innerHTML = `${latitude} ${longitude}<br/>` + mapLink.innerHTML;
   }
-  function error() {
-    status.textContent = 'Unable to retrieve your location';
+  function error(err) {
+    // status.textContent = 'Unable to retrieve your location';
+    alert('geoFindAction err' + err);
   }
   if (!navigator.geolocation) {
-    status.textContent = 'Geolocation is not supported by your browser';
+    // status.textContent = 'Geolocation is not supported by your browser';
+    alert('Geolocation is not supported by your browser');
   } else {
-    status.textContent = 'Locating…';
+    // status.textContent = 'Locating…';
     navigator.geolocation.getCurrentPosition(success, error);
   }
 }
