@@ -1,14 +1,18 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/_0fWGg7ni
-// video-meter-rgb-tall
+// pixel-scope
 
 let my = {
-  version: 3, // update to verify change on mobile
+  version: 6, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
   cscale: 64, // scale down from video size to cross hair length
   colorClipLen: 50, // size of each saved color chip
-  facingMode: 'environment', // user environment
+  facingMode: 'user', // user environment
+  scan: 0, // scan the cross hairs
+  scanRate: 6, // scan step rate, bigger for slower
+  snap: 0, // snap every n frames
+  snapNframe: 60,
 };
 
 function setup() {
@@ -32,6 +36,22 @@ function setup() {
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
 
   my.faceBtn = createButton('Face').mousePressed(faceAction);
+
+  createElement('br');
+
+  my.scanChk = createCheckbox('Scan', my.scan);
+  my.scanChk.style('display:inline');
+  my.scanChk.changed(function () {
+    my.scan = this.checked() ? 1 : 0;
+  });
+  my.scanOffsetX = 0;
+  my.scanOffsetY = 0;
+
+  my.snapChk = createCheckbox('Snap', my.snap);
+  my.snapChk.style('display:inline');
+  my.snapChk.changed(function () {
+    my.snap = this.checked() ? 1 : 0;
+  });
 
   my.listDiv = createDiv('');
   my.listDiv.style('line-height:0;');
@@ -60,12 +80,30 @@ function videoIsReady() {
 function draw() {
   if (!videoIsReady()) return;
 
+  if (my.snap && frameCount % my.snapNframe == 0) {
+    addAction();
+  }
+
   let vwidth = my.vwidth;
   let vheight = my.vheight;
 
   // Get pixel from center of video
   let cx = vwidth / 2;
   let cy = vheight / 2;
+  if (my.scan) {
+    cx = my.scanOffsetX;
+    cy = my.scanOffsetY;
+    if (frameCount % my.scanRate == 0) {
+      my.scanOffsetX += my.crossLen;
+      if (my.scanOffsetX > vwidth) {
+        my.scanOffsetX = 0;
+        my.scanOffsetY += my.crossLen;
+        if (my.scanOffsetY > vheight) {
+          my.scanOffsetY = 0;
+        }
+      }
+    }
+  }
   let color = my.video.get(cx, cy);
   my.color = color;
 
@@ -126,7 +164,7 @@ function draw() {
 }
 
 function addAction() {
-  console.log('addAction');
+  // console.log('addAction');
   let color = my.color;
   let r = color[0];
   let g = color[1];
@@ -153,8 +191,7 @@ function addAction() {
   my.listDiv.elt.insertBefore(box.elt, child);
 
   let rt = colorElm.elt.getBoundingClientRect();
-  console.log('rt', rt);
-  console.log('rt.y', rt.y);
+  console.log('addAction rt.y', rt.y);
   window.scrollTo(0, rt.y);
   // my.listDiv.child(element);
 }
