@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 2, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -21,7 +21,7 @@ function draw() {
 }
 
 function create_ui() {
-  my.permBtn = createButton('permission');
+  my.permBtn = createButton('permission v' + my.version);
   my.permBtn.mousePressed(permissionAction);
 
   my.chkX = create_checkBox('rotX');
@@ -68,15 +68,19 @@ function geoCreate_ui() {
 
 function geoFindAction() {
   console.log('geoFindAction');
-  // mapLink.textContent = '';
   function success(position) {
-    const latitude = position.coords.latitude.toFixed(6);
-    const longitude = position.coords.longitude.toFixed(6);
-    // let accuracy = position.coords.accuracy;
-    // status.textContent = '';
+    let coords = position.coords;
+    console.log('geoFindAction coords', coords);
+    let latitude = position.coords.latitude.toFixed(6);
+    let longitude = position.coords.longitude.toFixed(6);
+
+    let altitude = position.coords.altitude;
+    altitude = altitude ? altitude.toFixed(1) : '';
+    let heading = position.coords.heading;
+    heading = heading ? heading.toFixed(0) : '';
+
     let href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    let text = `${latitude} ${longitude}`;
-    // let status = my.status.elt;
+    let text = `${latitude} ${longitude} ${altitude} ${heading}`;
     let mapLink = createA(href, text, '_blank');
     let div = createDiv();
     div.child(mapLink);
@@ -116,6 +120,7 @@ function permissionAction() {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+// https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates
 
 // https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L
 // rotationXYZ
