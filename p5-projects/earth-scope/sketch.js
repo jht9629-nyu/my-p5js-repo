@@ -1,13 +1,14 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 5, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 6, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
   normalMaterial();
   create_ui();
   my.locations = [];
+  restore_locations();
 }
 
 function draw() {
@@ -60,57 +61,91 @@ function update_checkBox(chkProp, valProp, label) {
 // </div>
 
 function geoCreate_ui() {
-  createButton('Get Location').mousePressed(geoFindAction);
+  createButton('Add Location').mousePressed(add_locationAction);
+  createButton('Remove').mousePressed(remove_locationAction);
   createElement('br');
-  // my.status = createP();
-  // my.mapLink = createA('https://www.google.com/', 'test link', '_blank');
   my.mapLinks = createDiv('');
 }
 
-function geoFindAction() {
-  console.log('geoFindAction');
-  function success(position) {
-    let coords = position.coords;
-    console.log('geoFindAction coords', coords);
-    let latitude = position.coords.latitude.toFixed(6);
-    let longitude = position.coords.longitude.toFixed(6);
+function remove_locationAction() {
+  let child = my.mapLinks.elt.firstChild;
+  if (!child) return;
+  my.mapLinks.elt.removeChild(child);
+  my.locations.pop();
+  save_locations();
+}
 
-    let distance = distanceForLoc(latitude, longitude);
-
-    let href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    let text = `${latitude} ${longitude}`;
-    let mapLink = createA(href, text, '_blank');
-    let div = createDiv();
-    div.child(mapLink);
-    if (distance) {
-      let distanceSpan = createSpan(' ' + distance.toFixed(3) + 'km');
-      div.child(distanceSpan);
-    }
-    // child could be null
-    let child = my.mapLinks.elt.firstChild;
-    my.mapLinks.elt.insertBefore(div.elt, child);
-  }
-  function error(err) {
-    alert('geoFindAction err' + err);
-    console.log('geoFindAction err', err);
-  }
+function add_locationAction() {
+  // console.log('add_locationAction');
   if (!navigator.geolocation) {
     alert('Geolocation is not supported by your browser');
   } else {
     navigator.geolocation.getCurrentPosition(success, error);
   }
+  function success(position) {
+    let coords = position.coords;
+    console.log('add_locationAction coords', coords);
+    let la = position.coords.latitude;
+    let lo = position.coords.longitude;
+    add_location_lalo(la, lo);
+  }
+  function error(err) {
+    alert('add_locationAction err' + err);
+    console.log('geoFindAction err', err);
+  }
+}
+
+function add_location_lalo(la, lo) {
+  // Insert as first element in array locations
+  // my.locations.push({ la, lo });
+  my.locations.splice(0, 0, { la, lo });
+  let distance = distanceForLoc(la, lo);
+  let href = `https://www.openstreetmap.org/#map=18/${la}/${lo}`;
+  let text = `${la.toFixed(6)} ${lo.toFixed(6)}`;
+  let mapLink = createA(href, text, '_blank');
+  let div = createDiv();
+  div.child(mapLink);
+  if (distance) {
+    let distanceSpan = createSpan(' ' + distance.toFixed(3) + 'km');
+    div.child(distanceSpan);
+  }
+  // child could be null
+  let child = my.mapLinks.elt.firstChild;
+  my.mapLinks.elt.insertBefore(div.elt, child);
+
+  save_locations();
 }
 
 function distanceForLoc(la, lo) {
-  my.locations.push({ la, lo });
   let n = my.locations.length;
-  if (n <= 1) {
-    return 0;
-  }
-  let ent = my.locations[n - 2];
+  if (n <= 1) return 0;
+  let ent = my.locations[1];
   let dist = distanceInKm(la, lo, ent.la, ent.lo);
   console.log('dist', dist);
   return dist;
+}
+
+function save_locations() {
+  let str = JSON.stringify(my.locations);
+  localStorage.setItem('my.locations', str);
+  console.log('save_locations str.length', str.length);
+}
+
+function restore_locations() {
+  let str = localStorage.getItem('my.locations');
+  if (!str) return null;
+  console.log('restore_locations str.length', str.length);
+  let newlocs;
+  try {
+    newlocs = JSON.parse(str);
+  } catch (err) {
+    console.log('restore_locations parse err', err);
+    return;
+  }
+  for (let index = newlocs.length - 1; index >= 0; index--) {
+    let ent = newlocs[index];
+    add_location_lalo(ent.la, ent.lo);
+  }
 }
 
 // Need for iOS mobile device to get motion events
