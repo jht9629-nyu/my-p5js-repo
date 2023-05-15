@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 6, // update to verify change on mobile
+  version: 3, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -10,7 +10,7 @@ let my = {
   colorClipLen: 50, // size of each saved color chip
   facingMode: 'user', // user environment
   scan: 0, // scan the cross hairs
-  scanRate: 6, // scan step rate, bigger for slower
+  scanRate: 18, // scan step rate, bigger for slower
   snap: 0, // snap every n frames
   snapNframe: 60,
 };
@@ -42,10 +42,14 @@ function setup() {
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
   my.scanChk.changed(function () {
-    my.scan = this.checked() ? 1 : 0;
+    my.scan = this.checked();
   });
-  my.scanOffsetX = 0;
-  my.scanOffsetY = 0;
+  my.scanLeft = my.vwidth * 0.25;
+  my.scanTop = my.vheight * 0.25;
+  my.scanRight = my.vwidth * 0.75;
+  my.scanBotton = my.vheight * 0.75;
+  my.scanOffsetX = my.scanLeft;
+  my.scanOffsetY = my.scanTop;
 
   my.snapChk = createCheckbox('Snap', my.snap);
   my.snapChk.style('display:inline');
@@ -54,6 +58,7 @@ function setup() {
   });
 
   my.listDiv = createDiv('');
+  my.listDiv.position(0, 0);
   my.listDiv.style('line-height:0;');
 }
 
@@ -95,11 +100,11 @@ function draw() {
     cy = my.scanOffsetY;
     if (frameCount % my.scanRate == 0) {
       my.scanOffsetX += my.crossLen;
-      if (my.scanOffsetX > vwidth) {
-        my.scanOffsetX = 0;
+      if (my.scanOffsetX > my.scanRight) {
+        my.scanOffsetX = my.scanLeft;
         my.scanOffsetY += my.crossLen;
-        if (my.scanOffsetY > vheight) {
-          my.scanOffsetY = 0;
+        if (my.scanOffsetY > my.scanBotton) {
+          my.scanOffsetY = my.scanTop;
         }
       }
     }
@@ -187,13 +192,13 @@ function addAction() {
   box.child(rgbSpan);
 
   // child could be null
-  let child = my.listDiv.elt.firstChild;
-  my.listDiv.elt.insertBefore(box.elt, child);
+  // let child = my.listDiv.elt.firstChild;
+  // my.listDiv.elt.insertBefore(box.elt, child);
+  my.listDiv.elt.appendChild(box.elt);
 
   let rt = colorElm.elt.getBoundingClientRect();
   console.log('addAction rt.y', rt.y);
-  window.scrollTo(0, rt.y);
-  // my.listDiv.child(element);
+  // window.scrollTo(0, rt.y);
 }
 
 function colorMouseAction(e) {

@@ -1,12 +1,13 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 2, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 5, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
   normalMaterial();
   create_ui();
+  my.locations = [];
 }
 
 function draw() {
@@ -74,28 +75,42 @@ function geoFindAction() {
     let latitude = position.coords.latitude.toFixed(6);
     let longitude = position.coords.longitude.toFixed(6);
 
-    let altitude = position.coords.altitude;
-    altitude = altitude ? altitude.toFixed(1) : '';
-    let heading = position.coords.heading;
-    heading = heading ? heading.toFixed(0) : '';
+    let distance = distanceForLoc(latitude, longitude);
 
     let href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    let text = `${latitude} ${longitude} ${altitude} ${heading}`;
+    let text = `${latitude} ${longitude}`;
     let mapLink = createA(href, text, '_blank');
     let div = createDiv();
     div.child(mapLink);
+    if (distance) {
+      let distanceSpan = createSpan(' ' + distance.toFixed(3) + 'km');
+      div.child(distanceSpan);
+    }
     // child could be null
     let child = my.mapLinks.elt.firstChild;
     my.mapLinks.elt.insertBefore(div.elt, child);
   }
   function error(err) {
     alert('geoFindAction err' + err);
+    console.log('geoFindAction err', err);
   }
   if (!navigator.geolocation) {
     alert('Geolocation is not supported by your browser');
   } else {
     navigator.geolocation.getCurrentPosition(success, error);
   }
+}
+
+function distanceForLoc(la, lo) {
+  my.locations.push({ la, lo });
+  let n = my.locations.length;
+  if (n <= 1) {
+    return 0;
+  }
+  let ent = my.locations[n - 2];
+  let dist = distanceInKm(la, lo, ent.la, ent.lo);
+  console.log('dist', dist);
+  return dist;
 }
 
 // Need for iOS mobile device to get motion events
@@ -117,6 +132,28 @@ function permissionAction() {
   } else {
     alert('DeviceMotionEvent is not defined');
   }
+}
+
+// https://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates
+
+// function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+function distanceInKm(lat1, lon1, lat2, lon2) {
+  var earthRadiusKm = 6371;
+
+  var dLat = degreesToRadians(lat2 - lat1);
+  var dLon = degreesToRadians(lon2 - lon1);
+
+  lat1 = degreesToRadians(lat1);
+  lat2 = degreesToRadians(lat2);
+
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusKm * c;
+}
+
+function degreesToRadians(degrees) {
+  return (degrees * Math.PI) / 180;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
