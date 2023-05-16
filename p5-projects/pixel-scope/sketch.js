@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 3, // update to verify change on mobile
+  version: 4, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -18,25 +18,22 @@ let my = {
 function setup() {
   my.width = my.vwidth * my.vscale;
   my.height = my.vheight * my.vscale;
-
-  createCanvas(my.width, my.height);
-  background(200);
-
-  createMyVideo();
-
   my.crossLen = my.vwidth / my.cscale;
 
+  createCanvas(my.width, my.height);
   background(255);
   noStroke();
 
+  createMyVideo();
+
+  create_ui();
+}
+
+function create_ui() {
   createSpan('v' + my.version);
-
   my.addBtn = createButton('Add').mousePressed(addAction);
-
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
-
   my.faceBtn = createButton('Face').mousePressed(faceAction);
-
   createElement('br');
 
   my.scanChk = createCheckbox('Scan', my.scan);
@@ -58,7 +55,7 @@ function setup() {
   });
 
   my.listDiv = createDiv('');
-  my.listDiv.position(0, 0);
+  // my.listDiv.position(0, 0);
   my.listDiv.style('line-height:0;');
 }
 
@@ -75,6 +72,7 @@ function faceAction() {
   console.log('my.facingMode', my.facingMode);
 
   my.video.remove();
+
   createMyVideo();
 }
 

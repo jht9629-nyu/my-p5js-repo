@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 6, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 9, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -106,7 +106,7 @@ function add_location_lalo(la, lo) {
   let div = createDiv();
   div.child(mapLink);
   if (distance) {
-    let distanceSpan = createSpan(' ' + distance.toFixed(3) + 'km');
+    let distanceSpan = createSpan(' ' + distance.toFixed(2) + 'm');
     div.child(distanceSpan);
   }
   // child could be null
@@ -120,7 +120,7 @@ function distanceForLoc(la, lo) {
   let n = my.locations.length;
   if (n <= 1) return 0;
   let ent = my.locations[1];
-  let dist = distanceInKm(la, lo, ent.la, ent.lo);
+  let dist = distanceInKm(la, lo, ent.la, ent.lo) * 1000;
   console.log('dist', dist);
   return dist;
 }
