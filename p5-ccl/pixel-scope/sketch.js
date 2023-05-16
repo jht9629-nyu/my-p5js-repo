@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 4, // update to verify change on mobile
+  version: 6, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -29,8 +29,30 @@ function setup() {
   create_ui();
 }
 
+function draw() {
+  if (!videoIsReady()) return;
+
+  if (my.snap && frameCount % my.snapNframe == 0) {
+    addAction();
+  }
+
+  draw_rgb();
+}
+
+function createMyVideo() {
+  let options = { video: { facingMode: my.facingMode } };
+  my.video = createCapture(options);
+  my.video.size(my.vwidth, my.vheight);
+  my.video.hide();
+}
+
 function create_ui() {
   createSpan('v' + my.version);
+
+  my.resetBtn = createButton('reset');
+  my.resetBtn.mousePressed(resetAction);
+
+  createElement('br');
 
   my.addBtn = createButton('Add').mousePressed(addAction);
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
@@ -60,11 +82,9 @@ function create_ui() {
   my.listDiv.style('line-height:0;');
 }
 
-function createMyVideo() {
-  let options = { video: { facingMode: my.facingMode } };
-  my.video = createCapture(options);
-  my.video.size(my.vwidth, my.vheight);
-  my.video.hide();
+function resetAction() {
+  localStorage.removeItem('my.colors');
+  location.reload();
 }
 
 function faceAction() {
@@ -81,13 +101,7 @@ function videoIsReady() {
   return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;
 }
 
-function draw() {
-  if (!videoIsReady()) return;
-
-  if (my.snap && frameCount % my.snapNframe == 0) {
-    addAction();
-  }
-
+function draw_rgb() {
   let vwidth = my.vwidth;
   let vheight = my.vheight;
 
