@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 9, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 4, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -79,19 +79,21 @@ function add_locationAction() {
   // console.log('add_locationAction');
   if (!navigator.geolocation) {
     alert('Geolocation is not supported by your browser');
-  } else {
-    navigator.geolocation.getCurrentPosition(success, error);
+    return;
   }
+  let options = { enableHighAccuracy: true };
+  navigator.geolocation.getCurrentPosition(success, error, options);
+
   function success(position) {
     let coords = position.coords;
-    console.log('add_locationAction coords', coords);
+    // console.log('add_locationAction coords', coords);
     let la = position.coords.latitude;
     let lo = position.coords.longitude;
     add_location_lalo(la, lo);
   }
   function error(err) {
     alert('add_locationAction err' + err);
-    console.log('geoFindAction err', err);
+    console.log('add_locationAction err', err);
   }
 }
 
@@ -106,7 +108,7 @@ function add_location_lalo(la, lo) {
   let div = createDiv();
   div.child(mapLink);
   if (distance) {
-    let distanceSpan = createSpan(' ' + distance.toFixed(2) + 'm');
+    let distanceSpan = createSpan(' ' + distance);
     div.child(distanceSpan);
   }
   // child could be null
@@ -118,28 +120,38 @@ function add_location_lalo(la, lo) {
 
 function distanceForLoc(la, lo) {
   let n = my.locations.length;
-  if (n <= 1) return 0;
+  if (n <= 1) return '';
   let ent = my.locations[1];
   let dist = distanceInKm(la, lo, ent.la, ent.lo) * 1000;
   console.log('dist', dist);
-  return dist;
+  // dist += 0.01;
+  if (dist == 0) return '';
+  let unit = 'm';
+  if (dist < 1) {
+    dist = dist * 1000;
+    unit = 'mm';
+  } else if (dist > 1000) {
+    dist = dist / 1000;
+    unit = 'km';
+  }
+  return dist.toFixed(1) + unit;
 }
 
 function save_locations() {
   let str = JSON.stringify(my.locations);
   localStorage.setItem('my.locations', str);
-  console.log('save_locations str.length', str.length);
+  // console.log('save_locations str.length', str.length);
 }
 
 function restore_locations() {
   let str = localStorage.getItem('my.locations');
   if (!str) return null;
-  console.log('restore_locations str.length', str.length);
+  // console.log('restore_locations str.length', str.length);
   let newlocs;
   try {
     newlocs = JSON.parse(str);
   } catch (err) {
-    console.log('restore_locations parse err', err);
+    // console.log('restore_locations parse err', err);
     return;
   }
   for (let index = newlocs.length - 1; index >= 0; index--) {
@@ -191,8 +203,12 @@ function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
+// http://www.movable-type.co.uk/scripts/latlong.html
+// verifly location and distance
+
 // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
 // https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates
+// navigator.geolocation.getCurrentPosition api documentation
 
 // https://editor.p5js.org/jht9629-nyu/sketches/TXvXSJY6L
 // rotationXYZ
@@ -201,3 +217,8 @@ function degreesToRadians(degrees) {
 
 // https://editor.p5js.org/jht9629-nyu/sketches/G6Zr5SBuq
 // rotationX
+
+// https://en.m.wikipedia.org/wiki/Eratosthenes
+// credited first to estimate circumference of earth
+// https://en.m.wikipedia.org/wiki/Earth%27s_circumference
+// Measured around the Equator, it is 40,075.017 km (24,901.461 mi)
