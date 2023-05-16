@@ -36,7 +36,19 @@ function draw() {
     addAction();
   }
 
+  check_scroll();
+
   draw_rgb();
+}
+
+function check_scroll() {
+  if (!my.snap) return;
+
+  let y = my.resetBtn.elt.getBoundingClientRect().y;
+  console.log('check_scroll y', y);
+  if (y > 0) {
+    window.scrollBy(0, 1);
+  }
 }
 
 function createMyVideo() {
@@ -49,7 +61,7 @@ function createMyVideo() {
 function create_ui() {
   createSpan('v' + my.version);
 
-  my.resetBtn = createButton('reset');
+  my.resetBtn = createButton('Reset');
   my.resetBtn.mousePressed(resetAction);
 
   createElement('br');
