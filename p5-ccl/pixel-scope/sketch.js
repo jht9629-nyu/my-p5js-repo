@@ -31,6 +31,7 @@ function setup() {
 
 function create_ui() {
   createSpan('v' + my.version);
+
   my.addBtn = createButton('Add').mousePressed(addAction);
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
   my.faceBtn = createButton('Face').mousePressed(faceAction);

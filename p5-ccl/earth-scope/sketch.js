@@ -6,7 +6,9 @@ let my = { version: 9, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
   normalMaterial();
+
   create_ui();
+
   my.locations = [];
   restore_locations();
 }
