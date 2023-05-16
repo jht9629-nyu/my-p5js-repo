@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 4, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 9, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -23,17 +23,27 @@ function draw() {
 }
 
 function create_ui() {
-  my.permBtn = createButton('permission v' + my.version);
+  createSpan('v' + my.version);
+
+  my.resetBtn = createButton('reset');
+  my.resetBtn.mousePressed(resetAction);
+
+  my.permBtn = createButton('permission');
   my.permBtn.mousePressed(permissionAction);
 
   my.chkX = create_checkBox('rotX');
   my.chkY = create_checkBox('rotY');
   my.chkZ = create_checkBox('rotZ');
-  // createElement('br');
+
   geoCreate_ui();
 
   createElement('br');
   createA('https://en.m.wikipedia.org/wiki/Eratosthenes', 'Eratosthenes', '_blank');
+}
+
+function resetAction() {
+  localStorage.removeItem('my.locations');
+  location.reload();
 }
 
 function create_checkBox(prop) {
@@ -125,16 +135,18 @@ function distanceForLoc(la, lo) {
   let dist = distanceInKm(la, lo, ent.la, ent.lo) * 1000;
   console.log('dist', dist);
   // dist += 0.01;
-  if (dist == 0) return '';
+  if (dist < 0.000001) return '';
   let unit = 'm';
-  if (dist < 1) {
-    dist = dist * 1000;
-    unit = 'mm';
+  let nfix = 1;
+  if (dist < 0.001) {
+    nfix = 6;
+  } else if (dist < 10) {
+    nfix = 3;
   } else if (dist > 1000) {
     dist = dist / 1000;
     unit = 'km';
   }
-  return dist.toFixed(1) + unit;
+  return dist.toFixed(nfix) + unit;
 }
 
 function save_locations() {
