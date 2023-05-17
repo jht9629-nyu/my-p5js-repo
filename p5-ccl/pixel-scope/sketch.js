@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 9, // update to verify change on mobile
+  version: 2, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -46,15 +46,13 @@ function draw() {
   draw_rgb();
 
   if (frameCount % my.scanRate == 0) {
-    if (my.snap) {
-      addAction();
-    }
-    update_scan();
+    if (my.snap) addAction();
+    if (my.scan) update_scan();
   }
 }
 
 function check_scroll() {
-  if (!my.snap) return;
+  if (!my.scrolling) return;
 
   // let y = my.resetBtn.elt.getBoundingClientRect().y;
   // console.log('check_scroll y', y);
@@ -100,6 +98,9 @@ function create_ui() {
     if (my.snap) {
       init_scan();
       empty_listDiv();
+      my.scrolling = 1;
+    } else {
+      my.scrolling = 0;
     }
   });
 
@@ -225,6 +226,7 @@ function draw_rgb() {
 }
 
 function addAction() {
+  my.scrolling = 1;
   // console.log('addAction');
   let color = my.color;
   let r = color[0];
