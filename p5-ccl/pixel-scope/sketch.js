@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 8, // update to verify change on mobile
+  version: 9, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -12,6 +12,7 @@ let my = {
   scan: 0, // scan the cross hairs
   scanRate: 10, // scan step rate, bigger for slower
   snap: 0, // snap every n frames
+  scanMargin: 0.0, // 0.25, // inset for scan
 };
 
 function setup() {
@@ -19,13 +20,13 @@ function setup() {
   my.height = my.vheight * my.vscale;
   my.crossLen = my.vwidth / my.cscale;
 
-  my.scanLeft = my.vwidth * 0.25;
-  my.scanRight = my.vwidth * 0.75;
-  my.scanTop = my.vheight * 0.25;
-  my.scanBotton = my.vheight * 0.75;
+  my.scanLeft = my.vwidth * my.scanMargin;
+  my.scanRight = my.vwidth * (1 - my.scanMargin);
+  my.scanTop = my.vheight * my.scanMargin;
+  my.scanBotton = my.vheight * (1 - my.scanMargin);
   my.scanOffsetX = my.scanLeft;
   my.scanOffsetY = my.scanTop;
-  my.scanStep = (my.scanRight - my.scanLeft) / my.colorSpanN;
+  my.scanStep = (my.scanRight - my.scanLeft) / (my.colorSpanN - 1);
   my.colorSpanPx = windowWidth / my.colorSpanN;
 
   createCanvas(my.width, my.height);
@@ -44,8 +45,7 @@ function draw() {
 
   draw_rgb();
 
-  let doScan = frameCount % my.scanRate == 0;
-  if (doScan) {
+  if (frameCount % my.scanRate == 0) {
     if (my.snap) {
       addAction();
     }
@@ -56,11 +56,13 @@ function draw() {
 function check_scroll() {
   if (!my.snap) return;
 
-  let y = my.resetBtn.elt.getBoundingClientRect().y;
+  // let y = my.resetBtn.elt.getBoundingClientRect().y;
   // console.log('check_scroll y', y);
-  if (y > 0) {
-    window.scrollBy(0, 1);
-  }
+  // if (y > 0) {
+  //   window.scrollBy(0, 1);
+  // }
+
+  window.scrollBy(0, 1);
 }
 
 function createMyVideo() {
@@ -72,16 +74,17 @@ function createMyVideo() {
 
 function create_ui() {
   createSpan('v' + my.version);
-
-  my.resetBtn = createButton('Reset');
-  my.resetBtn.mousePressed(resetAction);
-
-  createElement('br');
-
   my.addBtn = createButton('Add').mousePressed(addAction);
   my.removeBtn = createButton('Remove').mousePressed(removeAction);
   my.faceBtn = createButton('Face').mousePressed(faceAction);
   createElement('br');
+
+  my.listDiv = createDiv('');
+  // my.listDiv.position(0, 0);
+  my.listDiv.style('line-height:0;');
+
+  my.resetBtn = createButton('Reset');
+  my.resetBtn.mousePressed(resetAction);
 
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
@@ -100,9 +103,8 @@ function create_ui() {
     }
   });
 
-  my.listDiv = createDiv('');
-  // my.listDiv.position(0, 0);
-  my.listDiv.style('line-height:0;');
+  createElement('br');
+  createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
 }
 
 function init_scan() {
@@ -120,10 +122,14 @@ function empty_listDiv() {
 
 function update_scan() {
   my.scanOffsetX += my.scanStep;
-  if (my.scanOffsetX + my.scanStep > my.scanRight) {
+  if (my.scanOffsetX >= my.scanRight) {
     my.scanOffsetX = my.scanLeft;
+
+    let br = createElement('br');
+    my.listDiv.elt.appendChild(br.elt);
+
     my.scanOffsetY += my.scanStep;
-    if (my.scanOffsetY + my.scanStep > my.scanBotton) {
+    if (my.scanOffsetY >= my.scanBotton) {
       my.scanOffsetY = my.scanTop;
     }
   }
