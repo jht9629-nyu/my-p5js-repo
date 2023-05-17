@@ -2,23 +2,31 @@
 // pixel-scope
 
 let my = {
-  version: 6, // update to verify change on mobile
+  version: 8, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
   cscale: 64, // scale down from video size to cross hair length
-  colorClipLen: 50, // size of each saved color chip
+  colorSpanN: 16, // number of color spans in a row
   facingMode: 'user', // user environment
   scan: 0, // scan the cross hairs
-  scanRate: 18, // scan step rate, bigger for slower
+  scanRate: 10, // scan step rate, bigger for slower
   snap: 0, // snap every n frames
-  snapNframe: 60,
 };
 
 function setup() {
   my.width = my.vwidth * my.vscale;
   my.height = my.vheight * my.vscale;
   my.crossLen = my.vwidth / my.cscale;
+
+  my.scanLeft = my.vwidth * 0.25;
+  my.scanRight = my.vwidth * 0.75;
+  my.scanTop = my.vheight * 0.25;
+  my.scanBotton = my.vheight * 0.75;
+  my.scanOffsetX = my.scanLeft;
+  my.scanOffsetY = my.scanTop;
+  my.scanStep = (my.scanRight - my.scanLeft) / my.colorSpanN;
+  my.colorSpanPx = windowWidth / my.colorSpanN;
 
   createCanvas(my.width, my.height);
   background(255);
@@ -32,20 +40,24 @@ function setup() {
 function draw() {
   if (!videoIsReady()) return;
 
-  if (my.snap && frameCount % my.snapNframe == 0) {
-    addAction();
-  }
-
   check_scroll();
 
   draw_rgb();
+
+  let doScan = frameCount % my.scanRate == 0;
+  if (doScan) {
+    if (my.snap) {
+      addAction();
+    }
+    update_scan();
+  }
 }
 
 function check_scroll() {
   if (!my.snap) return;
 
   let y = my.resetBtn.elt.getBoundingClientRect().y;
-  console.log('check_scroll y', y);
+  // console.log('check_scroll y', y);
   if (y > 0) {
     window.scrollBy(0, 1);
   }
@@ -75,23 +87,46 @@ function create_ui() {
   my.scanChk.style('display:inline');
   my.scanChk.changed(function () {
     my.scan = this.checked();
+    if (my.scan) init_scan();
   });
-  my.scanLeft = my.vwidth * 0.25;
-  my.scanTop = my.vheight * 0.25;
-  my.scanRight = my.vwidth * 0.75;
-  my.scanBotton = my.vheight * 0.75;
-  my.scanOffsetX = my.scanLeft;
-  my.scanOffsetY = my.scanTop;
 
   my.snapChk = createCheckbox('Snap', my.snap);
   my.snapChk.style('display:inline');
   my.snapChk.changed(function () {
-    my.snap = this.checked() ? 1 : 0;
+    my.snap = this.checked();
+    if (my.snap) {
+      init_scan();
+      empty_listDiv();
+    }
   });
 
   my.listDiv = createDiv('');
   // my.listDiv.position(0, 0);
   my.listDiv.style('line-height:0;');
+}
+
+function init_scan() {
+  my.scanOffsetX = my.scanLeft;
+  my.scanOffsetY = my.scanTop;
+}
+
+function empty_listDiv() {
+  for (;;) {
+    let child = my.listDiv.elt.firstChild;
+    if (!child) break;
+    child.remove();
+  }
+}
+
+function update_scan() {
+  my.scanOffsetX += my.scanStep;
+  if (my.scanOffsetX + my.scanStep > my.scanRight) {
+    my.scanOffsetX = my.scanLeft;
+    my.scanOffsetY += my.scanStep;
+    if (my.scanOffsetY + my.scanStep > my.scanBotton) {
+      my.scanOffsetY = my.scanTop;
+    }
+  }
 }
 
 function resetAction() {
@@ -123,16 +158,6 @@ function draw_rgb() {
   if (my.scan) {
     cx = my.scanOffsetX;
     cy = my.scanOffsetY;
-    if (frameCount % my.scanRate == 0) {
-      my.scanOffsetX += my.crossLen;
-      if (my.scanOffsetX > my.scanRight) {
-        my.scanOffsetX = my.scanLeft;
-        my.scanOffsetY += my.crossLen;
-        if (my.scanOffsetY > my.scanBotton) {
-          my.scanOffsetY = my.scanTop;
-        }
-      }
-    }
   }
   let color = my.video.get(cx, cy);
   my.color = color;
@@ -200,7 +225,7 @@ function addAction() {
   let g = color[1];
   let b = color[2];
 
-  let px = my.colorClipLen;
+  let px = my.colorSpanPx;
   let spec = 'background-color:rgb(' + r + ',' + g + ',' + b + ');';
   spec += 'width:' + px + 'px;height:' + px + 'px;';
   spec += 'display:inline-block';
