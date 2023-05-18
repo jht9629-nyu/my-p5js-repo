@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 2, // update to verify change on mobile
+  version: 3, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -11,7 +11,7 @@ let my = {
   facingMode: 'user', // user environment
   scan: 0, // scan the cross hairs
   scanRate: 10, // scan step rate, bigger for slower
-  snap: 0, // snap every n frames
+  record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
 };
 
@@ -46,13 +46,13 @@ function draw() {
   draw_rgb();
 
   if (frameCount % my.scanRate == 0) {
-    if (my.snap) addAction();
+    if (my.record) addAction();
     if (my.scan) update_scan();
   }
 }
 
 function check_scroll() {
-  if (!my.scrolling) return;
+  // if (!my.scrolling) return;
 
   // let y = my.resetBtn.elt.getBoundingClientRect().y;
   // console.log('check_scroll y', y);
@@ -91,11 +91,11 @@ function create_ui() {
     if (my.scan) init_scan();
   });
 
-  my.snapChk = createCheckbox('Snap', my.snap);
-  my.snapChk.style('display:inline');
-  my.snapChk.changed(function () {
-    my.snap = this.checked();
-    if (my.snap) {
+  my.recordChk = createCheckbox('Record', my.record);
+  my.recordChk.style('display:inline');
+  my.recordChk.changed(function () {
+    my.record = this.checked();
+    if (my.record) {
       init_scan();
       empty_listDiv();
       my.scrolling = 1;
@@ -126,8 +126,10 @@ function update_scan() {
   if (my.scanOffsetX >= my.scanRight) {
     my.scanOffsetX = my.scanLeft;
 
-    let br = createElement('br');
-    my.listDiv.elt.appendChild(br.elt);
+    if (my.record) {
+      let br = createElement('br');
+      my.listDiv.elt.appendChild(br.elt);
+    }
 
     my.scanOffsetY += my.scanStep;
     if (my.scanOffsetY >= my.scanBotton) {
