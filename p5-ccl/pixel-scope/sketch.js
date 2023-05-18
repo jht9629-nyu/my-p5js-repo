@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 3, // update to verify change on mobile
+  version: 1, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -13,6 +13,7 @@ let my = {
   scanRate: 10, // scan step rate, bigger for slower
   record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
+  snap: 0, // continous record
 };
 
 function setup() {
@@ -43,11 +44,14 @@ function draw() {
 
   check_scroll();
 
-  draw_rgb();
+  draw_rgb(my.scan);
 
   if (frameCount % my.scanRate == 0) {
     if (my.record) record_action();
-    if (my.scan) update_scan();
+    if (my.scan) update_scan(my.record);
+  }
+  if (my.snap) {
+    snap_record();
   }
 }
 
@@ -86,26 +90,48 @@ function create_ui() {
 
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
-  my.scanChk.changed(function () {
-    my.scan = this.checked();
-    if (my.scan) init_scan();
-  });
+  my.scanChk.changed(scanChk_action);
 
   my.recordChk = createCheckbox('Record', my.record);
   my.recordChk.style('display:inline');
-  my.recordChk.changed(function () {
-    my.record = this.checked();
-    if (my.record) {
-      init_scan();
-      empty_listDiv();
-      // my.scrolling = 1;
-    } else {
-      // my.scrolling = 0;
-    }
-  });
+  my.recordChk.changed(recordChk_action);
+
+  my.snapChk = createCheckbox('Snap', my.snap);
+  my.snapChk.style('display:inline');
+  my.snapChk.changed(snapChk_action);
 
   createElement('br');
   createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
+}
+
+function snapChk_action() {
+  my.snap = this.checked();
+}
+
+function snap_record() {
+  init_scan();
+  empty_listDiv();
+  for (;;) {
+    draw_rgb(1);
+    record_action();
+    let full = update_scan(1);
+    if (full) break;
+  }
+  let rt = my.recordChk.elt.getBoundingClientRect();
+  window.scrollTo(0, rt.y);
+}
+
+function scanChk_action() {
+  my.scan = this.checked();
+  if (my.scan) init_scan();
+}
+
+function recordChk_action() {
+  my.record = this.checked();
+  if (my.record) {
+    init_scan();
+    empty_listDiv();
+  }
 }
 
 function init_scan() {
@@ -121,19 +147,22 @@ function empty_listDiv() {
   }
 }
 
-function update_scan() {
+function update_scan(my_record) {
+  let full = 0;
   my.scanOffsetX += my.scanStep;
   if (my.scanOffsetX >= my.scanRight) {
     my.scanOffsetX = my.scanLeft;
-    if (my.record) {
+    if (my_record) {
       let br = createElement('br');
       my.listDiv.elt.appendChild(br.elt);
     }
     my.scanOffsetY += my.scanStep;
     if (my.scanOffsetY >= my.scanBotton) {
       my.scanOffsetY = my.scanTop;
+      full = 1;
     }
   }
+  return full;
 }
 
 function reset_action() {
@@ -155,14 +184,14 @@ function video_ready() {
   return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;
 }
 
-function draw_rgb() {
+function draw_rgb(my_scan) {
   let vwidth = my.vwidth;
   let vheight = my.vheight;
 
   // Get pixel from center of video
   let cx = vwidth / 2;
   let cy = vheight / 2;
-  if (my.scan) {
+  if (my_scan) {
     cx = my.scanOffsetX;
     cy = my.scanOffsetY;
   }
@@ -240,7 +269,7 @@ function record_action() {
   // console.log('spec', spec);
   let colorElm = createSpan('');
   colorElm.style(spec);
-  colorElm.mousePressed(color_mouse_action);
+  colorElm.mousePressed(colorElm_mouse_action);
 
   let rgbSpan = createSpan('r=' + r + ' g=' + g + ' b=' + b + ' ');
   rgbSpan.style('display:none');
@@ -255,13 +284,13 @@ function record_action() {
   my.listDiv.elt.appendChild(box.elt);
 
   let rt = colorElm.elt.getBoundingClientRect();
-  console.log('record_action rt.y', rt.y);
+  // console.log('record_action rt.y', rt.y);
   // window.scrollTo(0, rt.y);
 }
 
-function color_mouse_action(e) {
-  // console.log('color_mouse_action e', e);
-  // console.log('color_mouse_action this', this);
+function colorElm_mouse_action(e) {
+  // console.log('colorElm_mouse_action e', e);
+  // console.log('colorElm_mouse_action this', this);
   let sib = this.elt.nextSibling;
   // console.log('sib', sib);
   if (sib.style.display === 'none') {
