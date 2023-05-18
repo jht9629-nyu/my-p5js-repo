@@ -33,20 +33,20 @@ function setup() {
   background(255);
   noStroke();
 
-  createMyVideo();
+  create_myVideo();
 
   create_ui();
 }
 
 function draw() {
-  if (!videoIsReady()) return;
+  if (!video_ready()) return;
 
   check_scroll();
 
   draw_rgb();
 
   if (frameCount % my.scanRate == 0) {
-    if (my.record) addAction();
+    if (my.record) record_action();
     if (my.scan) update_scan();
   }
 }
@@ -63,7 +63,7 @@ function check_scroll() {
   window.scrollBy(0, 1);
 }
 
-function createMyVideo() {
+function create_myVideo() {
   let options = { video: { facingMode: my.facingMode } };
   my.video = createCapture(options);
   my.video.size(my.vwidth, my.vheight);
@@ -72,9 +72,9 @@ function createMyVideo() {
 
 function create_ui() {
   createSpan('v' + my.version);
-  my.addBtn = createButton('Add').mousePressed(addAction);
-  my.removeBtn = createButton('Remove').mousePressed(removeAction);
-  my.faceBtn = createButton('Face').mousePressed(faceAction);
+  my.addBtn = createButton('Record').mousePressed(record_action);
+  my.removeBtn = createButton('Delete').mousePressed(delete_action);
+  my.faceBtn = createButton('Face').mousePressed(face_action);
   createElement('br');
 
   my.listDiv = createDiv('');
@@ -82,7 +82,7 @@ function create_ui() {
   my.listDiv.style('line-height:0;');
 
   my.resetBtn = createButton('Reset');
-  my.resetBtn.mousePressed(resetAction);
+  my.resetBtn.mousePressed(reset_action);
 
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
@@ -98,9 +98,9 @@ function create_ui() {
     if (my.record) {
       init_scan();
       empty_listDiv();
-      my.scrolling = 1;
+      // my.scrolling = 1;
     } else {
-      my.scrolling = 0;
+      // my.scrolling = 0;
     }
   });
 
@@ -125,12 +125,10 @@ function update_scan() {
   my.scanOffsetX += my.scanStep;
   if (my.scanOffsetX >= my.scanRight) {
     my.scanOffsetX = my.scanLeft;
-
     if (my.record) {
       let br = createElement('br');
       my.listDiv.elt.appendChild(br.elt);
     }
-
     my.scanOffsetY += my.scanStep;
     if (my.scanOffsetY >= my.scanBotton) {
       my.scanOffsetY = my.scanTop;
@@ -138,22 +136,22 @@ function update_scan() {
   }
 }
 
-function resetAction() {
+function reset_action() {
   localStorage.removeItem('my.colors');
   location.reload();
 }
 
-function faceAction() {
+function face_action() {
   let isEnv = my.facingMode == 'environment';
   my.facingMode = isEnv ? 'user' : 'environment';
   console.log('my.facingMode', my.facingMode);
 
   my.video.remove();
 
-  createMyVideo();
+  create_myVideo();
 }
 
-function videoIsReady() {
+function video_ready() {
   return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;
 }
 
@@ -227,9 +225,9 @@ function draw_rgb() {
   text('b=' + b, x0, y2);
 }
 
-function addAction() {
-  my.scrolling = 1;
-  // console.log('addAction');
+function record_action() {
+  // my.scrolling = 1;
+  // console.log('record_action');
   let color = my.color;
   let r = color[0];
   let g = color[1];
@@ -242,7 +240,7 @@ function addAction() {
   // console.log('spec', spec);
   let colorElm = createSpan('');
   colorElm.style(spec);
-  colorElm.mousePressed(colorMouseAction);
+  colorElm.mousePressed(color_mouse_action);
 
   let rgbSpan = createSpan('r=' + r + ' g=' + g + ' b=' + b + ' ');
   rgbSpan.style('display:none');
@@ -257,13 +255,13 @@ function addAction() {
   my.listDiv.elt.appendChild(box.elt);
 
   let rt = colorElm.elt.getBoundingClientRect();
-  console.log('addAction rt.y', rt.y);
+  console.log('record_action rt.y', rt.y);
   // window.scrollTo(0, rt.y);
 }
 
-function colorMouseAction(e) {
-  // console.log('colorMouseAction e', e);
-  // console.log('colorMouseAction this', this);
+function color_mouse_action(e) {
+  // console.log('color_mouse_action e', e);
+  // console.log('color_mouse_action this', this);
   let sib = this.elt.nextSibling;
   // console.log('sib', sib);
   if (sib.style.display === 'none') {
@@ -273,7 +271,7 @@ function colorMouseAction(e) {
   }
 }
 
-function removeAction() {
+function delete_action() {
   let child = my.listDiv.elt.firstChild;
   if (!child) return;
   child.remove();
