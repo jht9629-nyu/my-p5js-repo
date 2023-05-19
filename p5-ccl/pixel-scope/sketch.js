@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 1, // update to verify change on mobile
+  version: 4, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -56,14 +56,6 @@ function draw() {
 }
 
 function check_scroll() {
-  // if (!my.scrolling) return;
-
-  // let y = my.resetBtn.elt.getBoundingClientRect().y;
-  // console.log('check_scroll y', y);
-  // if (y > 0) {
-  //   window.scrollBy(0, 1);
-  // }
-
   window.scrollBy(0, 1);
 }
 
@@ -82,7 +74,6 @@ function create_ui() {
   createElement('br');
 
   my.listDiv = createDiv('');
-  // my.listDiv.position(0, 0);
   my.listDiv.style('line-height:0;');
 
   my.resetBtn = createButton('Reset');
@@ -101,11 +92,17 @@ function create_ui() {
   my.snapChk.changed(snapChk_action);
 
   createElement('br');
-  createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
+  my.aref = createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
 }
 
 function snapChk_action() {
   my.snap = this.checked();
+  if (my.snap) {
+    setTimeout(function () {
+      my.snapChk.checked(false);
+      my.snap = 0;
+    }, 1000);
+  }
 }
 
 function snap_record() {
@@ -117,8 +114,8 @@ function snap_record() {
     let full = update_scan(1);
     if (full) break;
   }
-  let rt = my.recordChk.elt.getBoundingClientRect();
-  window.scrollTo(0, rt.y);
+  let rt = my.aref.elt.getBoundingClientRect();
+  window.scrollTo(0, rt.bottom);
 }
 
 function scanChk_action() {
@@ -283,14 +280,12 @@ function record_action() {
   // my.listDiv.elt.insertBefore(box.elt, child);
   my.listDiv.elt.appendChild(box.elt);
 
-  let rt = colorElm.elt.getBoundingClientRect();
+  // let rt = colorElm.elt.getBoundingClientRect();
   // console.log('record_action rt.y', rt.y);
   // window.scrollTo(0, rt.y);
 }
 
 function colorElm_mouse_action(e) {
-  // console.log('colorElm_mouse_action e', e);
-  // console.log('colorElm_mouse_action this', this);
   let sib = this.elt.nextSibling;
   // console.log('sib', sib);
   if (sib.style.display === 'none') {
