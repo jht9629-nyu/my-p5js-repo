@@ -2,33 +2,25 @@
 // pixel-scope
 
 let my = {
-  version: 4, // update to verify change on mobile
+  version: 6, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
   cscale: 64, // scale down from video size to cross hair length
   colorSpanN: 16, // number of color spans in a row
   facingMode: 'user', // user environment
+  face: 1,
   scan: 0, // scan the cross hairs
   scanRate: 10, // scan step rate, bigger for slower
   record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
   snap: 0, // continous record
+  scrolling: 1, // scroll to show last bottom element
+  frame: 0,
 };
 
 function setup() {
-  my.width = my.vwidth * my.vscale;
-  my.height = my.vheight * my.vscale;
-  my.crossLen = my.vwidth / my.cscale;
-
-  my.scanLeft = my.vwidth * my.scanMargin;
-  my.scanRight = my.vwidth * (1 - my.scanMargin);
-  my.scanTop = my.vheight * my.scanMargin;
-  my.scanBotton = my.vheight * (1 - my.scanMargin);
-  my.scanOffsetX = my.scanLeft;
-  my.scanOffsetY = my.scanTop;
-  my.scanStep = (my.scanRight - my.scanLeft) / (my.colorSpanN - 1);
-  my.colorSpanPx = windowWidth / my.colorSpanN;
+  my_init();
 
   createCanvas(my.width, my.height);
   background(255);
@@ -49,14 +41,42 @@ function draw() {
   if (frameCount % my.scanRate == 0) {
     if (my.record) record_action();
     if (my.scan) update_scan(my.record);
+    check_save_color();
   }
   if (my.snap) {
     snap_record();
   }
 }
 
+function my_init() {
+  my.width = my.vwidth * my.vscale;
+  my.height = my.vheight * my.vscale;
+  my.crossLen = my.vwidth / my.cscale;
+
+  my.scanLeft = my.vwidth * my.scanMargin;
+  my.scanRight = my.vwidth * (1 - my.scanMargin);
+  my.scanTop = my.vheight * my.scanMargin;
+  my.scanBotton = my.vheight * (1 - my.scanMargin);
+  my.scanOffsetX = my.scanLeft;
+  my.scanOffsetY = my.scanTop;
+  my.scanStep = (my.scanRight - my.scanLeft) / (my.colorSpanN - 1);
+  my.colorSpanPx = windowWidth / my.colorSpanN;
+
+  my.colors = [];
+  my.yFrame = my.height / 6;
+}
+
 function check_scroll() {
-  window.scrollBy(0, 1);
+  if (my.scrolling) {
+    // console.log('my.lastScrollY', my.lastScrollY, 'window.scrollY', window.scrollY);
+    if (my.lastScrollY == window.scrollY) {
+      // no change in scroll, shut it off
+      // my.scrolling = 0;
+      // console.log('my.scrolling', my.scrolling);
+    }
+    window.scrollBy(0, 1);
+    my.lastScrollY = window.scrollY;
+  }
 }
 
 function create_myVideo() {
@@ -70,7 +90,15 @@ function create_ui() {
   createSpan('v' + my.version);
   my.addBtn = createButton('Record').mousePressed(record_action);
   my.removeBtn = createButton('Delete').mousePressed(delete_action);
-  my.faceBtn = createButton('Face').mousePressed(face_action);
+
+  my.faceChk = createCheckbox('Face', my.face);
+  my.faceChk.style('display:inline');
+  my.faceChk.changed(faceChk_action);
+
+  my.frameChk = createCheckbox('Frame', my.frame);
+  my.frameChk.style('display:inline');
+  my.frameChk.changed(frameChk_action);
+
   createElement('br');
 
   my.listDiv = createDiv('');
@@ -93,6 +121,28 @@ function create_ui() {
 
   createElement('br');
   my.aref = createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
+}
+
+function frameChk_action() {
+  my.frame = this.checked();
+}
+
+function faceChk_action() {
+  my.face = this.checked();
+  my.facingMode = my.face ? 'user' : 'environment';
+  console.log('my.facingMode', my.facingMode);
+  my.video.remove();
+  create_myVideo();
+}
+
+function face_action() {
+  let isEnv = my.facingMode == 'environment';
+  my.facingMode = isEnv ? 'user' : 'environment';
+  console.log('my.facingMode', my.facingMode);
+
+  my.video.remove();
+
+  create_myVideo();
 }
 
 function snapChk_action() {
@@ -167,18 +217,16 @@ function reset_action() {
   location.reload();
 }
 
-function face_action() {
-  let isEnv = my.facingMode == 'environment';
-  my.facingMode = isEnv ? 'user' : 'environment';
-  console.log('my.facingMode', my.facingMode);
-
-  my.video.remove();
-
-  create_myVideo();
-}
-
 function video_ready() {
   return my.video.loadedmetadata && my.video.width > 0 && my.video.height > 0;
+}
+
+function check_save_color() {
+  if (!my.color) return;
+  if (my.colors.length > my.yFrame) {
+    my.colors.pop();
+  }
+  my.colors.splice(0, 0, my.color);
 }
 
 function draw_rgb(my_scan) {
@@ -199,13 +247,37 @@ function draw_rgb(my_scan) {
   fill(color);
   rect(0, 0, width, height);
 
-  // place video in lower right middle
+  // top corner for video + rgb bars in middle of canvas
   let vx = width / 2 - vwidth / 2;
-  let vy = height - vheight * 2.5;
+  let vy = height - vheight * 3; // 2.5;
+  let clen = my.crossLen;
+
+  // draw outter prior colors
+  if (my.frame) {
+    let x = width / 4;
+    let y = my.yFrame;
+    let w = width / 2;
+    let dx = x / y;
+    let dy = 1;
+    for (col of my.colors) {
+      let y1 = height - y;
+      let h = y1 - y;
+      fill(col);
+      rect(x, y, w, dy);
+      rect(x, y1, w, dy);
+      rect(x, y, dx, h);
+      rect(x + w, y, dx, h);
+      x -= dx;
+      y -= dy;
+      w += dx * 2;
+    }
+  }
+
+  // video in middle of canvas
   image(my.video, vx, vy);
 
   // draw cross hairs
-  let clen = my.crossLen;
+  fill(color);
   rect(vx + cx, vy, clen, vheight);
   rect(vx, vy + cy, vwidth, clen);
 
