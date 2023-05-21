@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 6, // update to verify change on mobile
+  version: 9, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -14,7 +14,7 @@ let my = {
   scanRate: 10, // scan step rate, bigger for slower
   record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
-  snap: 0, // continous record
+  // snap: 0, // continous record
   scrolling: 1, // scroll to show last bottom element
   frame: 0,
 };
@@ -43,9 +43,6 @@ function draw() {
     if (my.scan) update_scan(my.record);
     check_save_color();
   }
-  if (my.snap) {
-    snap_record();
-  }
 }
 
 function my_init() {
@@ -68,15 +65,13 @@ function my_init() {
 
 function check_scroll() {
   if (my.scrolling) {
-    // console.log('my.lastScrollY', my.lastScrollY, 'window.scrollY', window.scrollY);
-    if (my.lastScrollY == window.scrollY) {
-      // no change in scroll, shut it off
-      // my.scrolling = 0;
-      // console.log('my.scrolling', my.scrolling);
-    }
     window.scrollBy(0, 1);
-    my.lastScrollY = window.scrollY;
   }
+}
+
+function mousePressed() {
+  my.scrolling = !my.scrolling;
+  console.log('my.scrolling', my.scrolling);
 }
 
 function create_myVideo() {
@@ -107,6 +102,8 @@ function create_ui() {
   my.resetBtn = createButton('Reset');
   my.resetBtn.mousePressed(reset_action);
 
+  my.snapBtn = createButton('Snap').mousePressed(snap_action);
+
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
   my.scanChk.changed(scanChk_action);
@@ -114,10 +111,6 @@ function create_ui() {
   my.recordChk = createCheckbox('Record', my.record);
   my.recordChk.style('display:inline');
   my.recordChk.changed(recordChk_action);
-
-  my.snapChk = createCheckbox('Snap', my.snap);
-  my.snapChk.style('display:inline');
-  my.snapChk.changed(snapChk_action);
 
   createElement('br');
   my.aref = createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
@@ -135,27 +128,7 @@ function faceChk_action() {
   create_myVideo();
 }
 
-function face_action() {
-  let isEnv = my.facingMode == 'environment';
-  my.facingMode = isEnv ? 'user' : 'environment';
-  console.log('my.facingMode', my.facingMode);
-
-  my.video.remove();
-
-  create_myVideo();
-}
-
-function snapChk_action() {
-  my.snap = this.checked();
-  if (my.snap) {
-    setTimeout(function () {
-      my.snapChk.checked(false);
-      my.snap = 0;
-    }, 1000);
-  }
-}
-
-function snap_record() {
+function snap_action() {
   init_scan();
   empty_listDiv();
   for (;;) {
