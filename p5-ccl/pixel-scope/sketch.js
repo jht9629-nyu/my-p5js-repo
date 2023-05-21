@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 9, // update to verify change on mobile
+  version: 11, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -14,7 +14,6 @@ let my = {
   scanRate: 10, // scan step rate, bigger for slower
   record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
-  // snap: 0, // continous record
   scrolling: 1, // scroll to show last bottom element
   frame: 0,
 };
@@ -59,7 +58,7 @@ function my_init() {
   my.scanStep = (my.scanRight - my.scanLeft) / (my.colorSpanN - 1);
   my.colorSpanPx = windowWidth / my.colorSpanN;
 
-  my.colors = [];
+  my.frameColors = [];
   my.yFrame = my.height / 6;
 }
 
@@ -186,7 +185,6 @@ function update_scan(my_record) {
 }
 
 function reset_action() {
-  localStorage.removeItem('my.colors');
   location.reload();
 }
 
@@ -196,10 +194,10 @@ function video_ready() {
 
 function check_save_color() {
   if (!my.color) return;
-  if (my.colors.length > my.yFrame) {
-    my.colors.pop();
+  if (my.frameColors.length > my.yFrame) {
+    my.frameColors.pop();
   }
-  my.colors.splice(0, 0, my.color);
+  my.frameColors.splice(0, 0, my.color);
 }
 
 function draw_rgb(my_scan) {
@@ -232,7 +230,7 @@ function draw_rgb(my_scan) {
     let w = width / 2;
     let dx = x / y;
     let dy = 1;
-    for (col of my.colors) {
+    for (col of my.frameColors) {
       let y1 = height - y;
       let h = y1 - y;
       fill(col);
@@ -297,7 +295,6 @@ function draw_rgb(my_scan) {
 }
 
 function record_action() {
-  // my.scrolling = 1;
   // console.log('record_action');
   let color = my.color;
   let r = color[0];
@@ -320,14 +317,7 @@ function record_action() {
   box.child(colorElm);
   box.child(rgbSpan);
 
-  // child could be null
-  // let child = my.listDiv.elt.firstChild;
-  // my.listDiv.elt.insertBefore(box.elt, child);
   my.listDiv.elt.appendChild(box.elt);
-
-  // let rt = colorElm.elt.getBoundingClientRect();
-  // console.log('record_action rt.y', rt.y);
-  // window.scrollTo(0, rt.y);
 }
 
 function colorElm_mouse_action(e) {
