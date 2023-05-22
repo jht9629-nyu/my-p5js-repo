@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 12, // update to verify change on mobile
+  version: 1, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -15,7 +15,7 @@ let my = {
   record: 0, // record every n frames
   scanMargin: 0.0, // 0.25, // inset for scan
   scrolling: 1, // scroll to show last bottom element
-  frame: 0,
+  frame: 1,
 };
 
 function setup() {
@@ -59,7 +59,7 @@ function my_init() {
   my.colorSpanPx = windowWidth / my.colorSpanN;
 
   my.frameColors = [];
-  my.yFrame = my.height / 6;
+  my.yFrame = my.height / 5.5;
 }
 
 function check_scroll() {
@@ -89,9 +89,9 @@ function create_ui() {
   my.faceChk.style('display:inline');
   my.faceChk.changed(faceChk_action);
 
-  my.frameChk = createCheckbox('Frame', my.frame);
-  my.frameChk.style('display:inline');
-  my.frameChk.changed(frameChk_action);
+  // my.frameChk = createCheckbox('Frame', my.frame);
+  // my.frameChk.style('display:inline');
+  // my.frameChk.changed(frameChk_action);
 
   createElement('br');
 
@@ -227,8 +227,8 @@ function draw_rgb(my_scan) {
   // draw outter prior colors
   if (my.frame) {
     let x = width / 4;
-    let y = my.yFrame;
     let w = width / 2;
+    let y = my.yFrame;
     let dx = x / y;
     let dy = 1;
     for (col of my.frameColors) {
