@@ -2,7 +2,7 @@
 // pixel-scope
 
 let my = {
-  version: 11, // update to verify change on mobile
+  version: 12, // update to verify change on mobile
   vwidth: 120, // Aspect ratio of video capture
   vheight: 160,
   vscale: 4, // scale up factor to canvas size
@@ -101,7 +101,7 @@ function create_ui() {
   my.resetBtn = createButton('Reset');
   my.resetBtn.mousePressed(reset_action);
 
-  my.snapBtn = createButton('Snap').mousePressed(snap_action);
+  // my.snapBtn = createButton('Snap').mousePressed(snap_action);
 
   my.scanChk = createCheckbox('Scan', my.scan);
   my.scanChk.style('display:inline');
@@ -127,18 +127,19 @@ function faceChk_action() {
   create_myVideo();
 }
 
-function snap_action() {
-  init_scan();
-  empty_listDiv();
-  for (;;) {
-    draw_rgb(1);
-    record_action();
-    let full = update_scan(1);
-    if (full) break;
-  }
-  let rt = my.aref.elt.getBoundingClientRect();
-  window.scrollTo(0, rt.bottom);
-}
+// removed - too slow
+// function snap_action() {
+//   init_scan();
+//   empty_listDiv();
+//   for (;;) {
+//     draw_rgb(1);
+//     record_action();
+//     let full = update_scan(1);
+//     if (full) break;
+//   }
+//   let rt = my.aref.elt.getBoundingClientRect();
+//   window.scrollTo(0, rt.bottom);
+// }
 
 function scanChk_action() {
   my.scan = this.checked();
