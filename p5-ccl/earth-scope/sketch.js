@@ -1,7 +1,7 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/bpsB_xmSH
 // earth-scope
 
-let my = { version: 3, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
+let my = { version: 4, width: 400, height: 400, rotX: 1, rotY: 0, rotZ: 0 };
 
 function setup() {
   createCanvas(my.width, my.height, WEBGL);
@@ -30,7 +30,7 @@ function create_ui() {
   my.resetBtn = createButton('Reset');
   my.resetBtn.mousePressed(resetAction);
 
-  my.permBtn = createButton('iOS permission');
+  my.permBtn = createButton('iOS');
   my.permBtn.mousePressed(permissionAction);
 
   my.chkX = create_checkBox('rotX');
