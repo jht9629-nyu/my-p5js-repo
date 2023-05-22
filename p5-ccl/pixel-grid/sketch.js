@@ -1,5 +1,5 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/twgS6eWRZ
-// pixel-touch
+// pixel-grid
 
 let my = {
   version: 1, // update to verify change on mobile
@@ -7,6 +7,8 @@ let my = {
   vheight: 640,
   face: 1,
   scrolling: 1,
+  nstep: 16,
+  margin: 0.1,
 };
 
 function setup() {
@@ -26,15 +28,31 @@ function draw() {
 
   check_scroll();
 
+  // faster to get entire video frame as an image
+  let img = my.video.get();
+  let stepPx = my.stepPx;
+  let rr = stepPx * (1 - my.margin);
   let vx = 0;
   let vy = 0;
 
-  image(my.video, vx, vy);
+  image(img, vx, vy);
+
+  while (vy < my.vheight) {
+    let col = img.get(vx, vy);
+    fill(col);
+    rect(vx, vy, rr, rr);
+    vx += stepPx;
+    if (vx > my.vwidth) {
+      vx = 0;
+      vy += stepPx;
+    }
+  }
 }
 
 function my_init() {
   my.width = my.vwidth;
   my.height = my.vheight;
+  my.stepPx = my.vwidth / my.nstep;
 }
 
 function check_scroll() {
