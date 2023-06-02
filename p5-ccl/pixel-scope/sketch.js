@@ -112,6 +112,7 @@ function create_ui() {
   my.recordChk.changed(recordChk_action);
 
   createElement('br');
+  createElement('br');
   my.aref = createA('https://jht1493.github.io/2021-NYU-ITP-Installation/colored.html', 'Colored Portraits', '_blank');
 }
 
