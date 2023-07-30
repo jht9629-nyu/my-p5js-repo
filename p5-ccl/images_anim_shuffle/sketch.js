@@ -1,5 +1,6 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/H4XTYK58S
-// images_anim_shuffle
+// images anim shuffle
+// - click pairs of bands to unshuffle the image
 
 let my = {
   n: 10, // number of bands for the source image
@@ -30,6 +31,12 @@ function draw() {
   draw_clickCount();
 
   check_completed();
+}
+
+function create_ui() {
+  createButton('Shuffle').mouseClicked(action_shuffle);
+  createButton('Complete').mouseClicked(action_complete);
+  createDiv('v1 Click two bands to exchange possition');
 }
 
 function check_completed() {
@@ -105,12 +112,6 @@ function draw_clickCount() {
   strokeWeight(1);
   textSize(my.message_h);
   text(my.clickCount, 10, height - textDescent());
-}
-
-function create_ui() {
-  createButton('Shuffle').mouseClicked(action_shuffle);
-  createButton('Reset').mouseClicked(action_reset);
-  createDiv('v1 Click two bands to exchange possition');
 }
 
 function init_bands() {
@@ -193,7 +194,7 @@ function anim_start() {
   my.anim_duration = my.anim_secs * 1000;
 }
 
-function action_reset() {
+function action_complete() {
   my.bands.sort((ent1, ent2) => {
     return ent1.index - ent2.index;
   });
