@@ -1,26 +1,32 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/H4XTYK58S
-// images anim shuffle
-// - click pairs of bands to unshuffle the image
+// images puzzle
+// - solve the image puzzle by clicking swap bands
 
 let my = {
   n: 10, // number of bands for the source image
   anim_secs: 2, // seconds for animation
-  startup_pause_secs: 1,
+  startup_secs: 1, // seconds to pause at startup
+  // image_name: 'jht-w128.png'
+  image_name: 'henrybb.jpg',
+  // image_name: 'latimer.jpg'
+  // image_name: 'woods.jpg'
 };
 
+// preload the image my.image_name
 function preload() {
-  my.srcImage = loadImage('jht-w128.png');
+  my.srcImage = loadImage(my.image_name);
 }
 
 function setup() {
   my.cnv = createCanvas(390, 600);
   my.cnv.mouseClicked(canvas_mouseClicked);
 
-  init_bands();
+  init_vars();
 
   create_ui();
 
-  setTimeout(action_shuffle, my.startup_pause_secs * 1000);
+  // show image in original order for a sec
+  setTimeout(action_shuffle, my.startup_secs * 1000);
 }
 
 function draw() {
@@ -35,8 +41,8 @@ function draw() {
 
 function create_ui() {
   createButton('Shuffle').mouseClicked(action_shuffle);
-  createButton('Complete').mouseClicked(action_complete);
-  createDiv('v1 Click two bands to exchange possition');
+  createButton('Finish').mouseClicked(action_finish);
+  createDiv('Click two bands to swap<br>v2');
 }
 
 function check_completed() {
@@ -53,6 +59,7 @@ function check_completed() {
   }
 }
 
+// find and hilight up to two bands
 function canvas_mouseClicked() {
   // console.log('canvas_mouseClicked');
   let selected = -1;
@@ -62,7 +69,7 @@ function canvas_mouseClicked() {
     let inx = mouseX > ent.x && mouseX < ent.x + my.dw;
     let iny = mouseY > ent.y && mouseY < ent.y + my.dh;
     if (inx && iny) {
-      console.log('canvas_mouseClicked index', index);
+      // console.log('canvas_mouseClicked index', index);
       selected = index;
     }
   }
@@ -71,18 +78,30 @@ function canvas_mouseClicked() {
   }
   if (my.selected.length >= 2) {
     my.clickCount += 1;
-    switch_selected_pair();
+    swap_selected_pair();
   }
   return false; // prevent drag on mobile
 }
 
-// kick of animation between the selected pair in my.selected
-function switch_selected_pair() {
+// swap and animate the selected pair in my.selected
+function swap_selected_pair() {
+  anim_location_prep();
+
+  selected_swap();
+
+  anim_duration(my.anim_swap_secs);
+}
+
+// initialize y_prior for animation in all the bands
+function anim_location_prep() {
   for (let index = 0; index < my.n; index++) {
     let ent = my.bands[index];
     ent.y_prior = ent.y;
   }
+}
 
+// swap the two bands given in my.selected indices
+function selected_swap() {
   let index1 = my.selected[0];
   let index2 = my.selected[1];
   let ent1 = my.bands[index1];
@@ -96,15 +115,13 @@ function switch_selected_pair() {
 
   my.bands[index1] = ent2;
   my.bands[index2] = ent1;
-
-  anim_start();
 }
 
 function draw_completed_msg() {
   fill(255);
   strokeWeight(1);
   textSize(my.message_h);
-  text('Completed!', width / 2, height - textDescent());
+  text('Finished!', width / 2, height - textDescent());
 }
 
 function draw_clickCount() {
@@ -114,10 +131,16 @@ function draw_clickCount() {
   text(my.clickCount, 10, height - textDescent());
 }
 
-function init_bands() {
+function init_vars() {
+  my.anim_swap_secs = my.anim_secs / 2;
   my.message_h = 30;
   my.selected = [];
   my.clickCount = 0;
+  init_bands();
+}
+
+// copy source image into my.bands
+function init_bands() {
   let sw = my.srcImage.width;
   let sh = my.srcImage.height;
   let shn = int(sh / my.n);
@@ -141,6 +164,7 @@ function init_bands() {
   }
 }
 
+// draw the bands of images
 function draw_bands() {
   let lapsePercent = -1;
   // for animation calc lapsePercent = 0..1
@@ -179,6 +203,7 @@ function draw_bands() {
   }
 }
 
+// put the bands of images in random order
 function action_shuffle() {
   shuffle(my.bands, true);
   for (let index = 0; index < my.n; index++) {
@@ -186,15 +211,11 @@ function action_shuffle() {
     ent.y_prior = ent.y;
     ent.y = my.dh * index;
   }
-  anim_start();
+  anim_duration(my.anim_secs);
 }
 
-function anim_start() {
-  my.anim_start = millis();
-  my.anim_duration = my.anim_secs * 1000;
-}
-
-function action_complete() {
+// arrange the bands original order
+function action_finish() {
   my.bands.sort((ent1, ent2) => {
     return ent1.index - ent2.index;
   });
@@ -203,7 +224,13 @@ function action_complete() {
     ent.y_prior = ent.y;
     ent.y = my.dh * index;
   }
-  anim_start();
+  anim_duration(my.anim_secs);
+}
+
+// start animation with given durartion in seconds
+function anim_duration(duration) {
+  my.anim_start = millis();
+  my.anim_duration = duration * 1000;
 }
 
 // https://editor.p5js.org/jht9629-nyu/sketches/6GTcx_Ia6
@@ -214,3 +241,15 @@ function action_complete() {
 
 // image(img, x, y, [width], [height])
 // image(img, dx,dy,dWidth,dHeight, sx,sy,sWidth,sHeight...
+
+// Henry Box Brown image source:
+// https://www.neh.gov/humanities/2013/mayjune/statement/end
+
+// JHT image source:
+// http://www.johnhenrythompson.com/0-refections-on-learning
+
+// Lewis Latimer image source:
+// https://en.wikipedia.org/wiki/Lewis_Howard_Latimer
+
+// Granville T Woods image source:
+// https://en.wikipedia.org/wiki/Granville_Woods
