@@ -1,19 +1,17 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/H4XTYK58S
 // images puzzle
-// - solve the image puzzle by clicking swap bands
+// - solve the image puzzle by clicking to swap bands
 
 let my = {
   n: 10, // number of bands for the source image
   anim_secs: 2, // seconds for animation
   startup_secs: 1, // seconds to pause at startup
-  // image_name: 'jht-w128.png'
-  image_name: 'henrybb.jpg',
-  // image_name: 'latimer.jpg'
-  // image_name: 'woods.jpg'
+  image_names: ['jht.png', 'henrybb.jpg', 'latimer.jpg', 'woods.jpg'],
 };
 
 // preload the image my.image_name
 function preload() {
+  my.image_name = random(my.image_names);
   my.srcImage = loadImage(my.image_name);
 }
 
