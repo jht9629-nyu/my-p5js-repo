@@ -6,9 +6,9 @@ let my = {
   image_names: [
     // source images
     'jht.jpg',
-    // 'henrybb.jpg',
-    // 'latimer.jpg',
-    // 'woods.jpg',
+    'henrybb.jpg',
+    'latimer.jpg',
+    'woods.jpg',
   ],
   nx: 4, // number of chips horizontally
   ny: 4, // number of chips vertically
@@ -196,23 +196,13 @@ function draw_chips() {
   }
   for (let index = 0; index < my.n; index++) {
     let ent = my.chips[index];
-    let { x, y } = my.locs[index];
-    if (lapsePercent >= 0) {
-      let prior = my.locs[ent.prior_index];
-      x = prior.x + (x - prior.x) * lapsePercent;
-      y = prior.y + (y - prior.y) * lapsePercent;
-    }
+    let { x, y } = loc_by_percent(ent, index, lapsePercent);
     image(ent.img, x, y, my.dw, my.dh);
   }
   // Draw selection
   for (let index of my.selected) {
     let ent = my.chips[index];
-    let { x, y } = my.locs[index];
-    if (lapsePercent >= 0) {
-      let prior = my.locs[ent.prior_index];
-      x = prior.x + (x - prior.x) * lapsePercent;
-      y = prior.y + (y - prior.y) * lapsePercent;
-    }
+    let { x, y } = loc_by_percent(ent, index, lapsePercent);
     image(ent.img, x, y, my.dw, my.dh);
     strokeWeight(10);
     stroke(255);
