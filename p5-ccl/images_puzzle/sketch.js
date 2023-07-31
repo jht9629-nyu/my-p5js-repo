@@ -3,14 +3,19 @@
 // - solve the image puzzle by clicking to swap bands
 
 let my = {
-  n: 10, // number of bands for the source image
+  image_names: [
+    // source images
+    'jht.jpg',
+    'henrybb.jpg',
+    'latimer.jpg',
+    'woods.jpg',
+  ],
+  n: 8, // number of bands to split source image
   anim_secs: 2, // seconds for animation
-  startup_secs: 1, // seconds to pause at startup
-  image_names: ['jht.png', 'henrybb.jpg', 'latimer.jpg', 'woods.jpg'],
 };
 
-// preload the image my.image_name
 function preload() {
+  // select a random image to preload
   my.image_name = random(my.image_names);
   my.srcImage = loadImage(my.image_name);
 }
@@ -23,8 +28,8 @@ function setup() {
 
   create_ui();
 
-  // show image in original order for a sec
-  setTimeout(action_shuffle, my.startup_secs * 1000);
+  // show image in original order for a sec before shuffling
+  setTimeout(action_shuffle, 1000);
 }
 
 function draw() {
@@ -38,11 +43,17 @@ function draw() {
 }
 
 function create_ui() {
+  createButton('Reload').mouseClicked(action_reload);
   createButton('Shuffle').mouseClicked(action_shuffle);
   createButton('Finish').mouseClicked(action_finish);
-  createDiv('Click two bands to swap<br>v2');
+  createDiv('Click two bands to swap them<br>v3');
 }
 
+function action_reload() {
+  location.reload();
+}
+
+// check if all bands are in the original order
 function check_completed() {
   let count = 0;
   for (let index = 0; index < my.n; index++) {
@@ -75,6 +86,7 @@ function canvas_mouseClicked() {
     my.selected.push(selected);
   }
   if (my.selected.length >= 2) {
+    // second band selected, swap them
     my.clickCount += 1;
     swap_selected_pair();
   }
@@ -98,7 +110,7 @@ function anim_location_prep() {
   }
 }
 
-// swap the two bands given in my.selected indices
+// swap the two bands given the my.selected indices
 function selected_swap() {
   let index1 = my.selected[0];
   let index2 = my.selected[1];
@@ -137,7 +149,7 @@ function init_vars() {
   init_bands();
 }
 
-// copy source image into my.bands
+// split up source image into my.bands
 function init_bands() {
   let sw = my.srcImage.width;
   let sh = my.srcImage.height;
@@ -203,11 +215,23 @@ function draw_bands() {
 
 // put the bands of images in random order
 function action_shuffle() {
-  shuffle(my.bands, true);
-  for (let index = 0; index < my.n; index++) {
-    let ent = my.bands[index];
-    ent.y_prior = ent.y;
-    ent.y = my.dh * index;
+  // keep shuffle until no consecutive bands
+  while (1) {
+    shuffle(my.bands, true);
+    let npairs = 0;
+    for (let index = 0; index < my.n; index++) {
+      let ent = my.bands[index];
+      ent.y_prior = ent.y;
+      ent.y = my.dh * index;
+      if (!npairs && index + 1 < my.n) {
+        let nent = my.bands[index + 1];
+        if (nent.index - 1 == ent.index) {
+          npairs++;
+        }
+      }
+    }
+    console.log('npairs', npairs);
+    if (!npairs) break;
   }
   anim_duration(my.anim_secs);
 }
