@@ -10,6 +10,7 @@ let balls = [];
 let maxBalls = 7 * 4;
 let myColors;
 let colorIndex = 0;
+let startupY = 0.5;
 
 // The midi notes of a scale
 let notes = [60, 62, 64, 65, 67, 69, 71];
@@ -17,6 +18,7 @@ let noteIndex = 0;
 
 let spawnRate = 0; // 60; // Spawn balls every n frames, 0 for no spawn
 let stuckRate = 60; // Check for stuck pairs every n frames
+let defaultYStart = 0.7;
 let bkgAlpha = 10;
 let jiggle = 3;
 let cmsg = 1;
@@ -38,7 +40,7 @@ function setup() {
   b1.xdir = 0;
   b1.x = 0;
   b1.y = 0;
-  b1.y = height * 0.95; // !!@ Chaos on start
+  b1.y = height * defaultYStart; // !!@ Chaos on start
   balls.push(b1);
 }
 
@@ -222,7 +224,7 @@ class Ball {
   //
   constructor() {
     this.x = floor(random(0, width));
-    this.y = floor(height / 20);
+    this.y = floor(height * 0.1);
     this.w = floor(random(10, 50));
     this.h = floor(random(10, 50));
     this.xdir = floor(random(-3, 3));
@@ -297,8 +299,8 @@ class Block {
   constructor() {
     this.w = 100;
     this.h = 20;
-    this.x = mouseX - this.w / 2;
-    this.y = height * 0.9; // !!@ Block constructor Chaos startup
+    this.x = floor(mouseX - this.w / 2);
+    this.y = floor(height * 0.95);
     this.color = 0;
   }
   initColor() {
