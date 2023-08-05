@@ -1,5 +1,6 @@
-// https://editor.p5js.org/jht9629-nyu/sketches/5Y1WTyVd-
-// Fancy Pong Chords
+// https://editor.p5js.org/jht9629-nyu/sketches/9Ss9owTn5
+// Pong Chaos startup mostly
+// ?? How may reruns to avoid chaos
 
 // TODO: start paddle in center. mouseX move drifts paddle
 // BUG: no audio running locally until click on canvas
@@ -297,8 +298,7 @@ class Block {
     this.w = 100;
     this.h = 20;
     this.x = mouseX - this.w / 2;
-    // this.y = height * 0.90; // !!@ Block constructor Chaos startup
-    this.y = height * 0.95; // !!@ Block constructor no Chaos startup
+    this.y = height * 0.9; // !!@ Block constructor Chaos startup
     this.color = 0;
   }
   initColor() {
@@ -383,7 +383,7 @@ function init_myColors() {
 // BUG: balls can get locked during bounce
 // BUG: random burst of new balls at top -keep!-
 
-// --
+////////////////////////////////////////////////////////////////////
 // FIXED: y bounce too early sometimes
 
 // DONE: multiple paddle-like obstacles that don't move to create mouse rhythms
@@ -391,7 +391,10 @@ function init_myColors() {
 // DONE: p5.env used to avoid crackle - crackle still present on ball burst
 // check_hit_pairs added to remove stuck pairs
 
-// --
+//////////////////////////////////////////////////////////////////////
+
+// https://editor.p5js.org/jht9629-nyu/sketches/5Y1WTyVd-
+// Fancy Pong Chords
 
 // https://editor.p5js.org/jht9629-nyu/sketches/QB13gST05
 // Fancy Pong Things
