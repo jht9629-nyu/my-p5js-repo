@@ -25,11 +25,13 @@ let blocks = [];
 let blockFlip = 0;
 
 function setup() {
-  createCanvas(windowWidth - 20, windowHeight - 20);
-
-  paddle = new Block();
+  createCanvas(windowWidth / 2, windowHeight / 2);
+  // createCanvas(windowWidth - 20, windowHeight - 20);
+  // createCanvas(800, 800);
 
   init_myColors();
+
+  paddle = new Block();
 
   let b = new Ball();
   b.xdir = 0;
