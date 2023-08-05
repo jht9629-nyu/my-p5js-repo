@@ -33,11 +33,12 @@ function setup() {
 
   paddle = new Block();
 
-  let b = new Ball();
-  b.xdir = 0;
-  b.x = 0;
-  b.y = height - height / 10;
-  balls.push(b);
+  let b1 = new Ball();
+  b1.xdir = 0;
+  b1.x = 0;
+  // b.y = height - height / 10; // Chaos on start
+  b1.y = 0;
+  balls.push(b1);
 }
 
 function draw() {
