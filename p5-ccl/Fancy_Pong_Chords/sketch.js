@@ -32,11 +32,12 @@ function setup() {
 
   paddle = new Block();
 
+  // init the first ball
   let b1 = new Ball();
   b1.xdir = 0;
   b1.x = 0;
   b1.y = 0;
-  b1.y = height - height * 0.1; // !!@ Chaos on start
+  b1.y = height * 0.95; // !!@ Chaos on start
   balls.push(b1);
 }
 
