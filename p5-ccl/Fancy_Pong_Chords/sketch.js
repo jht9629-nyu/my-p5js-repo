@@ -25,7 +25,7 @@ let blocks = [];
 let blockFlip = 0;
 
 function setup() {
-  createCanvas(windowWidth / 2, windowHeight / 2);
+  createCanvas(windowWidth / 2, windowHeight / 2); // Chaos
   // createCanvas(windowWidth - 20, windowHeight - 20);
   // createCanvas(800, 800);
 
@@ -220,7 +220,7 @@ class Ball {
   //
   constructor() {
     this.x = floor(random(0, width));
-    this.y = 40;
+    this.y = floor(height / 20);
     this.w = floor(random(10, 50));
     this.h = floor(random(10, 50));
     this.xdir = floor(random(-3, 3));
