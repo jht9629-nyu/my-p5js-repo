@@ -25,8 +25,8 @@ let blocks = [];
 let blockFlip = 0;
 
 function setup() {
-  createCanvas(windowWidth / 2, windowHeight / 2); // !!@ Chaos
-  // createCanvas(windowWidth - 20, windowHeight - 20);
+  createCanvas(windowWidth * 0.5, windowHeight * 0.5); // !!@ Chaos
+  // createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 
   init_myColors();
 
@@ -402,15 +402,3 @@ function init_myColors() {
 
 // https://editor.p5js.org/shawn/sketches/eEjPTfJ4N
 // Fancy Pong
-
-// Not used
-function mousePressed_newBall() {
-  trimsBalls();
-  let b = new Ball();
-  balls.push(b);
-  b.x = mouseX;
-  b.y = mouseY;
-  if (mouseY > height / 2) {
-    b.xdir = 0;
-  }
-}
