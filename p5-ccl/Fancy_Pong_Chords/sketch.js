@@ -2,6 +2,7 @@
 // Fancy Pong Chords
 
 // TODO: start paddle in center. mouseX move drifts paddle
+// BUG: no audio running locally until click on canvas
 
 let score = 0;
 let balls = [];
@@ -33,7 +34,7 @@ function setup() {
   let b = new Ball();
   b.xdir = 0;
   b.x = 0;
-  b.y = height - height/10;
+  b.y = height - height / 10;
   balls.push(b);
 }
 
@@ -44,19 +45,19 @@ function draw() {
   draw_balls();
 
   draw_blocks();
-  
+
   paddle.x = mouseX - paddle.w / 2;
   paddle.render();
-  
+
   check_collisions();
 
   check_block_collisions();
 
   // Score
-  fill("blue");
+  fill('blue');
   textSize(24);
   // text("Score:" + score, 10, 25);
-  text("nballs:" + balls.length, 10, 25);
+  text('nballs:' + balls.length, 10, 25);
 
   check_spawn();
 }
@@ -73,7 +74,7 @@ function draw_balls() {
       trimsBalls();
       balls.push(new Ball());
     }
-  }  
+  }
 }
 
 function draw_blocks() {
@@ -104,23 +105,22 @@ function mousePressed() {
   let nblocks = [];
   for (let i1 = 0; i1 < blocks.length; i1++) {
     let o1 = blocks[i1];
-    if (! o1.touches(mouseX, mouseY)) {
+    if (!o1.touches(mouseX, mouseY)) {
       nblocks.push(o1);
     }
   }
   if (nblocks.length != blocks.length) {
     blocks = nblocks;
-  }
-  else {
-    newBlock();  
+  } else {
+    newBlock();
   }
 }
 
 function newBlock() {
   let o1 = new Block();
   blocks.push(o1);
-  o1.x = mouseX - o1.w/2;
-  o1.y = mouseY - o1.h/2;
+  o1.x = mouseX - o1.w / 2;
+  o1.y = mouseY - o1.h / 2;
   o1.xdir = 0;
   o1.ydir = 0;
   o1.initColor();
@@ -128,8 +128,8 @@ function newBlock() {
     let t = o1.w;
     o1.w = o1.h;
     o1.h = t;
-    o1.x = mouseX - o1.w/2;
-    o1.y = mouseY - o1.h/2;
+    o1.x = mouseX - o1.w / 2;
+    o1.y = mouseY - o1.h / 2;
   }
   blockFlip = !blockFlip;
 }
@@ -152,7 +152,7 @@ function check_collisions() {
         nowHits.push([frameCount, c1, c2]);
       }
     }
-  }  
+  }
   check_hit_pairs(nowHits);
 }
 
@@ -202,8 +202,8 @@ function check_hit_pairs(nowHits) {
       }
     }
     if (cmsg) {
-      console.log("nhits", [...nhits.values()], "fc", frameCount);
-      console.log("nballs", nballs.length, "balls", balls.length);
+      console.log('nhits', [...nhits.values()], 'fc', frameCount);
+      console.log('nballs', nballs.length, 'balls', balls.length);
     }
     // if (nhits.size > 2) {
     //   noLoop();
@@ -262,7 +262,7 @@ class Ball {
   }
   isHit(o1) {
     // Test for hit against paddle
-    return this.intersects(o1)
+    return this.intersects(o1);
     // let x = this.x;
     // let y = this.y;
     // let hitx = x >= paddle.x && x <= paddle.x + paddle.w;
@@ -270,10 +270,10 @@ class Ball {
     // return hitx && hity;
   }
   intersects(o1) {
-    // Test of touching second ball based 
+    // Test of touching second ball based
     // adjust for centered circle
-    let x1 = this.x - this.w/2;
-    let y1 = this.y - this.h/2;
+    let x1 = this.x - this.w / 2;
+    let y1 = this.y - this.h / 2;
     let x2 = x1 + this.w;
     let y2 = y1 + this.h;
     return pointInRect(x1, y1, o1) || pointInRect(x2, y2, o1);
@@ -306,7 +306,7 @@ class Block {
     rect(this.x, this.y, this.w, this.h);
   }
   touches(x1, y1) {
-    return pointInRect(x1, y1, this) 
+    return pointInRect(x1, y1, this);
   }
 }
 
@@ -367,7 +367,7 @@ function pointInRect(x1, y1, rt) {
 }
 
 function init_myColors() {
-  myColors = ["red", "green", "orange", "purple", "blue", "cyan", "pink"];
+  myColors = ['red', 'green', 'orange', 'purple', 'blue', 'cyan', 'pink'];
 
   myColors = [];
   for (let ii = 0; ii < 8; ii++) {
