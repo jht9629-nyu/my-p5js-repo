@@ -25,9 +25,8 @@ let blocks = [];
 let blockFlip = 0;
 
 function setup() {
-  createCanvas(windowWidth / 2, windowHeight / 2); // Chaos
+  createCanvas(windowWidth / 2, windowHeight / 2); // !!@ Chaos
   // createCanvas(windowWidth - 20, windowHeight - 20);
-  // createCanvas(800, 800);
 
   init_myColors();
 
@@ -36,8 +35,8 @@ function setup() {
   let b1 = new Ball();
   b1.xdir = 0;
   b1.x = 0;
-  // b.y = height - height / 10; // Chaos on start
   b1.y = 0;
+  b1.y = height - height * 0.1; // !!@ Chaos on start
   balls.push(b1);
 }
 
