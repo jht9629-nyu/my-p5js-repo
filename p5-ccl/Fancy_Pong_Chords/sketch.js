@@ -296,7 +296,8 @@ class Block {
     this.w = 100;
     this.h = 20;
     this.x = mouseX - this.w / 2;
-    this.y = height - 50;
+    // this.y = height * 0.90; // !!@ Block constructor Chaos startup
+    this.y = height * 0.95; // !!@ Block constructor no Chaos startup
     this.color = 0;
   }
   initColor() {
