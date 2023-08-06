@@ -9,6 +9,7 @@ let score = 0;
 let balls = [];
 let maxBalls = 7 * 4;
 let myColors;
+let ncolors = 12; // number of random colors in palette
 let colorIndex = 0;
 let startupY = 0.5;
 
@@ -16,8 +17,12 @@ let startupY = 0.5;
 let notes = [60, 62, 64, 65, 67, 69, 71];
 let noteIndex = 0;
 
-let spawnRate = 0; // 60; // Spawn balls every n frames, 0 for no spawn
-let stuckRate = 60; // Check for stuck pairs every n frames
+// Spawn balls every n frames, 0 for no spawn
+let spawnRate = 0; // 60;
+
+// Check for stuck pairs every n frames, 0 for no check
+let stuckRate = 60;
+
 let defaultYStart = 0.7;
 let bkgAlpha = 10;
 let jiggle = 3;
@@ -28,14 +33,14 @@ let blocks = [];
 let blockFlip = 0;
 
 function setup() {
-  createCanvas(windowWidth * 0.5, windowHeight * 0.5); // !!@ Chaos
-  // createCanvas(windowWidth * 0.95, windowHeight * 0.95);
+  // createCanvas(windowWidth * 0.5, windowHeight * 0.5); // !!@ Chaos
+  createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 
   init_myColors();
 
   paddle = new Block();
 
-  // init the first ball
+  // init the first ball to drop from left edge
   let b1 = new Ball();
   b1.xdir = 0;
   b1.x = 0;
@@ -46,7 +51,7 @@ function setup() {
 
 function draw() {
   //
-  background(220, bkgAlpha);
+  // background(220, bkgAlpha);
 
   draw_balls();
 
@@ -77,10 +82,16 @@ function draw_balls() {
       score++;
       b.bounceY();
       b.playNote();
-      trimsBalls();
-      balls.push(new Ball());
+      addBall();
     }
   }
+}
+
+function addBall() {
+  trimsBalls();
+  let b = new Ball();
+  balls.push(b);
+  return b;
 }
 
 function draw_blocks() {
@@ -99,9 +110,7 @@ function trimsBalls() {
 
 function check_spawn() {
   if (spawnRate && frameCount % spawnRate == 0) {
-    trimsBalls();
-    let b = new Ball();
-    balls.push(b);
+    let b = addBall();
     b.x = floor(random(0, width));
     b.y = floor(random(0, height));
   }
@@ -209,7 +218,7 @@ function check_hit_pairs(nowHits) {
     }
     if (cmsg) {
       console.log('nhits', [...nhits.values()], 'fc', frameCount);
-      console.log('nballs', nballs.length, 'balls', balls.length);
+      console.log('balls', balls.length, 'nballs', nballs.length);
     }
     // if (nhits.size > 2) {
     //   noLoop();
@@ -230,22 +239,32 @@ class Ball {
     this.xdir = floor(random(-3, 3));
     this.ydir = floor(random(1, 5)); // 3;
 
-    this.color = myColors[colorIndex];
-    colorIndex = (colorIndex + 1) % myColors.length;
+    if (random([0, 1])) {
+      this.xdir = 0;
+    } else {
+      this.ydir = 0;
+    }
 
     let note = notes[noteIndex];
     this.note = new NotePlayer(note, 1000);
     noteIndex = (noteIndex + 1) % notes.length;
+
+    this.nextColor();
   }
-  //
+  nextColor() {
+    this.color = myColors[colorIndex];
+    colorIndex = (colorIndex + 1) % myColors.length;
+  }
   move() {
     this.render();
     this.x = this.x + this.xdir;
     this.y = this.y + this.ydir;
     if (this.y >= height || this.y <= 0) {
+      this.nextColor();
       this.bounceY();
     }
     if (this.x >= width || this.x <= 0) {
+      this.nextColor();
       this.bounceX();
     }
   }
@@ -304,8 +323,9 @@ class Block {
     this.color = 0;
   }
   initColor() {
-    this.color = myColors[colorIndex];
-    colorIndex = (colorIndex + 1) % myColors.length;
+    // this.color = myColors[colorIndex];
+    // colorIndex = (colorIndex + 1) % myColors.length;
+    this.color = [random(0, 200), random(0, 200), random(0, 200)];
   }
   render() {
     fill(this.color);
@@ -373,12 +393,20 @@ function pointInRect(x1, y1, rt) {
 }
 
 function init_myColors() {
-  myColors = ['red', 'green', 'orange', 'purple', 'blue', 'cyan', 'pink'];
-
+  // myColors = ["red", "green", "orange", "purple", "blue", "cyan", "pink"];
+  // myColors = ["red", "green", "orange", 0];
   myColors = [];
-  for (let ii = 0; ii < 8; ii++) {
-    myColors.push([random(0, 200), random(0, 200), random(0, 200)]);
-  }
+  myColors.push([255, 0, 0, 100]);
+  myColors.push([0, 255, 0, 100]);
+  myColors.push([255, 160, 0, 100]);
+  myColors.push([0, 0, 0, 100]);
+  // myColors = [];
+  // for (let ii = 0; ii < ncolors; ii++) {
+  //   let r = random(0, 200);
+  //   let g = random(0, 200);
+  //   let b = random(0, 200);
+  //   myColors.push([r, g, b, 100]);
+  // }
   // shuffle(myColors, true);
 }
 
