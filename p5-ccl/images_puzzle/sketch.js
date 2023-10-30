@@ -5,10 +5,10 @@
 let my = {
   image_names: [
     // source images
-    'jht.jpg',
-    'henrybb.jpg',
-    'latimer.jpg',
-    'woods.jpg',
+    './media/jht.jpg',
+    './media/henrybb.jpg',
+    './media/latimer.jpg',
+    './media/woods.jpg',
   ],
   n: 8, // number of bands to split source image
   anim_secs: 2, // seconds for animation
