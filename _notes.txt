@@ -1,0 +1,241 @@
+# --
+2023-11-13 12:41:55
+
+955,870,352 bytes (960.7 MB on disk) for 234 items
+
+ls -l downloads/zips 
+
+total 1876328
+-rw-r--r--  1 jht2  staff  4204526 Nov 13 12:35 03-jht-hatviz.zip
+-rw-r--r--  1 jht2  staff  3878801 Nov 13 12:35 1.2 draw_shapes_ui.zip
+-rw-r--r--  1 jht2  staff   391512 Nov 13 12:35 10PRINT copy.zip
+-rw-r--r--  1 jht2  staff  4143615 Nov 13 12:35 11.3: The Pixel Array - p5.js Tutorial.zip
+-rw-r--r--  1 jht2  staff  4143549 Nov 13 12:35 11.3: The Pixel Array Slider copy.zip
+-rw-r--r--  1 jht2  staff  4143226 Nov 13 12:35 11.3: The Pixel Array.zip
+-rw-r--r--  1 jht2  staff  1179005 Nov 13 12:35 11.4 Brightness Mirror.zip
+-rw-r--r--@ 1 jht2  staff   821274 Nov 13 12:35 11.4: Brightness getpixel.zip
+-rw-r--r--  1 jht2  staff  4302448 Nov 13 12:35 11.6 Painting with Pixels.zip
+-rw-r--r--  1 jht2  staff  4661905 Nov 13 12:35 17.11_FFT ui - funky.zip
+-rw-r--r--  1 jht2  staff  4456801 Nov 13 12:35 17.8: Microphone Input.zip
+-rw-r--r--  1 jht2  staff  4593200 Nov 13 12:35 17.9_graphingAmplitude copy.zip
+-rw-r--r--  1 jht2  staff  3595685 Nov 13 12:35 2.2.3 circleX width ui local vars.zip
+-rw-r--r--  1 jht2  staff  3595700 Nov 13 12:35 2.2.3 circleX width ui v1 object literal.zip
+-rw-r--r--  1 jht2  staff  3595225 Nov 13 12:35 2.2.3 circleX width ui v2.zip
+-rw-r--r--  1 jht2  staff  3595683 Nov 13 12:35 2.2.3 circleX width ui.zip
+-rw-r--r--  1 jht2  staff  4503011 Nov 13 12:35 3.4_1_p5.js_Boolean_variables copy copy copy copy.zip
+-rw-r--r--  1 jht2  staff  4502854 Nov 13 12:35 3.4_1_p5.js_Boolean_variables copy copy copy.zip
+-rw-r--r--  1 jht2  staff  4502844 Nov 13 12:35 3.4_1_p5.js_Boolean_variables copy copy.zip
+-rw-r--r--  1 jht2  staff  4502737 Nov 13 12:35 3.4_1_p5.js_Boolean_variables copy.zip
+-rw-r--r--  1 jht2  staff  4502572 Nov 13 12:35 3.4_1_p5.js_Boolean_variables.zip
+-rw-r--r--  1 jht2  staff  4304211 Nov 13 12:35 3.5 DOM Kit slider checkbox select.zip
+-rw-r--r--  1 jht2  staff  3595721 Nov 13 12:35 3.5 circleX a_len ui.zip
+-rw-r--r--  1 jht2  staff  3595711 Nov 13 12:35 3.5 circleX slider.zip
+-rw-r--r--  1 jht2  staff  3780163 Nov 13 12:35 7.3 Arrays of objects 1 copy.zip
+-rw-r--r--  1 jht2  staff  3986088 Nov 13 12:35 Acceleration Ball Bounce.zip
+-rw-r--r--  1 jht2  staff  4501936 Nov 13 12:36 Assignment_W3_3 copy copy.zip
+-rw-r--r--  1 jht2  staff  4501891 Nov 13 12:36 Beaded scorpio.zip
+-rw-r--r--  1 jht2  staff  4502365 Nov 13 12:36 Bedecked kangaroo copy.zip
+-rw-r--r--  1 jht2  staff  4501948 Nov 13 12:36 Bouncing Ball copy.zip
+-rw-r--r--  1 jht2  staff  4501620 Nov 13 12:36 Breezy packet.zip
+-rw-r--r--  1 jht2  staff  4657977 Nov 13 12:36 Cultivate digit copy.zip
+-rw-r--r--  1 jht2  staff  4657878 Nov 13 12:36 Cultivate digit.zip
+-rw-r--r--  1 jht2  staff  4501925 Nov 13 12:36 Day1-pattern-grid.zip
+-rw-r--r--  1 jht2  staff  4502217 Nov 13 12:36 Day2-matching-bounce.zip
+-rw-r--r--  1 jht2  staff  4502128 Nov 13 12:36 Day2-matching-game.zip
+-rw-r--r--  1 jht2  staff  4502163 Nov 13 12:36 Day2-matching-move.zip
+-rw-r--r--  1 jht2  staff  4600024 Nov 13 12:36 Day2-pattern-image.zip
+-rw-r--r--  1 jht2  staff  4502143 Nov 13 12:36 Day4-slides.zip
+-rw-r--r--  1 jht2  staff  4503181 Nov 13 12:36 Day5-matching emoji array.zip
+-rw-r--r--  1 jht2  staff  4502959 Nov 13 12:36 Day5-matching emoji copy.zip
+-rw-r--r--  1 jht2  staff  4503410 Nov 13 12:36 Day5-matching emoji mobile.zip
+-rw-r--r--  1 jht2  staff  4502923 Nov 13 12:36 Day5-matching emoji.zip
+-rw-r--r--  1 jht2  staff  4503113 Nov 13 12:36 Day5-matching random.zip
+-rw-r--r--  1 jht2  staff  4502702 Nov 13 12:36 Day5-matching.zip
+-rw-r--r--  1 jht2  staff  4510798 Nov 13 12:37 Fancy Pong Chords.zip
+-rw-r--r--  1 jht2  staff  4505309 Nov 13 12:37 Fancy Pong Things.zip
+-rw-r--r--  1 jht2  staff  4504668 Nov 13 12:37 Fancy Pong collision.zip
+-rw-r--r--  1 jht2  staff  4502990 Nov 13 12:37 Fancy Pong copy.zip
+-rw-r--r--  1 jht2  staff   631777 Nov 13 12:37 Fibonacci sequence (visualisation) by ktorn -- jht remix Object Literal version.zip
+-rw-r--r--  1 jht2  staff   631733 Nov 13 12:37 Fibonacci sequence (visualisation) by ktorn -- jht remix copy.zip
+-rw-r--r--  1 jht2  staff   631513 Nov 13 12:37 Fibonacci sequence (visualisation) by ktorn -- jht remix.zip
+-rw-r--r--  1 jht2  staff  3951216 Nov 13 12:37 Firebase-createImg-board copy.zip
+-rw-r--r--  1 jht2  staff  4471676 Nov 13 12:37 Fourier-Elephant-Lower-frequencies copy.zip
+-rw-r--r--  1 jht2  staff  4187893 Nov 13 12:37 Full Scan XY.zip
+-rw-r--r--  1 jht2  staff  4502609 Nov 13 12:37 Game States array buttons.zip
+-rw-r--r--  1 jht2  staff  4502331 Nov 13 12:37 Game States array.zip
+-rw-r--r--  1 jht2  staff  4502440 Nov 13 12:37 Game States explicit.zip
+-rw-r--r--  1 jht2  staff  4502191 Nov 13 12:37 Game States.zip
+-rw-r--r--  1 jht2  staff  4657656 Nov 13 12:37 Garrulous amphibian.zip
+-rw-r--r--  1 jht2  staff  4520358 Nov 13 12:37 ICM - WK6 - practicing with objects copy.zip
+-rw-r--r--  1 jht2  staff  4502298 Nov 13 12:37 ICM 2023 jht student selector.zip
+-rw-r--r--  1 jht2  staff  4932996 Nov 13 12:37 ICM Week 1 Assignment - Self Portrait copy.zip
+-rw-r--r--  1 jht2  staff  4933724 Nov 13 12:37 ICM Week 1 Assignment - Self Portrait.zip
+-rw-r--r--  1 jht2  staff  4503866 Nov 13 12:37 ICM jht student selector textarea.zip
+-rw-r--r--  1 jht2  staff  4502394 Nov 13 12:37 ICM_W1_HW_QZ658 copy.zip
+-rw-r--r--  1 jht2  staff  4186286 Nov 13 12:37 IMS - Truchet Vamoss copy.zip
+-rw-r--r--  1 jht2  staff  8242109 Apr  6  2023 IMS14 - Olive copy.zip
+-rw-r--r--  1 jht2  staff  4502768 Nov 13 12:37 Image Drawing copy.zip
+-rw-r--r--  1 jht2  staff  4501910 Nov 13 12:37 Invincible shame.zip
+-rw-r--r--  1 jht2  staff  4759952 Nov 13 12:38 Melanie pong with object array.zip
+-rw-r--r--  1 jht2  staff  4759904 Nov 13 12:38 Melanie pong with object literals.zip
+-rw-r--r--  1 jht2  staff  4191973 Nov 13 12:38 Necessary-forgery-timed-drawing.zip
+-rw-r--r--@ 1 jht2  staff  4185265 Apr  6  2023 Outstanding fortnight.zip
+-rw-r--r--  1 jht2  staff  4503000 Nov 13 12:38 Patch neem by bigmouthflower -- jht9629-gmail remix copy.zip
+-rw-r--r--  1 jht2  staff  4502525 Nov 13 12:38 Patch neem by bigmouthflower.zip
+-rw-r--r--  1 jht2  staff  4735078 Nov 13 12:38 Physarum Letters -- jht remix.zip
+-rw-r--r--  1 jht2  staff  4502189 Nov 13 12:38 PolySynth.zip
+-rw-r--r--  1 jht2  staff  4511837 Nov 13 12:39 Pong Chaos startup mostly.zip
+-rw-r--r--  1 jht2  staff  4510780 Nov 13 12:39 Pong Chords Chaos start.zip
+-rw-r--r--  1 jht2  staff  4510822 Nov 13 12:39 Pong Chords Chaos.zip
+-rw-r--r--  1 jht2  staff  4236732 Nov 13 12:39 Pong codingtrain.zip
+-rw-r--r--  1 jht2  staff  4238265 Nov 13 12:39 Pong drop earth-xyz.zip
+-rw-r--r--  1 jht2  staff  4237092 Nov 13 12:39 Pong drop.zip
+-rw-r--r--  1 jht2  staff   578464 Nov 13 12:39 Rainbow Canvas.zip
+-rw-r--r--  1 jht2  staff  4501873 Nov 13 12:39 Rural sardine.zip
+-rw-r--r--  1 jht2  staff  4501658 Nov 13 12:39 Scratched sputter.zip
+-rw-r--r--  1 jht2  staff  4501890 Nov 13 12:39 Scrawny cephalopod.zip
+-rw-r--r--  1 jht2  staff  3958178 Nov 13 12:39 Shared Space 3D copy.zip
+-rw-r--r--  1 jht2  staff  4194253 Nov 13 12:39 Simple Draw.zip
+-rw-r--r--  1 jht2  staff  4188141 Nov 13 12:39 Slit Scan Rotate.zip
+-rw-r--r--  1 jht2  staff  4186857 Nov 13 12:39 Slit Scan X Save.zip
+-rw-r--r--  1 jht2  staff  4187540 Nov 13 12:39 Slit Scan X-Y.zip
+-rw-r--r--  1 jht2  staff  4186355 Nov 13 12:39 Slit Scan X.zip
+-rw-r--r--  1 jht2  staff  4187619 Nov 13 12:39 Slit Scan XY.zip
+-rw-r--r--  1 jht2  staff  4186935 Nov 13 12:39 Slit Scan Y Save.zip
+-rw-r--r--  1 jht2  staff   630947 Nov 13 12:39 Slit Scan.zip
+-rw-r--r--  1 jht2  staff  4501895 Nov 13 12:39 South coral.zip
+-rw-r--r--  1 jht2  staff  4502401 Nov 13 12:39 Spiny heat.zip
+-rw-r--r--  1 jht2  staff  4501598 Nov 13 12:39 Stormy oviraptor.zip
+-rw-r--r--  1 jht2  staff  4851986 Nov 13 12:39 Stupendous tellurium copy.zip
+-rw-r--r--  1 jht2  staff  3780897 May 11  2023 UL4f15T8w video tint 2x2 mobile.zip
+-rw-r--r--  1 jht2  staff  4501907 Nov 13 12:40 W4: Re-write as a loop - I copy.zip
+-rw-r--r--  1 jht2  staff   532853 Nov 13 12:40 W4: Re-write as a loop - III copy.zip
+-rw-r--r--  1 jht2  staff  3780357 Nov 13 12:40 WK2 move a circle with random size copy.zip
+-rw-r--r--  1 jht2  staff      332 Nov 13 12:40 Week 2 homework V1 copy copy copy.zip
+-rw-r--r--  1 jht2  staff      332 Nov 13 12:40 Week3 homework - V3 copy.zip
+-rw-r--r--  1 jht2  staff  4502160 Nov 13 12:40 Wide afrovenator.zip
+-rw-r--r--  1 jht2  staff  4501688 Nov 13 12:41 Wk4 hw1 copy.zip
+-rw-r--r--  1 jht2  staff  3780923 May 11  2023 ZQKpaeJm0 video tint 2x2 mobile.zip
+-rw-r--r--  1 jht2  staff  3987032 Nov 13 12:36 acceleration-scope.zip
+-rw-r--r--  1 jht2  staff  3988441 Nov 13 12:36 accelerationXYZ.zip
+-rw-r--r--  1 jht2  staff  4502689 Nov 13 12:36 assignment week 3 copy.zip
+-rw-r--r--  1 jht2  staff  4502444 Nov 13 12:36 async-await-setTimeout.zip
+-rw-r--r--  1 jht2  staff  4505987 Nov 13 12:36 chat-G Scratch risk.zip
+-rw-r--r--  1 jht2  staff  4503987 Nov 13 12:36 chat-G gen art rev 2.zip
+-rw-r--r--  1 jht2  staff  4502965 Nov 13 12:36 chat-G gen art rev.zip
+-rw-r--r--  1 jht2  staff  4504167 Nov 13 12:36 chat-G gen art rev3.zip
+-rw-r--r--  1 jht2  staff  4502549 Nov 13 12:36 chat-G gen art.zip
+-rw-r--r--  1 jht2  staff  4504558 Nov 13 12:36 chat-G pong pause fix.zip
+-rw-r--r--  1 jht2  staff  4504579 Nov 13 12:36 chat-G pong pause.zip
+-rw-r--r--  1 jht2  staff  4503864 Nov 13 12:36 chat-G pong.zip
+-rw-r--r--  1 jht2  staff   392689 Nov 13 12:36 checking objects intersection.zip
+-rw-r--r--  1 jht2  staff  3595166 Nov 13 12:36 circleX buttons copy.zip
+-rw-r--r--  1 jht2  staff  3594727 Nov 13 12:36 circleX circleY copy.zip
+-rw-r--r--  1 jht2  staff  3595038 Nov 13 12:36 circleX follow copy.zip
+-rw-r--r--  1 jht2  staff  3594572 Nov 13 12:36 circleX modulo copy.zip
+-rw-r--r--  1 jht2  staff  4501945 Nov 13 12:36 colorMode-rainbow copy.zip
+-rw-r--r--  1 jht2  staff  4501877 Nov 13 12:36 colorMode-rainbow-flag.zip
+-rw-r--r--  1 jht2  staff  4501982 Nov 13 12:36 colorMode-rainbow-single.zip
+-rw-r--r--  1 jht2  staff  4501727 Nov 13 12:36 colorMode-rainbow.zip
+-rw-r--r--  1 jht2  staff  4501816 Nov 13 12:36 console.log frameCount.zip
+-rw-r--r--  1 jht2  staff  4501829 Nov 13 12:36 day1.zip
+-rw-r--r--  1 jht2  staff  4503031 Nov 13 12:36 draw sine wave.zip
+-rw-r--r--  1 jht2  staff  4186460 Nov 13 12:36 draw-rainbow.zip
+-rw-r--r--  1 jht2  staff  3951361 Nov 13 12:36 draw-share-multi.zip
+-rw-r--r--  1 jht2  staff  3951282 Nov 13 12:36 draw-share.zip
+-rw-r--r--  1 jht2  staff  3950610 Nov 13 12:37 draw-video.zip
+-rw-r--r--  1 jht2  staff  3990423 Nov 13 12:37 earth-lat-lon.zip
+-rw-r--r--  1 jht2  staff  3988233 Nov 13 12:37 earth-xyz.zip
+-rw-r--r--  1 jht2  staff  4185329 Nov 13 12:37 foo error.zip
+-rw-r--r--  1 jht2  staff  3693738 Nov 13 12:37 geolocation.zip
+-rw-r--r--  1 jht2  staff  4502064 Nov 13 12:37 global variable pattern animation.zip
+-rw-r--r--  1 jht2  staff  4504242 Nov 13 12:37 hello-p5-song.zip
+-rw-r--r--  1 jht2  staff  4550190 Nov 13 12:37 image  array sin.zip
+-rw-r--r--  1 jht2  staff  4549800 Nov 13 12:37 image preload  array.zip
+-rw-r--r--  1 jht2  staff  4549636 Nov 13 12:37 image preload  copy4.zip
+-rw-r--r--  1 jht2  staff  4549483 Nov 13 12:37 image preload copy2.zip
+-rw-r--r--  1 jht2  staff  4540980 Nov 13 12:37 image preload rh.zip
+-rw-r--r--  1 jht2  staff  4669906 Nov 13 12:37 images puzzle copy.zip
+-rw-r--r--  1 jht2  staff  4670003 Nov 13 12:37 images puzzle grid.zip
+-rw-r--r--  1 jht2  staff  4669970 Nov 13 12:37 images puzzle.zip
+-rw-r--r--  1 jht2  staff  4550205 Nov 13 12:37 images shuffle iOS.zip
+-rw-r--r--  1 jht2  staff  4550216 Nov 13 12:37 images shuffle.zip
+-rw-r--r--  1 jht2  staff  4187528 Nov 13 12:37 ims-03-jht truchet tiles pause copy.zip
+-rw-r--r--  1 jht2  staff  4186781 Nov 13 12:37 ims03-jht scrolling color bars.zip
+-rw-r--r--@ 1 jht2  staff  4187142 Nov 13 12:37 ims03-jht scrolling color time.zip
+-rw-r--r--  1 jht2  staff  4502176 Nov 13 12:37 input DOM element method.zip
+-rw-r--r--  1 jht2  staff  4549276 Nov 13 12:38 jht preload  imgs.zip
+-rw-r--r--  1 jht2  staff  4502064 Nov 13 12:38 let draw  pattern.zip
+-rw-r--r--  1 jht2  staff  4502105 Nov 13 12:38 let me variable pattern animation.zip
+-rw-r--r--  1 jht2  staff  4502126 Nov 13 12:38 let variables draw.zip
+-rw-r--r--  1 jht2  staff  4502165 Nov 13 12:38 let variables topleft ellipse.zip
+-rw-r--r--  1 jht2  staff  4502067 Nov 13 12:38 let variables topleft.zip
+-rw-r--r--  1 jht2  staff  4501937 Nov 13 12:38 let variables while y1.zip
+-rw-r--r--  1 jht2  staff  4501878 Nov 13 12:38 let variables while.zip
+-rw-r--r--  1 jht2  staff  4501949 Nov 13 12:38 let variables.zip
+-rw-r--r--  1 jht2  staff  3595145 Nov 13 12:38 many circles object literal.zip
+-rw-r--r--  1 jht2  staff  4502428 Nov 13 12:38 match pairs emoji.zip
+-rw-r--r--  1 jht2  staff  4592537 Nov 13 12:38 mic graph.zip
+-rw-r--r--  1 jht2  staff  4002012 Nov 13 12:38 mo-pixel-grid.zip
+-rw-r--r--  1 jht2  staff  4502297 Nov 13 12:38 p5.Envelope setADSR.zip
+-rw-r--r--  1 jht2  staff  3958360 Nov 13 12:38 p5Live  many.zip
+-rw-r--r--  1 jht2  staff  3594386 Nov 13 12:38 p5js Code! - 2.2 - make your own variable copy.zip
+-rw-r--r--  1 jht2  staff  4457838 Nov 13 12:38 p5js Code! - Array of Objects nmax.zip
+-rw-r--r--  1 jht2  staff  4458297 Nov 13 12:38 p5js Code! - Mouse Interaction with Objects copy.zip
+-rw-r--r--  1 jht2  staff  4457236 Nov 13 12:38 p5js Code! - Nested Loops copy.zip
+-rw-r--r--  1 jht2  staff  4457345 Nov 13 12:38 p5js Code! - The Bouncing Ball copy.zip
+-rw-r--r--  1 jht2  staff   631318 Nov 13 12:38 p5js Code! - createGraphics copy.zip
+-rw-r--r--  1 jht2  staff  4457307 Nov 13 12:38 p5js Code! - while and for Loops NO LOOP.zip
+-rw-r--r--  1 jht2  staff  4782445 Nov 13 12:38 p5play-starter-code.zip
+-rw-r--r--  1 jht2  staff  4781810 Nov 13 12:38 p5play-tumbler.zip
+-rw-r--r--  1 jht2  staff  4502079 Nov 13 12:38 pattern animation my_shape.zip
+-rw-r--r--  1 jht2  staff  4502045 Nov 13 12:38 pattern animation random colors.zip
+-rw-r--r--  1 jht2  staff  4502241 Nov 13 12:38 pattern my_rect my_circle.zip
+-rw-r--r--  1 jht2  staff  4502352 Nov 13 12:38 pattern-animation random gary.zip
+-rw-r--r--  1 jht2  staff  4502352 Nov 13 12:38 pattern-animation random rgb.zip
+-rw-r--r--  1 jht2  staff  4502384 Nov 13 12:38 pattern-animation random rz.zip
+-rw-r--r--  1 jht2  staff  4502539 Nov 13 12:38 pattern-animation rect ellipse.zip
+-rw-r--r--  1 jht2  staff  4502216 Nov 13 12:38 pattern-animation while.zip
+-rw-r--r--  1 jht2  staff  4502388 Nov 13 12:38 pattern-animation-gray while.zip
+-rw-r--r--  1 jht2  staff  4502348 Nov 13 12:38 pattern-animation-gray.zip
+-rw-r--r--  1 jht2  staff  4502047 Nov 13 12:38 pattern-animation-shape.zip
+-rw-r--r--  1 jht2  staff  3992018 Nov 13 12:38 pixel-center.zip
+-rw-r--r--  1 jht2  staff  4187285 Nov 13 12:38 pixel-grid.zip
+-rw-r--r--  1 jht2  staff  3994035 Nov 13 12:38 pixel-scope.zip
+-rw-r--r--  1 jht2  staff  4501971 Nov 13 12:38 playingWithArcs.zip
+-rw-r--r--  1 jht2  staff  4636221 Nov 13 12:39 preload data url.zip
+-rw-r--r--  1 jht2  staff  4541952 Nov 13 12:39 preload loadImage scale.zip
+-rw-r--r--  1 jht2  staff  4541157 Nov 13 12:39 preload loadImage.zip
+-rw-r--r--  1 jht2  staff  4550473 Nov 13 12:39 real pong copy (day 3) copy.zip
+-rw-r--r--  1 jht2  staff  4501902 Nov 13 12:39 red-green-gold-flag.zip
+-rw-r--r--  1 jht2  staff  3986296 Nov 13 12:39 rotationX.zip
+-rw-r--r--@ 1 jht2  staff  3987124 Nov 13 12:39 rotationXYZ.zip
+-rw-r--r--  1 jht2  staff  4501779 Nov 13 12:39 setup shapes.zip
+-rw-r--r--  1 jht2  staff  4188680 Nov 13 12:39 show-video-draw-bounce copy.zip
+-rw-r--r--  1 jht2  staff  4188566 Nov 13 12:39 show-video-draw-bounce.zip
+-rw-r--r--  1 jht2  staff  4187714 Nov 13 12:39 show-video-draw.zip
+-rw-r--r--  1 jht2  staff  4186856 Nov 13 12:39 show-video-face-ui.zip
+-rw-r--r--  1 jht2  staff  4188309 Nov 13 12:39 show-video-jitter.zip
+-rw-r--r--  1 jht2  staff  4185958 Nov 13 12:39 simple-draw.zip
+-rw-r--r--  1 jht2  staff  4502703 Nov 13 12:39 sound-note-envelope.zip
+-rw-r--r--  1 jht2  staff  4656666 Nov 13 12:39 soundFile copy.zip
+-rw-r--r--  1 jht2  staff  4502562 Nov 13 12:39 storinginput - from java.zip
+-rw-r--r--  1 jht2  staff  4501989 Nov 13 12:39 system variables width height.zip
+-rw-r--r--  1 jht2  staff  4657480 Nov 13 12:39 three video effects.zip
+-rw-r--r--  1 jht2  staff  4000339 Nov 13 12:39 timed-drawing-class.zip
+-rw-r--r--  1 jht2  staff  4459781 Nov 13 12:39 timed-drawing.zip
+-rw-r--r--@ 1 jht2  staff  4456924 Nov 13 12:39 truchet tiles copy.zip
+-rw-r--r--@ 1 jht2  staff  4457194 Nov 13 12:39 truchet tiles odd.zip
+-rw-r--r--  1 jht2  staff  4187523 Nov 13 12:39 truchet tiles pause copy.zip
+-rw-r--r--@ 1 jht2  staff  4457141 Nov 13 12:40 truchet tiles tweeked.zip
+-rw-r--r--  1 jht2  staff  3594830 Nov 13 12:40 two circles object literal.zip
+-rw-r--r--  1 jht2  staff  3781338 Nov 13 12:40 video meter rgb long.zip
+-rw-r--r--@ 1 jht2  staff  3781874 May 10  2023 video meter rgb tall.zip
+-rw-r--r--  1 jht2  staff  3780850 Nov 13 12:40 video pixel meter.zip
+-rw-r--r--  1 jht2  staff  3780659 Nov 13 12:40 video pixel scan random.zip
+-rw-r--r--  1 jht2  staff  3780579 Nov 13 12:40 video pixel scan.zip
+-rw-r--r--  1 jht2  staff  3780504 Nov 13 12:40 video pixel.zip
+-rw-r--r--  1 jht2  staff  3986817 Nov 13 12:40 video-tint-2x2-mobile.zip
+-rw-r--r--  1 jht2  staff      332 Nov 13 12:40 week01 demo.zip
+-rw-r--r--  1 jht2  staff      332 Nov 13 12:40 week2, animation copy.zip
+-rw-r--r--  1 jht2  staff  3595221 Nov 13 12:41 wk2-sketch copy.zip
